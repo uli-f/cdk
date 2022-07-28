@@ -29,7 +29,7 @@ import io.github.dan2097.jnarinchi.RinchiOutput;
 
 public class RInChIGenerator {
 	
-	private static final RinchiOptions DEFAULT_OPTIONS = new RinchiOptions();
+	private static final RinchiOptions DEFAULT_OPTIONS = RinchiOptions.DEFAULT_OPTIONS;
 	
 	protected RinchiInput input;	
 	protected RinchiOutput rinchiOutput;
