@@ -23,6 +23,7 @@ import org.openscience.cdk.interfaces.IReaction;
 
 import io.github.dan2097.jnarinchi.RinchiInput;
 import io.github.dan2097.jnarinchi.RinchiKeyOutput;
+import io.github.dan2097.jnarinchi.RinchiKeyType;
 import io.github.dan2097.jnarinchi.RinchiOptions;
 import io.github.dan2097.jnarinchi.RinchiOutput;
 
@@ -32,7 +33,9 @@ public class RInChIGenerator {
 	
 	protected RinchiInput input;	
 	protected RinchiOutput rinchiOutput;
-	protected RinchiKeyOutput rinchiKeyOutput;
+	protected RinchiKeyOutput shortRinchiKeyOutput = null;
+	protected RinchiKeyOutput longRinchiKeyOutput = null;
+	protected RinchiKeyOutput webRinchiKeyOutput = null;
 	protected IReaction reaction;
 	protected RinchiOptions options;
 	
@@ -56,6 +59,10 @@ public class RInChIGenerator {
 		//TODO
 	}
 	
+	private void generateRInChIKey(RinchiKeyType type) {
+		//TODO
+	}
+	
 	public String getRInChI() {
 		return rinchiOutput.getRinchi();
 	}
@@ -68,16 +75,34 @@ public class RInChIGenerator {
 		return rinchiOutput.getErrorMessage();
 	}
 	
-	public String getRInChIKey() {
-		return rinchiKeyOutput.getRinchiKey();
+	public String getRInChIKey(RinchiKeyType type) throws CDKException {
+		switch (type) {
+		case SHORT:
+			if (shortRinchiKeyOutput == null)
+				generateRInChIKey(type);
+			return shortRinchiKeyOutput.getRinchiKey();
+		case LONG:
+			if (longRinchiKeyOutput == null)
+				generateRInChIKey(type);
+			return longRinchiKeyOutput.getRinchiKey();
+		case WEB:
+			if (webRinchiKeyOutput == null)
+				generateRInChIKey(type);
+			return webRinchiKeyOutput.getRinchiKey();	
+		}
+		return null;
 	}
-	
-	public String getRInChIKeyType() {
-		return rinchiKeyOutput.getRinchiKeyType().toString();
-	}
-	
-	public String getRInChIKeyErrorMessage() {
-		return rinchiOutput.getErrorMessage();
+		
+	public String getRInChIKeyErrorMessage(RinchiKeyType type) {
+		switch (type) {
+		case SHORT:
+			return shortRinchiKeyOutput.getErrorMessage();
+		case LONG:
+			return longRinchiKeyOutput.getErrorMessage();
+		case WEB:
+			return webRinchiKeyOutput.getErrorMessage();	
+		}
+		return "";
 	}
 	
 }
