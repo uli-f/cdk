@@ -49,6 +49,10 @@ public class RInChIGenerator {
 		this(reaction, options, false);
 	}
 	
+	protected RInChIGenerator (IReaction reaction, String optStr) throws CDKException {
+		this(reaction, RInChIOptionParser.parseString(optStr), false);
+	}
+	
 	protected RInChIGenerator (IReaction reaction, RinchiOptions options, boolean useCDK_MDL_IO) throws CDKException {
 		this.reaction = reaction;
 		this.options = options;

@@ -91,6 +91,17 @@ public class RInChIGeneratorFactory {
 		if (options == null) throw new IllegalArgumentException("Null flags");
 		return (new RInChIGenerator(reaction, options));
 	}
+	
+	/**
+	 * Get a RInChI generator providing flags to customise the generation.
+	 * @param reaction Reaction to generate RInChI for
+	 * @param options Space or comma delimited string of options for RInChI generation
+	 * @return the RInChI generator
+	 * @throws CDKException something went wrong
+	 */
+	public RInChIGenerator getRInChIGenerator(IReaction reaction, String options) throws CDKException {
+		return (new RInChIGenerator(reaction, options));
+	}
 
 
 }
