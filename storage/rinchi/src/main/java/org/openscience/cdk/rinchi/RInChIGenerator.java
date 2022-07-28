@@ -18,6 +18,37 @@
  */
 package org.openscience.cdk.rinchi;
 
+import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.interfaces.IReaction;
+
+import io.github.dan2097.jnarinchi.RinchiInput;
+import io.github.dan2097.jnarinchi.RinchiOptions;
+import io.github.dan2097.jnarinchi.RinchiOutput;
+
 public class RInChIGenerator {
+	
+	private static final RinchiOptions DEFAULT_OPTIONS = new RinchiOptions();
+	
+	protected RinchiInput input;	
+	protected RinchiOutput output;
+	protected IReaction reaction;
+	protected RinchiOptions options;
+	
+	protected boolean useCDK_MDL_IO = false;
+	
+	protected RInChIGenerator (IReaction reaction) throws CDKException {
+		this(reaction, DEFAULT_OPTIONS, false);
+	}
+	
+	protected RInChIGenerator (IReaction reaction, RinchiOptions options) throws CDKException {
+		this(reaction, options, false);
+	}
+	
+	protected RInChIGenerator (IReaction reaction, RinchiOptions options, boolean useCDK_MDL_IO) throws CDKException {
+		this.reaction = reaction;
+		this.options = options;
+		this.useCDK_MDL_IO = useCDK_MDL_IO; 
+	}
+	
 	
 }
