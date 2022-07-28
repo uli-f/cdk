@@ -18,7 +18,10 @@
  */
 package org.openscience.cdk.rinchi;
 
-public class RInChIGeneratorTest {
+import org.junit.Test;
+import org.openscience.cdk.test.CDKTestCase;
+
+public class RInChIGeneratorTest extends CDKTestCase {
+
 	
 }
-
