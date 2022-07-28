@@ -22,6 +22,7 @@ import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IReaction;
 
 import io.github.dan2097.jnarinchi.RinchiInput;
+import io.github.dan2097.jnarinchi.RinchiKeyOutput;
 import io.github.dan2097.jnarinchi.RinchiOptions;
 import io.github.dan2097.jnarinchi.RinchiOutput;
 
@@ -30,7 +31,8 @@ public class RInChIGenerator {
 	private static final RinchiOptions DEFAULT_OPTIONS = new RinchiOptions();
 	
 	protected RinchiInput input;	
-	protected RinchiOutput output;
+	protected RinchiOutput rinchiOutput;
+	protected RinchiKeyOutput rinchiKeyOutput;
 	protected IReaction reaction;
 	protected RinchiOptions options;
 	
@@ -50,5 +52,32 @@ public class RInChIGenerator {
 		this.useCDK_MDL_IO = useCDK_MDL_IO; 
 	}
 	
+	private void generateRinchiFromReaction() throws CDKException {
+		//TODO
+	}
+	
+	public String getRInChI() {
+		return rinchiOutput.getRinchi();
+	}
+	
+	public String getAuxInfo() {
+		return rinchiOutput.getAuxInfo();
+	}
+	
+	public String getRInChIErrorMessage() {
+		return rinchiOutput.getErrorMessage();
+	}
+	
+	public String getRInChIKey() {
+		return rinchiKeyOutput.getRinchiKey();
+	}
+	
+	public String getRInChIKeyType() {
+		return rinchiKeyOutput.getRinchiKeyType().toString();
+	}
+	
+	public String getRInChIKeyErrorMessage() {
+		return rinchiOutput.getErrorMessage();
+	}
 	
 }
