@@ -19,6 +19,7 @@
         <module>pdb</module>
         <module>pdbcml</module>
         <module>inchi</module>
+        <module>rinchi</module>
         <module>jniinchi-support</module>
         <module>smiles</module>
     </modules>
