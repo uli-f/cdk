@@ -21,14 +21,18 @@ package org.openscience.cdk.rinchi;
 import java.io.StringWriter;
 
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.io.MDLRXNWriter;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 
 import io.github.dan2097.jnarinchi.JnaRinchi;
+import io.github.dan2097.jnarinchi.ReactionComponentRole;
 import io.github.dan2097.jnarinchi.ReactionFileFormat;
 import io.github.dan2097.jnarinchi.RinchiInput;
+import io.github.dan2097.jnarinchi.RinchiInputComponent;
 import io.github.dan2097.jnarinchi.RinchiKeyOutput;
 import io.github.dan2097.jnarinchi.RinchiKeyStatus;
 import io.github.dan2097.jnarinchi.RinchiKeyType;
@@ -49,7 +53,7 @@ public class RInChIGenerator {
 	protected RinchiKeyOutput webRinchiKeyOutput = null;
 	protected IReaction reaction;
 	protected RinchiOptions options;
-	protected String rinchiInputGenErrorMsg = null;
+	protected String rinchiInputGenErrorMsg = "";
 	
 	protected boolean useCDK_MDL_IO = false;
 	
@@ -73,6 +77,9 @@ public class RInChIGenerator {
 	}
 	
 	private void generateRinchiFromReaction() throws CDKException {
+		if (reaction == null)
+			throw new CDKException("Null reaction object!");	
+		
 		if (useCDK_MDL_IO) {
 			//Using CDK MDLRXNWriter to Serialize Reaction to MDL RXN.
 			//Then RXN file text is used as an input to JnaRinchi
@@ -131,7 +138,37 @@ public class RInChIGenerator {
 	}
 	
 	private RinchiInput getRinchiInputFromReaction() {
-		//TODO
+		RinchiInput rinchiInput = new RinchiInput();
+		IAtomContainerSet acs;
+		
+		acs = reaction.getReactants();
+		for (int i = 0; i < acs.getAtomContainerCount(); i++) {
+			IAtomContainer mol = acs.getAtomContainer(i);
+			RinchiInputComponent ric = getRinchiInputCompoment(mol);
+			ric.setRole(ReactionComponentRole.REAGENT);
+			rinchiInput.addComponent(ric);
+		}
+		
+		acs = reaction.getProducts();
+		for (int i = 0; i < acs.getAtomContainerCount(); i++) {
+			IAtomContainer mol = acs.getAtomContainer(i);
+			RinchiInputComponent ric = getRinchiInputCompoment(mol);
+			ric.setRole(ReactionComponentRole.PRODUCT);
+			rinchiInput.addComponent(ric);
+		}
+		
+		acs = reaction.getAgents();
+		for (int i = 0; i < acs.getAtomContainerCount(); i++) {
+			IAtomContainer mol = acs.getAtomContainer(i);
+			RinchiInputComponent ric = getRinchiInputCompoment(mol);
+			ric.setRole(ReactionComponentRole.AGENT);
+			rinchiInput.addComponent(ric);
+		}
+		return rinchiInput;
+	}
+	
+	private RinchiInputComponent getRinchiInputCompoment(IAtomContainer mol) {
+		//
 		return null;
 	}
 	
