@@ -106,7 +106,7 @@ public class RInChIGenerator {
 			throw new CDKException("RInChI generation problem: " + rinchiOutput.getErrorMessage());	
 	}
 	
-	private void generateRInChIKey(RinchiKeyType type) throws Exception {
+	private void generateRInChIKey(RinchiKeyType type) throws CDKException {
 		RinchiKeyOutput rkOut;
 		if (rinchiOutput.getStatus() == RinchiStatus.ERROR) {
 			String err = "Unable to generate RInChIKey since, no RInChI is generated!";
@@ -155,32 +155,35 @@ public class RInChIGenerator {
 		return rinchiOutput.getStatus();
 	}
 	
-	public String getRInChIKey(RinchiKeyType type) throws CDKException {
-		switch (type) {
-		case SHORT:
-			if (shortRinchiKeyOutput == null)
-				generateRInChIKey(type);
-			return shortRinchiKeyOutput.getRinchiKey();
-		case LONG:
-			if (longRinchiKeyOutput == null)
-				generateRInChIKey(type);
-			return longRinchiKeyOutput.getRinchiKey();
-		case WEB:
-			if (webRinchiKeyOutput == null)
-				generateRInChIKey(type);
-			return webRinchiKeyOutput.getRinchiKey();	
-		}
-		return null;
+	public String getShortRInChIKey(RinchiKeyType type) throws CDKException {		
+		if (shortRinchiKeyOutput == null)
+			generateRInChIKey(RinchiKeyType.SHORT);
+		return shortRinchiKeyOutput.getRinchiKey();
 	}
+	
+	public String getLongRInChIKey(RinchiKeyType type) throws CDKException {		
+		if (longRinchiKeyOutput == null)
+			generateRInChIKey(RinchiKeyType.LONG);
+		return longRinchiKeyOutput.getRinchiKey();
+	}	
+	
+	public String getWebRInChIKey(RinchiKeyType type) throws CDKException {		
+		if (webRinchiKeyOutput == null)
+			generateRInChIKey(RinchiKeyType.WEB);
+		return webRinchiKeyOutput.getRinchiKey();
+	}	
 	
 	public String getRInChIKeyErrorMessage(RinchiKeyType type) {
 		switch (type) {
 		case SHORT:
-			return shortRinchiKeyOutput.getErrorMessage();
+			if (shortRinchiKeyOutput != null)
+				return shortRinchiKeyOutput.getErrorMessage();
 		case LONG:
-			return longRinchiKeyOutput.getErrorMessage();
+			if (longRinchiKeyOutput != null)
+				return longRinchiKeyOutput.getErrorMessage();
 		case WEB:
-			return webRinchiKeyOutput.getErrorMessage();	
+			if (webRinchiKeyOutput != null)
+				return webRinchiKeyOutput.getErrorMessage();	
 		}
 		return "";
 	}
