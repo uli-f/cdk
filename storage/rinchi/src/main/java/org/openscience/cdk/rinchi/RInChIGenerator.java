@@ -23,6 +23,8 @@ import java.io.StringWriter;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.io.MDLRXNWriter;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 
 import io.github.dan2097.jnarinchi.JnaRinchi;
 import io.github.dan2097.jnarinchi.ReactionFileFormat;
@@ -37,6 +39,8 @@ import io.github.dan2097.jnarinchi.RinchiStatus;
 public class RInChIGenerator {
 	
 	private static final RinchiOptions DEFAULT_OPTIONS = RinchiOptions.DEFAULT_OPTIONS;
+	
+	private static final ILoggingTool LOGGER = LoggingToolFactory.createLoggingTool(RInChIGenerator.class);
 	
 	protected RinchiInput input;	
 	protected RinchiOutput rinchiOutput;
@@ -75,11 +79,13 @@ public class RInChIGenerator {
 			try {
 				// Serialize Reaction to MDL RXN
 				StringWriter writer = new StringWriter(10000);		        
-				MDLRXNWriter mdlWriter = new MDLRXNWriter(writer);
+				MDLRXNWriter mdlWriter = new MDLRXNWriter(writer);				
 				mdlWriter.write(reaction);
 				mdlWriter.close();		        
 				String fileText = writer.toString(); 
 				rinchiOutput = JnaRinchi.fileTextToRinchi(ReactionFileFormat.RXN, fileText, options);
+				//if (rinchiOutput.getStatus() == RinchiStatus.ERROR)
+				//	LOGGER.debug("MDL RXN file text\n" + fileText);
 			}
 			catch (Exception x) {
 				String errMsg = "Unable to write MDL RXN file for reaction: " + x.getMessage();
