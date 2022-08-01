@@ -19,15 +19,24 @@
 package org.openscience.cdk.rinchi;
 
 import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
+import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.io.MDLRXNWriter;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 
+import io.github.dan2097.jnainchi.InchiAtom;
+import io.github.dan2097.jnainchi.InchiBond;
+import io.github.dan2097.jnainchi.InchiBondType;
 import io.github.dan2097.jnarinchi.JnaRinchi;
 import io.github.dan2097.jnarinchi.ReactionComponentRole;
 import io.github.dan2097.jnarinchi.ReactionFileFormat;
@@ -53,7 +62,7 @@ public class RInChIGenerator {
 	protected RinchiKeyOutput webRinchiKeyOutput = null;
 	protected IReaction reaction;
 	protected RinchiOptions options;
-	protected String rinchiInputGenErrorMsg = "";
+	protected List<String> rinchiInputGenerationErrors = new ArrayList<>();
 	
 	protected boolean useCDK_MDL_IO = false;
 	
@@ -102,7 +111,7 @@ public class RInChIGenerator {
 		else {
 			RinchiInput rInp = getRinchiInputFromReaction();
 			if (rInp == null) {
-				String errMsg = "Unable to convert CDK Reaction to RinchiInput: " + rinchiInputGenErrorMsg;
+				String errMsg = "Unable to convert CDK Reaction to RinchiInput: " + getAllRinchiInputGenerationErrors();
 				rinchiOutput = new RinchiOutput("", "", RinchiStatus.ERROR, -1, errMsg);
 			} 
 			else 
@@ -164,16 +173,88 @@ public class RInChIGenerator {
 			ric.setRole(ReactionComponentRole.AGENT);
 			rinchiInput.addComponent(ric);
 		}
-		return rinchiInput;
+		
+		if (rinchiInputGenerationErrors.isEmpty())
+			return rinchiInput;
+		else
+			return null;
 	}
 	
 	private RinchiInputComponent getRinchiInputCompoment(IAtomContainer mol) {
-		//
-		return null;
+		RinchiInputComponent ric = new RinchiInputComponent();
+		Map<IAtom,InchiAtom> atomInchiAtomMap = new HashMap<>();
+		//Convert atoms
+		for (int i = 0; i < mol.getAtomCount(); i++) {
+			IAtom atom = mol.getAtom(i);
+			InchiAtom iAt = getInchiAtom(atom);
+			atomInchiAtomMap.put(atom, iAt);
+			if (iAt != null)
+				ric.addAtom(iAt);
+		}
+		//Convert bonds
+		for (int i = 0; i < mol.getBondCount(); i++) {
+			IBond bond = mol.getBond(i);
+			InchiBond iBo = getInchiBond (bond, atomInchiAtomMap);
+			if (iBo != null)
+				ric.addBond(iBo);
+		}
+		return ric;
 	}
 	
-	private String getRXNFileTextFromReaction() {
-		return null;
+	private InchiAtom getInchiAtom (IAtom atom) {		
+		//TODO handle non standard atoms e.g. IPseudoAtom
+		String atSymbol = atom.getSymbol();
+		InchiAtom inchiAtom = new InchiAtom(atSymbol);
+		//Set charge
+		Integer q = atom.getFormalCharge();
+        if (q == null)
+            q = 0;
+        inchiAtom.setCharge(q);
+        
+        //TODO Set isotope
+        
+        //Set coordinates: 3D takes precedence 
+        if (atom.getPoint3d() != null) {
+        	inchiAtom.setX(atom.getPoint3d().x);
+        	inchiAtom.setY(atom.getPoint3d().y);
+        	inchiAtom.setZ(atom.getPoint3d().z);
+        }
+        else if (atom.getPoint2d() != null) {
+        	inchiAtom.setX(atom.getPoint2d().x);
+        	inchiAtom.setY(atom.getPoint2d().y);
+        }
+		return inchiAtom;
+	}
+	
+	private InchiBond getInchiBond (IBond bond, Map<IAtom,InchiAtom> atomInchiAtomMap) {
+		InchiAtom at0 = atomInchiAtomMap.get(bond.getAtom(0));
+		InchiAtom at1 = atomInchiAtomMap.get(bond.getAtom(1));
+		InchiBondType boType = null;
+		switch (bond.getOrder()) {
+		case SINGLE:
+			boType = InchiBondType.SINGLE;
+			break;
+		case DOUBLE:
+			boType = InchiBondType.DOUBLE;
+			break;
+		case TRIPLE:
+			boType = InchiBondType.TRIPLE;
+			break;	
+		}
+		if (boType == null) {
+			rinchiInputGenerationErrors.add("Unable to convert CDK bond type to InchiBond: " 
+					+ bond.getOrder().toString());
+			return null;
+		}	
+		else
+			return new InchiBond(at0, at1, boType);
+	}
+	
+	private String getAllRinchiInputGenerationErrors() {
+		StringBuilder sb = new StringBuilder(); 
+		for (String err: rinchiInputGenerationErrors)
+			sb.append(err).append("\n");
+		return sb.toString();
 	}
 	
 	public String getRInChI() {
