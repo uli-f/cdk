@@ -155,19 +155,19 @@ public class RInChIGenerator {
 		return rinchiOutput.getStatus();
 	}
 	
-	public String getShortRInChIKey(RinchiKeyType type) throws CDKException {		
+	public String getShortRInChIKey() throws CDKException {		
 		if (shortRinchiKeyOutput == null)
 			generateRInChIKey(RinchiKeyType.SHORT);
 		return shortRinchiKeyOutput.getRinchiKey();
 	}
 	
-	public String getLongRInChIKey(RinchiKeyType type) throws CDKException {		
+	public String getLongRInChIKey() throws CDKException {		
 		if (longRinchiKeyOutput == null)
 			generateRInChIKey(RinchiKeyType.LONG);
 		return longRinchiKeyOutput.getRinchiKey();
 	}	
 	
-	public String getWebRInChIKey(RinchiKeyType type) throws CDKException {		
+	public String getWebRInChIKey() throws CDKException {		
 		if (webRinchiKeyOutput == null)
 			generateRInChIKey(RinchiKeyType.WEB);
 		return webRinchiKeyOutput.getRinchiKey();
