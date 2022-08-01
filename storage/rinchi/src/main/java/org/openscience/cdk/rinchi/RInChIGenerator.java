@@ -18,14 +18,20 @@
  */
 package org.openscience.cdk.rinchi;
 
+import java.io.StringWriter;
+
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.io.MDLRXNWriter;
 
+import io.github.dan2097.jnarinchi.JnaRinchi;
+import io.github.dan2097.jnarinchi.ReactionFileFormat;
 import io.github.dan2097.jnarinchi.RinchiInput;
 import io.github.dan2097.jnarinchi.RinchiKeyOutput;
 import io.github.dan2097.jnarinchi.RinchiKeyType;
 import io.github.dan2097.jnarinchi.RinchiOptions;
 import io.github.dan2097.jnarinchi.RinchiOutput;
+import io.github.dan2097.jnarinchi.RinchiStatus;
 
 public class RInChIGenerator {
 	
@@ -38,6 +44,7 @@ public class RInChIGenerator {
 	protected RinchiKeyOutput webRinchiKeyOutput = null;
 	protected IReaction reaction;
 	protected RinchiOptions options;
+	protected String rinchiInputGenErrorMsg = null;
 	
 	protected boolean useCDK_MDL_IO = false;
 	
@@ -56,16 +63,55 @@ public class RInChIGenerator {
 	protected RInChIGenerator (IReaction reaction, RinchiOptions options, boolean useCDK_MDL_IO) throws CDKException {
 		this.reaction = reaction;
 		this.options = options;
-		this.useCDK_MDL_IO = useCDK_MDL_IO; 
+		this.useCDK_MDL_IO = useCDK_MDL_IO;		
+		generateRinchiFromReaction();
 	}
 	
 	private void generateRinchiFromReaction() throws CDKException {
-		//TODO
+		if (useCDK_MDL_IO) {
+			//Using CDK MDLRXNWriter to Serialize Reaction to MDL RXN.
+			//Then RXN file text is used as an input to JnaRinchi
+			try {
+				// Serialize Reaction to MDL RXN
+				StringWriter writer = new StringWriter(10000);		        
+				MDLRXNWriter mdlWriter = new MDLRXNWriter(writer);
+				mdlWriter.write(reaction);
+				mdlWriter.close();		        
+				String fileText = writer.toString(); 
+				rinchiOutput = JnaRinchi.fileTextToRinchi(ReactionFileFormat.RXN, fileText, options);
+			}
+			catch (Exception x) {
+				String errMsg = "Unable to write MDL RXN file for reaction: " + x.getMessage();
+				rinchiOutput = new RinchiOutput("", "", RinchiStatus.ERROR, -1, errMsg);;
+			}			
+		}
+		else {
+			RinchiInput rInp = getRinchiInputFromReaction();
+			if (rInp == null) {
+				String errMsg = "Unable to convert CDK Reaction to RinchiInput: " + rinchiInputGenErrorMsg;
+				rinchiOutput = new RinchiOutput("", "", RinchiStatus.ERROR, -1, errMsg);
+			} 
+			else 
+				rinchiOutput = JnaRinchi.toRinchi(rInp, options);			
+		}
+		
+		if (rinchiOutput.getStatus() == RinchiStatus.ERROR)
+			throw new CDKException("RInChI generation problem: " + rinchiOutput.getErrorMessage());	
 	}
 	
 	private void generateRInChIKey(RinchiKeyType type) {
 		//TODO
 	}
+	
+	private RinchiInput getRinchiInputFromReaction() {
+		//TODO
+		return null;
+	}
+	
+	private String getRXNFileTextFromReaction() {
+		return null;
+	}
+	
 	
 	public String getRInChI() {
 		return rinchiOutput.getRinchi();
