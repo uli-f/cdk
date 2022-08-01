@@ -106,8 +106,28 @@ public class RInChIGenerator {
 			throw new CDKException("RInChI generation problem: " + rinchiOutput.getErrorMessage());	
 	}
 	
-	private void generateRInChIKey(RinchiKeyType type) {
-		//TODO
+	private void generateRInChIKey(RinchiKeyType type) throws Exception {
+		RinchiKeyOutput rkOut;
+		if (rinchiOutput.getStatus() == RinchiStatus.ERROR) {
+			String err = "Unable to generate RInChIKey since, no RInChI is generated!";
+			rkOut = new RinchiKeyOutput("", type, RinchiKeyStatus.ERROR, -1, err);
+		}	
+		rkOut = JnaRinchi.rinchiToRinchiKey(type, rinchiOutput.getRinchi());
+		
+		switch (type) {
+		case SHORT:
+			shortRinchiKeyOutput = rkOut;
+			break;
+		case LONG:
+			longRinchiKeyOutput = rkOut;
+			break;
+		case WEB:
+			webRinchiKeyOutput = rkOut;
+			break;	
+		}
+		
+		if (rkOut.getStatus() == RinchiKeyStatus.ERROR)
+			throw new CDKException("RInChIKey generation problem: " + rkOut.getErrorMessage());
 	}
 	
 	private RinchiInput getRinchiInputFromReaction() {
