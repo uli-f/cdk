@@ -18,6 +18,75 @@
  */
 package org.openscience.cdk.rinchi;
 
+import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.interfaces.IChemObjectBuilder;
+import org.openscience.cdk.interfaces.IReaction;
+
+import io.github.dan2097.jnarinchi.JnaRinchi;
+import io.github.dan2097.jnarinchi.RinchiInputFromRinchiOutput;
+import io.github.dan2097.jnarinchi.RinchiStatus;
+
 public class RInChIToReaction {
 	
+	protected RinchiInputFromRinchiOutput output;
+	
+	protected IReaction reaction;
+	
+	/**
+     * Constructor. Generates CDK Reaction from RInChI.
+     * @param rinchi RInChI string
+     * @param auxInfo RInChI aux info string
+     * @throws CDKException
+     */
+	protected RInChIToReaction(String rinchi, IChemObjectBuilder builder) throws CDKException {
+		this (rinchi, "", builder);
+	}
+	
+	/**
+     * Constructor. Generates CDK Reaction from RInChI.
+     * @param rinchi RInChI string
+     * @param auxInfo RInChI aux info string
+     * @throws CDKException
+     */
+	protected RInChIToReaction(String rinchi, String auxInfo, IChemObjectBuilder builder) throws CDKException {
+		if (rinchi == null)
+			throw new IllegalArgumentException("Null RInChI string provided");
+		if (auxInfo == null)
+			throw new IllegalArgumentException("Null RInChI aux info string provided");
+		
+		this.output = JnaRinchi.getRnchiInputFromRinchi(rinchi, auxInfo);
+		generateReactionFromRinchi(builder);
+	}
+	
+	/**
+     * Gets reaction from RnChI, and converts RInChI library data structure (RinchiInput object)
+     * into an IReactionr.
+     *
+     * @throws CDKException
+     */
+    protected void generateReactionFromRinchi(IChemObjectBuilder builder) throws CDKException {
+    	//TODO
+    }
+	/**
+     * Returns generated reaction.
+     * @return A Reaction object
+     */
+	public IReaction getReaction() {
+		return reaction;
+	}
+	
+	/**
+     * Access the status of the RInChI output.
+     * @return the status
+     */
+	public RinchiStatus getStatus() {
+		return output.getStatus();
+	}
+	
+	/**
+     * Gets generated error messages.
+     */
+    public String getErrorMessage() {
+        return output.getErrorMessage();
+    }
 }
