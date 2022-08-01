@@ -102,6 +102,18 @@ public class RInChIGeneratorFactory {
 	public RInChIGenerator getRInChIGenerator(IReaction reaction, String options) throws CDKException {
 		return (new RInChIGenerator(reaction, options));
 	}
+	
+	/**
+	 * Get a RInChI generator providing flags to customise the generation.
+	 * @param reaction Reaction to generate RInChI for
+	 * @param options the rinchi option flags
+	 * @param useCDK_MDL_IO determines whether to used CDL MDL RCN Writer
+	 * @return the RInChI generator
+	 * @throws CDKException something went wrong
+	 */
+	public RInChIGenerator getRInChIGenerator(IReaction reaction, RinchiOptions options, boolean useCDK_MDL_IO) throws CDKException {
+		return (new RInChIGenerator(reaction, options, useCDK_MDL_IO));
+	}
 
 
 }
