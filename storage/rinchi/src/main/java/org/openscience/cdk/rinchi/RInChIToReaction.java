@@ -22,13 +22,18 @@ import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IChemObjectBuilder;
 import org.openscience.cdk.interfaces.IReaction;
 
+import io.github.dan2097.jnarinchi.FileTextOutput;
+import io.github.dan2097.jnarinchi.FileTextStatus;
 import io.github.dan2097.jnarinchi.JnaRinchi;
+import io.github.dan2097.jnarinchi.ReactionFileFormat;
 import io.github.dan2097.jnarinchi.RinchiInputFromRinchiOutput;
 import io.github.dan2097.jnarinchi.RinchiStatus;
 
 public class RInChIToReaction {
 	
-	protected RinchiInputFromRinchiOutput output;
+	protected RinchiInputFromRinchiOutput rInpFromRinchiOutput = null;
+	
+	protected FileTextOutput fileTextOutput = null;
 	
 	protected IReaction reaction;
 	
@@ -56,20 +61,42 @@ public class RInChIToReaction {
 		if (auxInfo == null)
 			throw new IllegalArgumentException("Null RInChI aux info string provided");
 		
-		this.useCDK_MDL_IO = useCDK_MDL_IO; 
-		this.output = JnaRinchi.getRnchiInputFromRinchi(rinchi, auxInfo);
-		generateReactionFromRinchi(builder);
+		this.useCDK_MDL_IO = useCDK_MDL_IO;
+		if (useCDK_MDL_IO) {
+			fileTextOutput = JnaRinchi.rinchiToFileText(rinchi, auxInfo, ReactionFileFormat.RXN);
+			generateReactionFromMDLRXNFile(builder);
+		}			
+		else {	
+			this.rInpFromRinchiOutput = JnaRinchi.getRnchiInputFromRinchi(rinchi, auxInfo);
+			generateReactionFromRinchi(builder);
+		}	
 	}
 	
 	/**
      * Gets reaction from RnChI, and converts RInChI library data structure (RinchiInput object)
-     * into an IReactionr.
+     * into an IReaction.
      *
      * @throws CDKException
      */
     protected void generateReactionFromRinchi(IChemObjectBuilder builder) throws CDKException {
+    	if (rInpFromRinchiOutput.getStatus() == RinchiStatus.ERROR)
+    		throw new CDKException(rInpFromRinchiOutput.getErrorMessage());
+    		
     	//TODO
     }
+    
+    /**
+     * Gets reaction from MDL RXN file obtained from RInChI library data structure.
+     *
+     * @throws CDKException
+     */
+    protected void generateReactionFromMDLRXNFile(IChemObjectBuilder builder) throws CDKException {
+    	if (fileTextOutput.getStatus() == FileTextStatus.ERROR)
+    		throw new CDKException(fileTextOutput.getErrorMessage());
+    		
+    	//TODO
+    }
+    
 	/**
      * Returns generated reaction.
      * @return A Reaction object
@@ -83,14 +110,18 @@ public class RInChIToReaction {
      * @return the status
      */
 	public RinchiStatus getStatus() {
-		return output.getStatus();
+		if (rInpFromRinchiOutput != null)
+			return rInpFromRinchiOutput.getStatus();
+		else
+			return null;
 	}
+	
 	
 	/**
      * Gets generated error messages.
      */
     public String getErrorMessage() {
-        return output.getErrorMessage();
+        return rInpFromRinchiOutput.getErrorMessage();
     }
 
 	public boolean isUseCDK_MDL_IO() {
