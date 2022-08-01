@@ -28,6 +28,7 @@ import io.github.dan2097.jnarinchi.JnaRinchi;
 import io.github.dan2097.jnarinchi.ReactionFileFormat;
 import io.github.dan2097.jnarinchi.RinchiInput;
 import io.github.dan2097.jnarinchi.RinchiKeyOutput;
+import io.github.dan2097.jnarinchi.RinchiKeyStatus;
 import io.github.dan2097.jnarinchi.RinchiKeyType;
 import io.github.dan2097.jnarinchi.RinchiOptions;
 import io.github.dan2097.jnarinchi.RinchiOutput;
@@ -112,7 +113,6 @@ public class RInChIGenerator {
 		return null;
 	}
 	
-	
 	public String getRInChI() {
 		return rinchiOutput.getRinchi();
 	}
@@ -123,6 +123,10 @@ public class RInChIGenerator {
 	
 	public String getRInChIErrorMessage() {
 		return rinchiOutput.getErrorMessage();
+	}
+	
+	public RinchiStatus getRInChIStatus() {
+		return rinchiOutput.getStatus();
 	}
 	
 	public String getRInChIKey(RinchiKeyType type) throws CDKException {
@@ -142,7 +146,7 @@ public class RInChIGenerator {
 		}
 		return null;
 	}
-		
+	
 	public String getRInChIKeyErrorMessage(RinchiKeyType type) {
 		switch (type) {
 		case SHORT:
