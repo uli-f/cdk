@@ -32,6 +32,8 @@ public class RInChIToReaction {
 	
 	protected IReaction reaction;
 	
+	protected boolean useCDK_MDL_IO = false;
+	
 	/**
      * Constructor. Generates CDK Reaction from RInChI.
      * @param rinchi RInChI string
@@ -39,7 +41,7 @@ public class RInChIToReaction {
      * @throws CDKException
      */
 	protected RInChIToReaction(String rinchi, IChemObjectBuilder builder) throws CDKException {
-		this (rinchi, "", builder);
+		this (rinchi, "", builder, false);
 	}
 	
 	/**
@@ -48,12 +50,13 @@ public class RInChIToReaction {
      * @param auxInfo RInChI aux info string
      * @throws CDKException
      */
-	protected RInChIToReaction(String rinchi, String auxInfo, IChemObjectBuilder builder) throws CDKException {
+	protected RInChIToReaction(String rinchi, String auxInfo, IChemObjectBuilder builder, boolean useCDK_MDL_IO) throws CDKException {
 		if (rinchi == null)
 			throw new IllegalArgumentException("Null RInChI string provided");
 		if (auxInfo == null)
 			throw new IllegalArgumentException("Null RInChI aux info string provided");
 		
+		this.useCDK_MDL_IO = useCDK_MDL_IO; 
 		this.output = JnaRinchi.getRnchiInputFromRinchi(rinchi, auxInfo);
 		generateReactionFromRinchi(builder);
 	}
@@ -89,4 +92,9 @@ public class RInChIToReaction {
     public String getErrorMessage() {
         return output.getErrorMessage();
     }
+
+	public boolean isUseCDK_MDL_IO() {
+		return useCDK_MDL_IO;
+	}
+    
 }
