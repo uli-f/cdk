@@ -182,7 +182,7 @@ public class RInChIToReaction {
     	for (int i = 0; i < ric.getAtoms().size(); i++) {    		
     		InchiAtom iAt = ric.getAtoms().get(i);
     		IAtom atom = getAtom(iAt);
-    		if (atom == null) {
+    		if (atom != null) {
     			inchiAtom2AtomMap.put(iAt, atom);
     			mol.addAtom(atom);
     		}
@@ -191,7 +191,7 @@ public class RInChIToReaction {
     	for (int i = 0; i < ric.getBonds().size(); i++) {    		
     		InchiBond iBo = ric.getBonds().get(i);
     		IBond bond = getBond(iBo, inchiAtom2AtomMap);
-    		if (bond == null) 
+    		if (bond != null) 
     			mol.addBond(bond);
     	}	
     	
@@ -204,6 +204,8 @@ public class RInChIToReaction {
     	int q = iAt.getCharge();
     	if (q != 0)
     		atom.setFormalCharge(q);
+    	
+    	atom.setImplicitHydrogenCount(iAt.getImplicitHydrogen());
     	
     	//TODO set isotope
     	
