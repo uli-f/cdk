@@ -107,12 +107,49 @@ public class RInChIGeneratorFactory {
 	 * Get a RInChI generator providing flags to customise the generation.
 	 * @param reaction Reaction to generate RInChI for
 	 * @param options the rinchi option flags
-	 * @param useCDK_MDL_IO determines whether to used CDL MDL RCN Writer
+	 * @param useCDK_MDL_IO determines whether to use CDK MDL RXN Writer
 	 * @return the RInChI generator
 	 * @throws CDKException something went wrong
 	 */
 	public RInChIGenerator getRInChIGenerator(IReaction reaction, RinchiOptions options, boolean useCDK_MDL_IO) throws CDKException {
 		return (new RInChIGenerator(reaction, options, useCDK_MDL_IO));
+	}
+	
+	/**
+	 * <p>Gets reaction generator for a RInChI string.
+	 *
+	 * @param rinchi   RInChI to generate reaction from. 
+	 * @throws CDKException if the generator cannot be instantiated
+	 */
+	public RInChIToReaction getRInChIToReaction(String rinchi)
+			throws CDKException {
+		return (new RInChIToReaction(rinchi));
+	}
+	
+	/**
+	 * <p>Gets reaction generator for a RInChI string.
+	 *
+	 * @param rinchi   RInChI to generate reaction from. 
+	 * @param auxInfo   RInChI aux info.
+	 * @throws CDKException if the generator cannot be instantiated
+	 */
+	public RInChIToReaction getRInChIToReaction(String rinchi, String auxInfo)
+			throws CDKException {
+		return (new RInChIToReaction(rinchi, auxInfo));
+	}
+	
+	
+	/**
+	 * <p>Gets reaction generator for a RInChI string.
+	 *
+	 * @param rinchi   RInChI to generate reaction from. 
+	 * @param auxInfo   RInChI aux info.
+	 * @param useCDK_MDL_IO determines whether to use CDK MDL RXN Reader
+	 * @throws CDKException if the generator cannot be instantiated
+	 */
+	public RInChIToReaction getRInChIToReaction(String rinchi, String auxInfo, boolean useCDK_MDL_IO)
+			throws CDKException {
+		return (new RInChIToReaction(rinchi, auxInfo, useCDK_MDL_IO));
 	}
 
 

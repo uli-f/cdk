@@ -47,8 +47,7 @@ public class RInChIToReaction {
 	
 	/**
      * Constructor. Generates CDK Reaction from RInChI.
-     * @param rinchi RInChI string
-     * @param auxInfo RInChI aux info string
+     * @param rinchi RInChI string     * 
      * @throws CDKException
      */
 	protected RInChIToReaction(String rinchi) throws CDKException {
@@ -59,6 +58,17 @@ public class RInChIToReaction {
      * Constructor. Generates CDK Reaction from RInChI.
      * @param rinchi RInChI string
      * @param auxInfo RInChI aux info string
+     * @throws CDKException
+     */
+	protected RInChIToReaction(String rinchi, String auxInfo) throws CDKException {
+		this (rinchi, auxInfo, false);
+	}
+	
+	/**
+     * Constructor. Generates CDK Reaction from RInChI.
+     * @param rinchi RInChI string
+     * @param auxInfo RInChI aux info string
+     * @param useCDK_MDL_IO determines whether to use CDK MDL RXN Reader
      * @throws CDKException
      */
 	protected RInChIToReaction(String rinchi, String auxInfo, boolean useCDK_MDL_IO) throws CDKException {
