@@ -67,7 +67,7 @@ public class RInChIToReaction {
 			generateReactionFromMDLRXNFile(builder);
 		}			
 		else {	
-			this.rInpFromRinchiOutput = JnaRinchi.getRnchiInputFromRinchi(rinchi, auxInfo);
+			this.rInpFromRinchiOutput = JnaRinchi.getRinchiInputFromRinchi(rinchi, auxInfo);
 			generateReactionFromRinchi(builder);
 		}	
 	}
