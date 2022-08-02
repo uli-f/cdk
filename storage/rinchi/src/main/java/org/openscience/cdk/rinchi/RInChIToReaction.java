@@ -32,6 +32,7 @@ import io.github.dan2097.jnarinchi.FileTextOutput;
 import io.github.dan2097.jnarinchi.FileTextStatus;
 import io.github.dan2097.jnarinchi.JnaRinchi;
 import io.github.dan2097.jnarinchi.ReactionFileFormat;
+import io.github.dan2097.jnarinchi.RinchiInput;
 import io.github.dan2097.jnarinchi.RinchiInputFromRinchiOutput;
 import io.github.dan2097.jnarinchi.RinchiStatus;
 
@@ -110,14 +111,19 @@ public class RInChIToReaction {
     	if (fileTextOutput.getStatus() == FileTextStatus.ERROR)
     		throw new CDKException(fileTextOutput.getErrorMessage());
     		
-    	BufferedReader inputBufReader = new BufferedReader(
-    			new StringReader(fileTextOutput.getReactionFileText()));
-    	MDLRXNV2000Reader reader = new MDLRXNV2000Reader(inputBufReader);
-    	IReaction reaction = new Reaction();
-    	reaction = reader.read(reaction);
     	try {
+    		BufferedReader inputBufReader = new BufferedReader(
+    				new StringReader(fileTextOutput.getReactionFileText()));
+    		MDLRXNV2000Reader reader = new MDLRXNV2000Reader(inputBufReader);
+    		IReaction reaction = new Reaction();
+    		reaction = reader.read(reaction);     	
+    		this.rInpFromRinchiOutput = new RinchiInputFromRinchiOutput(null, RinchiStatus.SUCCESS, 0, "");
+    		this.reaction = reaction;
     		reader.close();
-    	} catch (Exception e) {
+    	} 
+    	catch (Exception e) {
+    		this.rInpFromRinchiOutput = new RinchiInputFromRinchiOutput(null, RinchiStatus.ERROR, -1, 
+    				"Error on generating Reaction via MDL RXN Reader: " + e.getMessage());
     	}
     }
     
