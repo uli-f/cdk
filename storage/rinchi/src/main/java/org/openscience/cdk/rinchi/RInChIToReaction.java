@@ -18,9 +18,15 @@
  */
 package org.openscience.cdk.rinchi;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.StringReader;
+
+import org.openscience.cdk.Reaction;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IChemObjectBuilder;
 import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.io.MDLRXNV2000Reader;
 
 import io.github.dan2097.jnarinchi.FileTextOutput;
 import io.github.dan2097.jnarinchi.FileTextStatus;
@@ -45,8 +51,8 @@ public class RInChIToReaction {
      * @param auxInfo RInChI aux info string
      * @throws CDKException
      */
-	protected RInChIToReaction(String rinchi, IChemObjectBuilder builder) throws CDKException {
-		this (rinchi, "", builder, false);
+	protected RInChIToReaction(String rinchi) throws CDKException {
+		this (rinchi, "", false);
 	}
 	
 	/**
@@ -55,7 +61,7 @@ public class RInChIToReaction {
      * @param auxInfo RInChI aux info string
      * @throws CDKException
      */
-	protected RInChIToReaction(String rinchi, String auxInfo, IChemObjectBuilder builder, boolean useCDK_MDL_IO) throws CDKException {
+	protected RInChIToReaction(String rinchi, String auxInfo, boolean useCDK_MDL_IO) throws CDKException {
 		if (rinchi == null)
 			throw new IllegalArgumentException("Null RInChI string provided");
 		if (auxInfo == null)
@@ -64,11 +70,11 @@ public class RInChIToReaction {
 		this.useCDK_MDL_IO = useCDK_MDL_IO;
 		if (useCDK_MDL_IO) {
 			fileTextOutput = JnaRinchi.rinchiToFileText(rinchi, auxInfo, ReactionFileFormat.RXN);
-			generateReactionFromMDLRXNFile(builder);
+			generateReactionFromMDLRXNFile();
 		}			
 		else {	
 			this.rInpFromRinchiOutput = JnaRinchi.getRinchiInputFromRinchi(rinchi, auxInfo);
-			generateReactionFromRinchi(builder);
+			generateReactionFromRinchi();
 		}	
 	}
 	
@@ -78,7 +84,7 @@ public class RInChIToReaction {
      *
      * @throws CDKException
      */
-    protected void generateReactionFromRinchi(IChemObjectBuilder builder) throws CDKException {
+    protected void generateReactionFromRinchi() throws CDKException {
     	if (rInpFromRinchiOutput.getStatus() == RinchiStatus.ERROR)
     		throw new CDKException(rInpFromRinchiOutput.getErrorMessage());
     		
@@ -90,11 +96,19 @@ public class RInChIToReaction {
      *
      * @throws CDKException
      */
-    protected void generateReactionFromMDLRXNFile(IChemObjectBuilder builder) throws CDKException {
+    protected void generateReactionFromMDLRXNFile() throws CDKException {
     	if (fileTextOutput.getStatus() == FileTextStatus.ERROR)
     		throw new CDKException(fileTextOutput.getErrorMessage());
     		
-    	//TODO
+    	BufferedReader inputBufReader = new BufferedReader(
+    			new StringReader(fileTextOutput.getReactionFileText()));
+    	MDLRXNV2000Reader reader = new MDLRXNV2000Reader(inputBufReader);
+    	IReaction reaction = new Reaction();
+    	reaction = reader.read(reaction);
+    	try {
+    		reader.close();
+    	} catch (Exception e) {
+    	}
     }
     
 	/**
