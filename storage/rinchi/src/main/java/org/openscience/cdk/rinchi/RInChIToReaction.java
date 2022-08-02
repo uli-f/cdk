@@ -26,6 +26,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.vecmath.Point3d;
+
+import org.openscience.cdk.Atom;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.Reaction;
 import org.openscience.cdk.exception.CDKException;
@@ -183,7 +186,7 @@ public class RInChIToReaction {
     	//Convert bonds
     	for (int i = 0; i < ric.getBonds().size(); i++) {
     		InchiBond iBo = ric.getBonds().get(i);
-    		IBond bond = getBond(iBo);
+    		IBond bond = getBond(iBo, inchiAtom2AtomMap);
     		if (bond == null) 
     			mol.addBond(bond);
     	}	
@@ -192,11 +195,25 @@ public class RInChIToReaction {
     }
     
     private IAtom getAtom(InchiAtom iAt) {
-    	//TODO
-    	return null;
+    	IAtom atom = new Atom(iAt.getElName());
+    	//Set charge
+    	int q = iAt.getCharge();
+    	if (q != 0)
+    		atom.setFormalCharge(q);
+    	
+    	//TODO set isotope
+    	
+    	//Set coordinates
+    	Point3d p = new Point3d();
+    	p.x = iAt.getX();
+    	p.y = iAt.getY();
+    	p.z = iAt.getZ();
+    	atom.setPoint3d(p);
+    	
+    	return atom;
     }
     
-    private IBond getBond(InchiBond iBo) {
+    private IBond getBond(InchiBond iBo, Map<InchiAtom,IAtom> inchiAtom2AtomMap) {
     	//TODO
     	return null;
     }
