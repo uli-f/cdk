@@ -30,6 +30,7 @@ import javax.vecmath.Point3d;
 
 import org.openscience.cdk.Atom;
 import org.openscience.cdk.AtomContainer;
+import org.openscience.cdk.Bond;
 import org.openscience.cdk.Reaction;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
@@ -61,8 +62,8 @@ public class RInChIToReaction {
 	protected boolean useCDK_MDL_IO = false;
 	
 	private List<String> reactionGenerationErrors = new ArrayList<>();
-	private String curErrorContext = "";
-	
+	private String curComponentErrorContext = "";
+		
 	/**
      * Constructor. Generates CDK Reaction from RInChI.
      * @param rinchi RInChI string     * 
@@ -119,7 +120,10 @@ public class RInChIToReaction {
     	    	
     	RinchiInput rInput = rInpFromRinchiOutput.getRinchInput();
     	reaction = new Reaction();
-    	for (RinchiInputComponent ric : rInput.getComponents()) {    		
+    	List<RinchiInputComponent> compList = rInput.getComponents();
+    	for (int i = 0; i < compList.size(); i++) {    		
+    		RinchiInputComponent ric = compList.get(i);
+    		curComponentErrorContext = "Component " + (i+1) + " ";
     		IAtomContainer mol = getComponentMolecule(ric);
     		if (mol != null) {    		
     			switch (ric.getRole()) {
@@ -175,7 +179,7 @@ public class RInChIToReaction {
     	IAtomContainer mol = new AtomContainer();
     	Map<InchiAtom,IAtom> inchiAtom2AtomMap = new HashMap<>();
 		//Convert atoms
-    	for (int i = 0; i < ric.getAtoms().size(); i++) {
+    	for (int i = 0; i < ric.getAtoms().size(); i++) {    		
     		InchiAtom iAt = ric.getAtoms().get(i);
     		IAtom atom = getAtom(iAt);
     		if (atom == null) {
@@ -184,7 +188,7 @@ public class RInChIToReaction {
     		}
     	}
     	//Convert bonds
-    	for (int i = 0; i < ric.getBonds().size(); i++) {
+    	for (int i = 0; i < ric.getBonds().size(); i++) {    		
     		InchiBond iBo = ric.getBonds().get(i);
     		IBond bond = getBond(iBo, inchiAtom2AtomMap);
     		if (bond == null) 
@@ -214,8 +218,28 @@ public class RInChIToReaction {
     }
     
     private IBond getBond(InchiBond iBo, Map<InchiAtom,IAtom> inchiAtom2AtomMap) {
-    	//TODO
-    	return null;
+    	IAtom at0 = inchiAtom2AtomMap.get(iBo.getStart());
+    	IAtom at1 = inchiAtom2AtomMap.get(iBo.getEnd());
+    	IBond.Order order = null;
+    	switch (iBo.getType()) {
+    	case SINGLE:
+    		order = IBond.Order.SINGLE;
+    		break;
+    	case DOUBLE:
+    		order = IBond.Order.DOUBLE;
+    		break;
+    	case TRIPLE:
+    		order = IBond.Order.TRIPLE;
+    		break;	
+    	}
+    	
+    	if (order == null || at0 == null || at1 == null) {
+    		reactionGenerationErrors.add(curComponentErrorContext + 
+    				"Unable to convert InchiBond to CDK bond: " + order.toString());
+			return null;
+		}	
+		else
+			return new Bond(at0, at1, order);
     }
     
     private String getAllReactionGenerationErrors() {
