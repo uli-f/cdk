@@ -21,9 +21,12 @@ package org.openscience.cdk.rinchi;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.openscience.cdk.Reaction;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IChemObjectBuilder;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.io.MDLRXNV2000Reader;
@@ -33,6 +36,7 @@ import io.github.dan2097.jnarinchi.FileTextStatus;
 import io.github.dan2097.jnarinchi.JnaRinchi;
 import io.github.dan2097.jnarinchi.ReactionFileFormat;
 import io.github.dan2097.jnarinchi.RinchiInput;
+import io.github.dan2097.jnarinchi.RinchiInputComponent;
 import io.github.dan2097.jnarinchi.RinchiInputFromRinchiOutput;
 import io.github.dan2097.jnarinchi.RinchiStatus;
 
@@ -45,6 +49,8 @@ public class RInChIToReaction {
 	protected IReaction reaction;
 	
 	protected boolean useCDK_MDL_IO = false;
+	
+	protected List<String> reactionGenerationErrors = new ArrayList<>();
 	
 	/**
      * Constructor. Generates CDK Reaction from RInChI.
@@ -80,6 +86,7 @@ public class RInChIToReaction {
 		
 		this.useCDK_MDL_IO = useCDK_MDL_IO;
 		if (useCDK_MDL_IO) {
+			//Using CDK RXN Reader to make a Reaction object directly from the file text output
 			fileTextOutput = JnaRinchi.rinchiToFileText(rinchi, auxInfo, ReactionFileFormat.RXN);
 			generateReactionFromMDLRXNFile();
 		}			
@@ -98,10 +105,35 @@ public class RInChIToReaction {
     protected void generateReactionFromRinchi() throws CDKException {
     	if (rInpFromRinchiOutput.getStatus() == RinchiStatus.ERROR)
     		throw new CDKException(rInpFromRinchiOutput.getErrorMessage());
-    		
-    	//TODO
+    	    	
+    	RinchiInput rInput = rInpFromRinchiOutput.getRinchInput();
+    	reaction = new Reaction();
+    	for (RinchiInputComponent ric : rInput.getComponents()) {    		
+    		IAtomContainer mol = getComponentMolecule(ric);
+    		if (mol != null) {    		
+    			switch (ric.getRole()) {
+    			case REAGENT:
+    				reaction.addReactant(mol);
+    				break;
+    			case PRODUCT:
+    				reaction.addProduct(mol);
+    				break;
+    			case AGENT:
+    				reaction.addAgent(mol);
+    				break;
+    			}
+    		}
+    	}
+    	
+    	if (!reactionGenerationErrors.isEmpty()) {
+    		//Replacing rInpFromRinchiOutput with a new one with status ERROR
+    		this.rInpFromRinchiOutput = new RinchiInputFromRinchiOutput(rInput, RinchiStatus.ERROR, -1, 
+    				"Unable to create Reaction object from RinchiInput: " + getAllReactionGenerationErrors());
+    		throw new CDKException(rInpFromRinchiOutput.getErrorMessage());
+    	}
     }
     
+        
     /**
      * Gets reaction from MDL RXN file obtained from RInChI library data structure.
      *
@@ -124,8 +156,21 @@ public class RInChIToReaction {
     	catch (Exception e) {
     		this.rInpFromRinchiOutput = new RinchiInputFromRinchiOutput(null, RinchiStatus.ERROR, -1, 
     				"Error on generating Reaction via MDL RXN Reader: " + e.getMessage());
+    		throw new CDKException(rInpFromRinchiOutput.getErrorMessage());
     	}
     }
+    
+    private IAtomContainer getComponentMolecule(RinchiInputComponent ric) {
+    	//TODO
+    	return null;
+    }
+    
+    private String getAllReactionGenerationErrors() {
+		StringBuilder sb = new StringBuilder(); 
+		for (String err: reactionGenerationErrors)
+			sb.append(err).append("\n");
+		return sb.toString();
+	}
     
 	/**
      * Returns generated reaction.
