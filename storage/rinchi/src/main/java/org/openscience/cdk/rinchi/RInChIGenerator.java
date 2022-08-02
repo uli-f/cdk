@@ -309,5 +309,5 @@ public class RInChIGenerator {
 	public boolean isUseCDK_MDL_IO() {
 		return useCDK_MDL_IO;
 	}
-	
+		
 }
