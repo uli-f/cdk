@@ -22,15 +22,22 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.Reaction;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IChemObjectBuilder;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.io.MDLRXNV2000Reader;
 
+import io.github.dan2097.jnainchi.InchiAtom;
+import io.github.dan2097.jnainchi.InchiBond;
 import io.github.dan2097.jnarinchi.FileTextOutput;
 import io.github.dan2097.jnarinchi.FileTextStatus;
 import io.github.dan2097.jnarinchi.JnaRinchi;
@@ -50,7 +57,8 @@ public class RInChIToReaction {
 	
 	protected boolean useCDK_MDL_IO = false;
 	
-	protected List<String> reactionGenerationErrors = new ArrayList<>();
+	private List<String> reactionGenerationErrors = new ArrayList<>();
+	private String curErrorContext = "";
 	
 	/**
      * Constructor. Generates CDK Reaction from RInChI.
@@ -161,6 +169,34 @@ public class RInChIToReaction {
     }
     
     private IAtomContainer getComponentMolecule(RinchiInputComponent ric) {
+    	IAtomContainer mol = new AtomContainer();
+    	Map<InchiAtom,IAtom> inchiAtom2AtomMap = new HashMap<>();
+		//Convert atoms
+    	for (int i = 0; i < ric.getAtoms().size(); i++) {
+    		InchiAtom iAt = ric.getAtoms().get(i);
+    		IAtom atom = getAtom(iAt);
+    		if (atom == null) {
+    			inchiAtom2AtomMap.put(iAt, atom);
+    			mol.addAtom(atom);
+    		}
+    	}
+    	//Convert bonds
+    	for (int i = 0; i < ric.getBonds().size(); i++) {
+    		InchiBond iBo = ric.getBonds().get(i);
+    		IBond bond = getBond(iBo);
+    		if (bond == null) 
+    			mol.addBond(bond);
+    	}	
+    	
+    	return mol;
+    }
+    
+    private IAtom getAtom(InchiAtom iAt) {
+    	//TODO
+    	return null;
+    }
+    
+    private IBond getBond(InchiBond iBo) {
     	//TODO
     	return null;
     }

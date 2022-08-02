@@ -187,9 +187,10 @@ public class RInChIGenerator {
 		for (int i = 0; i < mol.getAtomCount(); i++) {
 			IAtom atom = mol.getAtom(i);
 			InchiAtom iAt = getInchiAtom(atom);
-			atomInchiAtomMap.put(atom, iAt);
-			if (iAt != null)
+			if (iAt != null) {
+				atomInchiAtomMap.put(atom, iAt);
 				ric.addAtom(iAt);
+			}	
 		}
 		//Convert bonds
 		for (int i = 0; i < mol.getBondCount(); i++) {
@@ -241,8 +242,8 @@ public class RInChIGenerator {
 			boType = InchiBondType.TRIPLE;
 			break;	
 		}
-		if (boType == null) {
-			rinchiInputGenerationErrors.add("Unable to convert CDK bond type to InchiBond: " 
+		if (boType == null || at0 == null || at1 == null) {
+			rinchiInputGenerationErrors.add("Unable to convert CDK bond to InchiBond: " 
 					+ bond.getOrder().toString());
 			return null;
 		}	
