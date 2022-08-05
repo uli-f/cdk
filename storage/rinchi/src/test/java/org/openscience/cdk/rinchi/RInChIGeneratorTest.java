@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.junit.Assert;
+import org.junit.Test;
 import org.openscience.cdk.Reaction;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.io.MDLRXNV2000Reader;
@@ -30,6 +32,10 @@ import org.openscience.cdk.io.IChemObjectReader.Mode;
 import org.openscience.cdk.test.CDKTestCase;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
+
+import io.github.dan2097.jnarinchi.RinchiOptions;
+import io.github.dan2097.jnarinchi.RinchiStatus;
+
 
 
 public class RInChIGeneratorTest extends CDKTestCase {
@@ -45,19 +51,19 @@ public class RInChIGeneratorTest extends CDKTestCase {
 			String s;
 			s = props.getProperty("RInChI");
 			if (s != null)
-				rfi.put("RInChI", s);			
+				rfi.put("RInChI", "RInChI=" + s);			
 			s = props.getProperty("RAuxInfo");
 			if (s != null)
-				rfi.put("RAuxInfo", s);
+				rfi.put("RAuxInfo", "RAuxInfo=" + s);
 			s = props.getProperty("Long-RInChIKey");
 			if (s != null)
-				rfi.put("Long-RInChIKey",s);			
+				rfi.put("Long-RInChIKey", "Long-RInChIKey=" + s);			
 			s = props.getProperty("Short-RInChIKey");
 			if (s != null)
-				rfi.put("Short-RInChIKey", s);
+				rfi.put("Short-RInChIKey", "Short-RInChIKey=" + s);
 			s = props.getProperty("Web-RInChIKey");
 			if (s != null)
-				rfi.put("Web-RInChIKey", s);
+				rfi.put("Web-RInChIKey", "Web-RInChIKey=" + s);
 			return rfi;
 		}
 		catch (Exception e) {
@@ -74,4 +80,23 @@ public class RInChIGeneratorTest extends CDKTestCase {
 		reader.close();
 		return reaction;
 	}
+	
+	public void genericExampleTest(String reactionFile, String rinchiFile, boolean useCDK_MDL_IO) throws Exception {
+		 logger.info("Testing with: " + reactionFile);
+		 IReaction reaction = readReactionFromResourceRXNFile(reactionFile);		 
+		 Map<String, String> rfi = readRinchiFullInfoFromResourceFile(rinchiFile);		 
+		 RInChIGenerator gen = RInChIGeneratorFactory.getInstance().
+				 	getRInChIGenerator(reaction, RinchiOptions.DEFAULT_OPTIONS, useCDK_MDL_IO);
+		 Assert.assertNotNull(gen);
+		 Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, gen.getRInChIStatus());
+		 Assert.assertEquals("RinChI:", rfi.get("RInChI"), gen.getRInChI());
+		 Assert.assertEquals("RinChI:", rfi.get("RAuxInfo"), gen.getAuxInfo());
+	}
+	
+	@Test
+	public void testExample_Tautomerization_01() throws Exception {
+		genericExampleTest("examples/Tautomerization_01.rxn", "examples/Tautomerization_01.txt", false);
+	}
+	
+	
 }
