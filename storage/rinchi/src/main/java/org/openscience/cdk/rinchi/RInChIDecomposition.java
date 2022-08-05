@@ -79,7 +79,7 @@ public class RInChIDecomposition {
 	/**
 	 * Gets reaction component aux infos.
 	 */
-	public String[] getAuxInfo() {
+	public String[] getAuxInfos() {
 		return rinchiDecompositionOutput.getAuxInfos();
 	}
 	
