@@ -21,7 +21,10 @@ package org.openscience.cdk.rinchi;
 import org.openscience.cdk.exception.CDKException;
 
 import io.github.dan2097.jnarinchi.JnaRinchi;
+import io.github.dan2097.jnarinchi.ReactionComponentRole;
+import io.github.dan2097.jnarinchi.ReactionDirection;
 import io.github.dan2097.jnarinchi.RinchiDecompositionOutput;
+import io.github.dan2097.jnarinchi.RinchiDecompositionStatus;
 
 public class RInChIDecomposition {
 
@@ -54,9 +57,37 @@ public class RInChIDecomposition {
 	private void decompose(String rinchi, String auxInfo) throws CDKException {
 		rinchiDecompositionOutput = JnaRinchi.decomposeRinchi(rinchi, auxInfo);
 		
-		//TODO
+		if (rinchiDecompositionOutput.getStatus() == RinchiDecompositionStatus.ERROR) 
+			throw new CDKException("RInChI decomposition error: " + rinchiDecompositionOutput.getErrorMessage());
 	}
-
+	
+	/**
+	 * Gets reaction component inchis.
+	 */
+	public String[] getIinchis() {
+		return rinchiDecompositionOutput.getInchis();
+	}
+	
+	/**
+	 * Gets reaction component aux infos.
+	 */
+	public String[] getAuxInfo() {
+		return rinchiDecompositionOutput.getAuxInfos();
+	}
+	
+	/**
+	 * Gets reaction component roles.
+	 */
+	public ReactionComponentRole[] getRoles() {
+		return rinchiDecompositionOutput.getRoles();
+	}
+	
+	/**
+	 * Gets RInChI reaction direction.
+	 */
+	public ReactionDirection getReactionDirection() {
+		return rinchiDecompositionOutput.getDirection();
+	}
 
 	/**
 	 * Gets generated error messages.
