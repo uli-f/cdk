@@ -18,10 +18,43 @@
  */
 package org.openscience.cdk.rinchi;
 
-import org.junit.Test;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
+
 import org.openscience.cdk.test.CDKTestCase;
+
 
 public class RInChIGeneratorTest extends CDKTestCase {
 
-	
+	public static Map<String, String> readRinchiFullInfoFromResourceFile(String fileName) {
+		try (InputStream is = RInChIGeneratorTest.class.getResourceAsStream(fileName)) {
+			Properties props = new Properties();
+			props.load(is);
+			Map<String, String> rfi = new HashMap<>();				
+			
+			String s;
+			s = props.getProperty("RInChI");
+			if (s != null)
+				rfi.put("RInChI", s);			
+			s = props.getProperty("RAuxInfo");
+			if (s != null)
+				rfi.put("RAuxInfo", s);
+			s = props.getProperty("Long-RInChIKey");
+			if (s != null)
+				rfi.put("Long-RInChIKey",s);			
+			s = props.getProperty("Short-RInChIKey");
+			if (s != null)
+				rfi.put("Short-RInChIKey", s);
+			s = props.getProperty("Web-RInChIKey");
+			if (s != null)
+				rfi.put("Web-RInChIKey", s);
+			return rfi;
+		}
+		catch (Exception e) {
+			return null;
+		}
+	}
 }
