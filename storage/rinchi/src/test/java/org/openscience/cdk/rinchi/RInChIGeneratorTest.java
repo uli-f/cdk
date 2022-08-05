@@ -23,12 +23,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-
+import org.openscience.cdk.Reaction;
+import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.io.MDLRXNV2000Reader;
+import org.openscience.cdk.io.IChemObjectReader.Mode;
 import org.openscience.cdk.test.CDKTestCase;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
 
 
 public class RInChIGeneratorTest extends CDKTestCase {
 
+	private static final ILoggingTool logger = LoggingToolFactory.createLoggingTool(RInChIGeneratorTest.class);
+	
 	public static Map<String, String> readRinchiFullInfoFromResourceFile(String fileName) {
 		try (InputStream is = RInChIGeneratorTest.class.getResourceAsStream(fileName)) {
 			Properties props = new Properties();
@@ -56,5 +63,15 @@ public class RInChIGeneratorTest extends CDKTestCase {
 		catch (Exception e) {
 			return null;
 		}
+	}
+	
+	public static IReaction readReactionFromResourceRXNFile(String fileName) throws Exception {
+
+		InputStream ins =  RInChIGeneratorTest.class.getResourceAsStream(fileName);
+		MDLRXNV2000Reader reader = new MDLRXNV2000Reader(ins, Mode.STRICT);
+		IReaction reaction = new Reaction();
+		reaction = reader.read(reaction);
+		reader.close();
+		return reaction;
 	}
 }
