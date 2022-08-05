@@ -62,6 +62,14 @@ public class RInChIDecomposition {
 	}
 	
 	/**
+     * Access the status of the RInChI Decomposition output.
+     * @return the status
+     */
+	public RinchiDecompositionStatus getStatus() { 
+		return rinchiDecompositionOutput.getStatus();
+	}
+	
+	/**
 	 * Gets reaction component inchis.
 	 */
 	public String[] getIinchis() {
