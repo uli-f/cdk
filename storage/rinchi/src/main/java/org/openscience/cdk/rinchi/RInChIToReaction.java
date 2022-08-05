@@ -39,6 +39,7 @@ import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IChemObjectBuilder;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.io.MDLRXNV2000Reader;
+import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
 
 import io.github.dan2097.jnainchi.InchiAtom;
 import io.github.dan2097.jnainchi.InchiBond;
@@ -60,6 +61,8 @@ public class RInChIToReaction {
 	protected IReaction reaction;
 	
 	protected boolean useCDK_MDL_IO = false;
+	
+	protected boolean configureMolecules = false;
 	
 	private List<String> reactionGenerationErrors = new ArrayList<>();
 	private String curComponentErrorContext = "";
@@ -195,6 +198,16 @@ public class RInChIToReaction {
     			mol.addBond(bond);
     	}	
     	
+    	if (configureMolecules) {
+    		try {
+    			AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(mol);
+    		}
+    		catch (Exception x) {
+    			reactionGenerationErrors.add(curComponentErrorContext + 
+    					"AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms: " + x.getMessage());
+    		}
+    	}	
+
     	return mol;
     }
     
