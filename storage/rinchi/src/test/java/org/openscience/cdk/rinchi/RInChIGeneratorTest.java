@@ -102,5 +102,29 @@ public class RInChIGeneratorTest extends CDKTestCase {
 		genericExampleTest("examples/Tautomerization_01.rxn", "examples/Tautomerization_01.txt", true);
 	}
 	
+	@Test
+	public void testExample_1_reactant__A() throws Exception {
+		genericExampleTest("examples/1_reactant_-_A.rxn", "examples/1_reactant_-_A.txt", false);
+		genericExampleTest("examples/1_reactant_-_A.rxn", "examples/1_reactant_-_A.txt", true);
+	}
+	
+	@Test
+	public void testExample_1_reactant__no_product() throws Exception {
+		genericExampleTest("examples/1_reactant_-_no_product.rxn", "examples/1_reactant_-_no_product.txt", false);
+		genericExampleTest("examples/1_reactant_-_no_product.rxn", "examples/1_reactant_-_no_product.txt", true);
+	}
+	
+	@Test
+	public void testExample_1_reactant__no_structure() throws Exception {
+		genericExampleTest("examples/1_reactant_-_no_structure.rxn", "examples/1_reactant_-_no_structure.txt", false);
+		genericExampleTest("examples/1_reactant_-_no_structure.rxn", "examples/1_reactant_-_no_structure.txt", true);
+	}
+	
+	@Test
+	public void testExample_1_reactant__R() throws Exception {
+		genericExampleTest("examples/1_reactant_-_R.rxn", "examples/1_reactant_-_R.txt", false);
+		genericExampleTest("examples/1_reactant_-_R.rxn", "examples/1_reactant_-_R.txt", true);
+	}	
+	
 	
 }
