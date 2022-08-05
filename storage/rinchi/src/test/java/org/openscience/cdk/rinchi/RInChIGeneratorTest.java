@@ -90,12 +90,16 @@ public class RInChIGeneratorTest extends CDKTestCase {
 		 Assert.assertNotNull(gen);
 		 Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, gen.getRInChIStatus());
 		 Assert.assertEquals("RinChI:", rfi.get("RInChI"), gen.getRInChI());
-		 Assert.assertEquals("RinChI:", rfi.get("RAuxInfo"), gen.getAuxInfo());
+		 Assert.assertEquals("RAuxInfo:", rfi.get("RAuxInfo"), gen.getAuxInfo());
+		 Assert.assertEquals("Long-RInChIKey:", rfi.get("Long-RInChIKey"), gen.getLongRInChIKey());
+		 Assert.assertEquals("Short-RInChIKey:", rfi.get("Short-RInChIKey"), gen.getShortRInChIKey());
+		 Assert.assertEquals("Web-RInChIKey:", rfi.get("Web-RInChIKey"), gen.getWebRInChIKey());
 	}
 	
 	@Test
 	public void testExample_Tautomerization_01() throws Exception {
 		genericExampleTest("examples/Tautomerization_01.rxn", "examples/Tautomerization_01.txt", false);
+		genericExampleTest("examples/Tautomerization_01.rxn", "examples/Tautomerization_01.txt", true);
 	}
 	
 	
