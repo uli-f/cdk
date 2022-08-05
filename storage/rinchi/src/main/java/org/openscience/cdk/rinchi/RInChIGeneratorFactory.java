@@ -151,6 +151,29 @@ public class RInChIGeneratorFactory {
 			throws CDKException {
 		return (new RInChIToReaction(rinchi, auxInfo, useCDK_MDL_IO));
 	}
+	
+	/**
+	 * <p>Gets reaction decomposition for a RInChI string.
+	 *
+	 * @param rinchi   RInChI to decompose from.
+	 * @throws CDKException if the generator cannot be instantiated
+	 */
+	public RInChIDecomposition getRInChIDecomposition(String rinchi)
+			throws CDKException {
+		return (new RInChIDecomposition(rinchi));
+	}
+	
+	/**
+	 * <p>Gets reaction decomposition for a RInChI string.
+	 *
+	 * @param rinchi   RInChI to decompose from. 
+	 * @param auxInfo   RInChI aux info.
+	 * @throws CDKException if the generator cannot be instantiated
+	 */
+	public RInChIDecomposition getRInChIDecomposition(String rinchi, String auxInfo)
+			throws CDKException {
+		return (new RInChIDecomposition(rinchi, auxInfo));
+	}
 
 
 }
