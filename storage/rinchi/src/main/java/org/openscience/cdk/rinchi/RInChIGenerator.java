@@ -49,6 +49,24 @@ import io.github.dan2097.jnarinchi.RinchiOptions;
 import io.github.dan2097.jnarinchi.RinchiOutput;
 import io.github.dan2097.jnarinchi.RinchiStatus;
 
+/**
+ * <p>This class generates the IUPAC Reaction International Chemical Identifier (RInChI) for
+ * a CDK IReaction object. 
+ * It places calls to a JNA wrapper for the RInChI C++ library (io.github.dan2097.jnarinchi).
+ * Native C++ code takes as an input only MDL RXN/RDfile formats. Therefore RInChI generation
+ * process includes IReaction object conversion to MDL format. The latter can be done in two ways:
+ * (1) using JnaRinchi converter (default);
+ * (2) using CDK MDL RXN Writer (set via input flag variable: useCDK_MDL_IO = true). 
+ *
+ * <p>If the atom container has 3D coordinates for all of its atoms then they
+ * will be used, otherwise 2D coordinates will be used if available.
+ * 
+ *
+ * @author Nikolay Kochev
+ * @cdk.module rinchi
+ * @cdk.githash
+ */
+
 public class RInChIGenerator {
 	
 	private static final RinchiOptions DEFAULT_OPTIONS = RinchiOptions.DEFAULT_OPTIONS;
@@ -66,18 +84,66 @@ public class RInChIGenerator {
 	
 	protected boolean useCDK_MDL_IO = false;
 	
+	
+	/**
+     * <p>Constructor. Generates RInChI from CDK Reaction.
+     *
+     * <p>Reads atoms, bonds etc from atom containers and converts to format
+     * RInChI library requires, then calls the library.
+     *
+     * @param reaction	Reaction to generate RInChI for.    
+     * @throws org.openscience.cdk.exception.CDKException if there is an
+     *                                                    error during RInChI generation
+     */
 	protected RInChIGenerator (IReaction reaction) throws CDKException {
 		this(reaction, DEFAULT_OPTIONS, false);
 	}
 	
+	/**
+     * <p>Constructor. Generates RInChI from CDK Reaction.
+     *
+     * <p>Reads atoms, bonds etc from atom containers and converts to format
+     * RInChI library requires, then calls the library.
+     *
+     * @param reaction	Reaction to generate RInChI for. 
+     * @param options RInChI generation options (in the format of the JnaRinchi library)   
+     * @throws org.openscience.cdk.exception.CDKException if there is an
+     *                                                    error during RInChI generation
+     */
 	protected RInChIGenerator (IReaction reaction, RinchiOptions options) throws CDKException {
 		this(reaction, options, false);
-	}
+	}	
 	
+	/**
+     * <p>Constructor. Generates RInChI from CDK Reaction.
+     *
+     * <p>Reads atoms, bonds etc from atom containers and converts to format
+     * RInChI library requires, then calls the library.
+     *
+     * @param reaction	Reaction to generate RInChI for. 
+     * @param optStr RInChI generation options set as string (options are space or comma separated)   
+     * @throws org.openscience.cdk.exception.CDKException if there is an
+     *                                                    error during RInChI generation
+     */
 	protected RInChIGenerator (IReaction reaction, String optStr) throws CDKException {
 		this(reaction, RInChIOptionParser.parseString(optStr), false);
 	}
 	
+	/**
+     * <p>Constructor. Generates RInChI from CDK Reaction.
+     *
+     * <p>Reads atoms, bonds etc from atom containers and converts to format
+     * RInChI library requires, then calls the library.  
+     * IReaction object conversion to MDL format can be done in two ways:
+     * (1) using JnaRinchi converter (useCDK_MDL_IO = false);
+     * (2) using CDK MDL RXN Writer (useCDK_MDL_IO = true). 
+     *
+     * @param reaction	Reaction to generate RInChI for. 
+     * @param options RInChI generation options (in the format of the JnaRinchi library) 
+     * @param useCDK_MDL_IO determines whether to use CDK MDL RXN Writer  
+     * @throws org.openscience.cdk.exception.CDKException if there is an
+     *                                                    error during RInChI generation
+     */
 	protected RInChIGenerator (IReaction reaction, RinchiOptions options, boolean useCDK_MDL_IO) throws CDKException {
 		this.reaction = reaction;
 		this.options = options;
