@@ -20,7 +20,11 @@ package org.openscience.cdk.rinchi;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.openscience.cdk.AtomContainer;
+import org.openscience.cdk.Reaction;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.test.CDKTestCase;
 
 public class RInChIGeneratorFactoryTest extends CDKTestCase {
@@ -29,6 +33,19 @@ public class RInChIGeneratorFactoryTest extends CDKTestCase {
 	public void testGetInstance() throws CDKException {
 		RInChIGeneratorFactory factory = RInChIGeneratorFactory.getInstance();
 		Assert.assertNotNull(factory);
+	}
+	
+	@Test
+	public void tes01() throws CDKException {
+		IReaction reaction = new Reaction();
+		IAtomContainer mol1 = new AtomContainer();
+		IAtomContainer mol2 = new AtomContainer();
+		IAtomContainer mol3 = new AtomContainer();
+		reaction.addReactant(mol1);
+		reaction.addReactant(mol2);
+		reaction.addProduct(mol3);
+		
+		//TODO
 	}
 
 }
