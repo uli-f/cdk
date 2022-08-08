@@ -324,40 +324,65 @@ public class RInChIGenerator {
 		return sb.toString();
 	}
 	
+	/**
+     * Gets generated RInChI string.
+     */
 	public String getRInChI() {
 		return rinchiOutput.getRinchi();
 	}
 	
+	/**
+     * Gets auxillary information.
+     */
 	public String getAuxInfo() {
 		return rinchiOutput.getAuxInfo();
 	}
 	
+	/**
+	 * Gets generated error messages.
+	 */
 	public String getRInChIErrorMessage() {
 		return rinchiOutput.getErrorMessage();
 	}
 	
+	/**
+     * Access the status of the RInChI output.
+     * @return the status
+     */
 	public RinchiStatus getRInChIStatus() {
 		return rinchiOutput.getStatus();
 	}
 	
+	/**
+     * Gets (generates) Short-RInChIKey.
+     */
 	public String getShortRInChIKey() throws CDKException {		
 		if (shortRinchiKeyOutput == null)
 			generateRInChIKey(RinchiKeyType.SHORT);
 		return shortRinchiKeyOutput.getRinchiKey();
 	}
 	
+	/**
+     * Gets (generates) Long-RInChIKey.
+     */
 	public String getLongRInChIKey() throws CDKException {		
 		if (longRinchiKeyOutput == null)
 			generateRInChIKey(RinchiKeyType.LONG);
 		return longRinchiKeyOutput.getRinchiKey();
 	}	
 	
+	/**
+     * Gets (generates) Web-RInChIKey.
+     */
 	public String getWebRInChIKey() throws CDKException {		
 		if (webRinchiKeyOutput == null)
 			generateRInChIKey(RinchiKeyType.WEB);
 		return webRinchiKeyOutput.getRinchiKey();
 	}	
 	
+	/**
+	 * Gets generated error messages for RInChIKey.
+	 */
 	public String getRInChIKeyErrorMessage(RinchiKeyType type) {
 		switch (type) {
 		case SHORT:
@@ -373,6 +398,9 @@ public class RInChIGenerator {
 		return "";
 	}
 	
+	/**
+     * Gets flag for using CDK MDL input/output utilities.
+     */
 	public boolean isUseCDK_MDL_IO() {
 		return useCDK_MDL_IO;
 	}

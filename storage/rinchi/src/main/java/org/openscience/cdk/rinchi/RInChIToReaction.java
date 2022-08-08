@@ -281,8 +281,7 @@ public class RInChIToReaction {
 			return rInpFromRinchiOutput.getStatus();
 		else
 			return null;
-	}
-	
+	}	
 	
 	/**
      * Gets generated error messages.
@@ -290,7 +289,10 @@ public class RInChIToReaction {
     public String getErrorMessage() {
         return rInpFromRinchiOutput.getErrorMessage();
     }
-
+    
+    /**
+     * Gets flag for using CDK MDL input/output utilities.
+     */
 	public boolean isUseCDK_MDL_IO() {
 		return useCDK_MDL_IO;
 	}
