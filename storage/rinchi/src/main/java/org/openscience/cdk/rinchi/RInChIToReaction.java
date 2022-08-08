@@ -51,7 +51,21 @@ import io.github.dan2097.jnarinchi.RinchiInput;
 import io.github.dan2097.jnarinchi.RinchiInputComponent;
 import io.github.dan2097.jnarinchi.RinchiInputFromRinchiOutput;
 import io.github.dan2097.jnarinchi.RinchiStatus;
-
+/**
+ * <p>This class generates a CDK IReaction from a RInChI string (and optionally aux info).
+ * It places calls to a JNA wrapper for the RInChI C++ library (io.github.dan2097.jnarinchi).
+ * Native C++ code exports output only as MDL RXN/RDfile formats. Therefore IReacton generation
+ * process includes conversion from MDL format. The latter can be done in two ways:
+ * (1) using JnaRinchi converter (default);
+ * (2) using CDK MDL RXN Reader (set via input flag variable: useCDK_MDL_IO = true).
+ *
+ * 
+ *
+ * @author Nikolay Kochev
+ *
+ * @cdk.module rinchi
+ * @cdk.githash
+ */
 public class RInChIToReaction {
 	
 	protected RinchiInputFromRinchiOutput rInpFromRinchiOutput = null;
