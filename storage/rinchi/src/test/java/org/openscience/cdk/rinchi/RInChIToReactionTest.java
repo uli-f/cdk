@@ -74,14 +74,6 @@ public class RInChIToReactionTest extends CDKTestCase {
 	}
 	
 	@Test
-	public void testExample_Tautomerization_01() throws Exception {
-		doubleConversionTestForExampleFile("examples/Tautomerization_01.txt", false, false);
-		doubleConversionTestForExampleFile("examples/Tautomerization_01.txt", true, true);
-		doubleConversionTestForExampleFile("examples/Tautomerization_01.txt", false, true);
-		doubleConversionTestForExampleFile("examples/Tautomerization_01.txt", true, false);
-	}
-	
-	@Test
 	public void testExample_1_reactant__A() throws Exception {		
 		doubleConversionTestForExampleFile("examples/1_reactant_-_A.txt", true, true);
 		doubleConversionTestForExampleFile("examples/1_reactant_-_A.txt", false, false);
@@ -112,5 +104,90 @@ public class RInChIToReactionTest extends CDKTestCase {
 		doubleConversionTestForExampleFile("examples/1_reactant_-_R.txt", false, true);
 		doubleConversionTestForExampleFile("examples/1_reactant_-_R.txt", true, false);
 	}
+	
+	@Test
+	public void testExample_Inverted_stereochemistry() throws Exception {		
+		doubleConversionTestForExampleFile("examples/Inverted_stereochemistry.txt", true, true);
+		//doubleConversionTestForExampleFile("examples/Inverted_stereochemistry.txt", false, true);
+		//doubleConversionTestForExampleFile("examples/Inverted_stereochemistry.txt", true, false);
+	}
+	
+	@Test
+	public void testExample_No_reactant_1_product_02() throws Exception {		
+		doubleConversionTestForExampleFile("examples/No_reactant_-_1_product_02.txt", true, true);
+		doubleConversionTestForExampleFile("examples/No_reactant_-_1_product_02.txt", false, false);
+		doubleConversionTestForExampleFile("examples/No_reactant_-_1_product_02.txt", false, true);
+		doubleConversionTestForExampleFile("examples/No_reactant_-_1_product_02.txt", true, false);
+	}
+	
+	@Test
+	public void testExample_No_reactant_1_product() throws Exception {		
+		doubleConversionTestForExampleFile("examples/No_reactant_-_1_product.txt", true, true);
+		doubleConversionTestForExampleFile("examples/No_reactant_-_1_product.txt", false, false);
+		doubleConversionTestForExampleFile("examples/No_reactant_-_1_product.txt", false, true);
+		doubleConversionTestForExampleFile("examples/No_reactant_-_1_product.txt", true, false);
+	}
+	
+	@Test
+	public void testExample_no_structure__1_product() throws Exception {		
+		doubleConversionTestForExampleFile("examples/no_structure_-_1_product.txt", true, true);
+		doubleConversionTestForExampleFile("examples/no_structure_-_1_product.txt", false, false);
+		doubleConversionTestForExampleFile("examples/no_structure_-_1_product.txt", false, true);
+		doubleConversionTestForExampleFile("examples/no_structure_-_1_product.txt", true, false);		
+	}
+	
+	@Test
+	public void testExample_nostruct__X() throws Exception {		
+		doubleConversionTestForExampleFile("examples/nostruct_-_X.txt", true, true);
+		doubleConversionTestForExampleFile("examples/nostruct_-_X.txt", false, false);
+		doubleConversionTestForExampleFile("examples/nostruct_-_X.txt", false, true);
+		doubleConversionTestForExampleFile("examples/nostruct_-_X.txt", true, false);
+	}
+	
+	@Test
+	public void testExample_R___A() throws Exception {		
+		doubleConversionTestForExampleFile("examples/R-_-A.txt", true, true);
+		doubleConversionTestForExampleFile("examples/R-_-A.txt", false, false);
+		doubleConversionTestForExampleFile("examples/R-_-A.txt", false, true);
+		doubleConversionTestForExampleFile("examples/R-_-A.txt", true, false);
+	}
+	
+	@Test
+	public void testExample_RingOpening01() throws Exception {		
+		doubleConversionTestForExampleFile("examples/RingOpening01.txt", true, true);		
+	}
+	
+	@Test
+	public void testExample_star_star___nostruct() throws Exception {		
+		doubleConversionTestForExampleFile("examples/star_star_-_nostruct.txt", true, true);
+		doubleConversionTestForExampleFile("examples/star_star_-_nostruct.txt", false, false);
+		doubleConversionTestForExampleFile("examples/star_star_-_nostruct.txt", false, true);
+		doubleConversionTestForExampleFile("examples/star_star_-_nostruct.txt", true, false);
+	}
+	
+	@Test
+	public void testExample_Styrene___Polystyrene_as_no_struct() throws Exception {		
+		doubleConversionTestForExampleFile("examples/Styrene_-_Polystyrene_as_no-struct.txt", true, true);
+		doubleConversionTestForExampleFile("examples/Styrene_-_Polystyrene_as_no-struct.txt", false, false);
+		doubleConversionTestForExampleFile("examples/Styrene_-_Polystyrene_as_no-struct.txt", false, true);
+		doubleConversionTestForExampleFile("examples/Styrene_-_Polystyrene_as_no-struct.txt", true, false);
+	}
+	
+	@Test
+	public void testExample_Tautomerization_01() throws Exception {
+		doubleConversionTestForExampleFile("examples/Tautomerization_01.txt", true, true);
+		doubleConversionTestForExampleFile("examples/Tautomerization_01.txt", false, false);
+		doubleConversionTestForExampleFile("examples/Tautomerization_01.txt", false, true);
+		doubleConversionTestForExampleFile("examples/Tautomerization_01.txt", true, false);
+	}
+	
+	@Test
+	public void testExample_X___1_product() throws Exception {
+		doubleConversionTestForExampleFile("examples/X_-_1_product.txt", true, true);
+		doubleConversionTestForExampleFile("examples/X_-_1_product.txt", false, false);
+		doubleConversionTestForExampleFile("examples/X_-_1_product.txt", false, true);
+		doubleConversionTestForExampleFile("examples/X_-_1_product.txt", true, false);
+	}
+	
 	
 }
