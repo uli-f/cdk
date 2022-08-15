@@ -77,7 +77,7 @@ public class RInChIToReactionTest extends CDKTestCase {
 	public void testExample_Tautomerization_01() throws Exception {
 		doubleConversionTestForExampleFile("examples/Tautomerization_01.txt", false, false);
 		doubleConversionTestForExampleFile("examples/Tautomerization_01.txt", true, true);
-		//doubleConversionTestForExampleFile("examples/Tautomerization_01.txt", false, true);
+		doubleConversionTestForExampleFile("examples/Tautomerization_01.txt", false, true);
 		doubleConversionTestForExampleFile("examples/Tautomerization_01.txt", true, false);
 	}
 	
@@ -85,6 +85,7 @@ public class RInChIToReactionTest extends CDKTestCase {
 	public void testExample_1_reactant__A() throws Exception {		
 		doubleConversionTestForExampleFile("examples/1_reactant_-_A.txt", true, true);
 		doubleConversionTestForExampleFile("examples/1_reactant_-_A.txt", false, false);
+		doubleConversionTestForExampleFile("examples/1_reactant_-_A.txt", false, true);
 		doubleConversionTestForExampleFile("examples/1_reactant_-_A.txt", true, false);
 	}
 	
@@ -92,6 +93,7 @@ public class RInChIToReactionTest extends CDKTestCase {
 	public void testExample_1_reactant__no_product() throws Exception {		
 		doubleConversionTestForExampleFile("examples/1_reactant_-_no_product.txt", true, true);
 		doubleConversionTestForExampleFile("examples/1_reactant_-_no_product.txt", false, false);
+		doubleConversionTestForExampleFile("examples/1_reactant_-_no_product.txt", false, true);
 		doubleConversionTestForExampleFile("examples/1_reactant_-_no_product.txt", true, false);
 	}
 	
@@ -99,6 +101,7 @@ public class RInChIToReactionTest extends CDKTestCase {
 	public void testExample_1_reactant__no_structure() throws Exception {		
 		doubleConversionTestForExampleFile("examples/1_reactant_-_no_structure.txt", true, true);
 		doubleConversionTestForExampleFile("examples/1_reactant_-_no_structure.txt", false, false);
+		doubleConversionTestForExampleFile("examples/1_reactant_-_no_structure.txt", false, true);
 		doubleConversionTestForExampleFile("examples/1_reactant_-_no_structure.txt", true, false);
 	}
 	
@@ -106,6 +109,7 @@ public class RInChIToReactionTest extends CDKTestCase {
 	public void testExample_1_reactant__R() throws Exception {		
 		doubleConversionTestForExampleFile("examples/1_reactant_-_R.txt", true, true);
 		doubleConversionTestForExampleFile("examples/1_reactant_-_R.txt", false, false);
+		doubleConversionTestForExampleFile("examples/1_reactant_-_R.txt", false, true);
 		doubleConversionTestForExampleFile("examples/1_reactant_-_R.txt", true, false);
 	}
 	
