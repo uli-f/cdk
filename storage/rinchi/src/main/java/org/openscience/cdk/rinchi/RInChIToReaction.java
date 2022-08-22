@@ -234,8 +234,10 @@ public class RInChIToReaction {
     	
     	atom.setImplicitHydrogenCount(iAt.getImplicitHydrogen());
     	
-    	//TODO set isotope
-    	
+    	//Set isotope
+        if(iAt.getIsotopicMass() > 0)        	
+        	atom.setMassNumber(iAt.getIsotopicMass());
+        
     	//Set coordinates
     	Point3d p = new Point3d();
     	p.x = iAt.getX();
