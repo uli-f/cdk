@@ -189,5 +189,12 @@ public class RInChIToReactionTest extends CDKTestCase {
 		doubleConversionTestForExampleFile("examples/X_-_1_product.txt", true, false);
 	}
 	
+	@Test 
+	public void testIsotopeConversion_01() throws Exception {
+		doubleConversionTest("RInChI=1.00.1S/C6H10O/c7-6-4-2-1-3-5-6/h4,7H,1-3,5H2/i5+1<>CH4/h1H4/d+", "", true, true);
+		doubleConversionTest("RInChI=1.00.1S/C6H10O/c7-6-4-2-1-3-5-6/h4,7H,1-3,5H2/i5+1<>CH4/h1H4/d+", "", false, false);
+		doubleConversionTest("RInChI=1.00.1S/C6H10O/c7-6-4-2-1-3-5-6/h4,7H,1-3,5H2/i5+1<>CH4/h1H4/d+", "", false, true);
+		doubleConversionTest("RInChI=1.00.1S/C6H10O/c7-6-4-2-1-3-5-6/h4,7H,1-3,5H2/i5+1<>CH4/h1H4/d+", "", true, false);
+	}
 	
 }

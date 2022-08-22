@@ -278,7 +278,10 @@ public class RInChIGenerator {
             q = 0;
         inchiAtom.setCharge(q);
         
-        //TODO Set isotope
+        //Set isotope
+        Integer mass = atom.getMassNumber();
+        if (mass != null)
+        	inchiAtom.setIsotopicMass(mass);
         
         //Set coordinates: 3D takes precedence 
         if (atom.getPoint3d() != null) {
