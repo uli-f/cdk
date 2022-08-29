@@ -312,5 +312,15 @@ public class RInChIToReaction {
 	public boolean isUseCDK_MDL_IO() {
 		return useCDK_MDL_IO;
 	}
+	/**
+     * Gets the RinchiInput object used for data conversion. 
+     * Function returns null when isUseCDK_MDL_IO() == null
+     */
+	public RinchiInput getResultRinchiInputObject() {
+		if (rInpFromRinchiOutput != null)
+			return rInpFromRinchiOutput.getRinchInput();
+		else 
+			return null;
+	}
     
 }
