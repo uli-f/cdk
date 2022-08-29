@@ -36,6 +36,7 @@ import org.openscience.cdk.tools.LoggingToolFactory;
 
 import io.github.dan2097.jnainchi.InchiAtom;
 import io.github.dan2097.jnainchi.InchiBond;
+import io.github.dan2097.jnainchi.InchiBondStereo;
 import io.github.dan2097.jnainchi.InchiBondType;
 import io.github.dan2097.jnarinchi.JnaRinchi;
 import io.github.dan2097.jnarinchi.ReactionComponentRole;
@@ -316,8 +317,32 @@ public class RInChIGenerator {
 					+ bond.getOrder().toString());
 			return null;
 		}	
-		else
-			return new InchiBond(at0, at1, boType);
+		else {
+			InchiBondStereo bondStereo = cdkBondStereoToInchiBondStereo(bond.getStereo());
+			return new InchiBond(at0, at1, boType, bondStereo);
+		}	
+	}
+	
+	private InchiBondStereo cdkBondStereoToInchiBondStereo(IBond.Stereo stereo) {
+		if (stereo == null)
+			return InchiBondStereo.NONE;
+		switch (stereo) {
+		case DOWN:
+			return InchiBondStereo.SINGLE_1DOWN;
+		case DOWN_INVERTED:
+			return InchiBondStereo.SINGLE_2DOWN;
+		case UP:
+			return InchiBondStereo.SINGLE_1UP;
+		case UP_INVERTED:
+			return InchiBondStereo.SINGLE_2UP;
+		case UP_OR_DOWN:
+			return InchiBondStereo.SINGLE_1EITHER;
+		case UP_OR_DOWN_INVERTED:
+			return InchiBondStereo.SINGLE_2EITHER;
+		case E_OR_Z:
+			return InchiBondStereo.DOUBLE_EITHER;
+		}
+		return InchiBondStereo.NONE;
 	}
 	
 	private String getAllRinchiInputGenerationErrors() {
