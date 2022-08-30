@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.vecmath.Point2d;
 import javax.vecmath.Point3d;
 
 import org.openscience.cdk.Atom;
@@ -36,7 +37,6 @@ import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
-import org.openscience.cdk.interfaces.IChemObjectBuilder;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.io.MDLRXNV2000Reader;
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
@@ -51,6 +51,9 @@ import io.github.dan2097.jnarinchi.RinchiInput;
 import io.github.dan2097.jnarinchi.RinchiInputComponent;
 import io.github.dan2097.jnarinchi.RinchiInputFromRinchiOutput;
 import io.github.dan2097.jnarinchi.RinchiStatus;
+import io.github.dan2097.jnarinchi.cheminfo.StereoUtils.MolCoordinatesType;
+import io.github.dan2097.jnarinchi.cheminfo.StereoUtils;
+
 /**
  * <p>This class generates a CDK IReaction from a RInChI string (and optionally aux info).
  * It places calls to a JNA wrapper for the RInChI C++ library (io.github.dan2097.jnarinchi).
@@ -195,10 +198,11 @@ public class RInChIToReaction {
     private IAtomContainer getComponentMolecule(RinchiInputComponent ric) {
     	IAtomContainer mol = new AtomContainer();
     	Map<InchiAtom,IAtom> inchiAtom2AtomMap = new HashMap<>();
-		//Convert atoms
+    	MolCoordinatesType molCoordType = StereoUtils.getMolCoordinatesType(ric);
+    	//Convert atoms
     	for (int i = 0; i < ric.getAtoms().size(); i++) {    		
     		InchiAtom iAt = ric.getAtoms().get(i);
-    		IAtom atom = getAtom(iAt);
+    		IAtom atom = getAtom(iAt, molCoordType);
     		if (atom != null) {
     			inchiAtom2AtomMap.put(iAt, atom);
     			mol.addAtom(atom);
@@ -225,7 +229,7 @@ public class RInChIToReaction {
     	return mol;
     }
     
-    private IAtom getAtom(InchiAtom iAt) {
+    private IAtom getAtom(InchiAtom iAt, MolCoordinatesType coordType) {
     	IAtom atom = new Atom(iAt.getElName());
     	//Set charge
     	int q = iAt.getCharge();
@@ -237,14 +241,22 @@ public class RInChIToReaction {
     	//Set isotope
         if(iAt.getIsotopicMass() > 0)        	
         	atom.setMassNumber(iAt.getIsotopicMass());
+
+        //Set coordinates 2D or 3D
+        if (coordType == MolCoordinatesType._2D) {
+        	Point2d p = new Point2d();
+        	p.x = iAt.getX();
+        	p.y = iAt.getY();
+        	atom.setPoint2d(p);
+        } 
+        else if (coordType == MolCoordinatesType._3D) {
+        	Point3d p = new Point3d();
+        	p.x = iAt.getX();
+        	p.y = iAt.getY();
+        	p.z = iAt.getZ();
+        	atom.setPoint3d(p);
+        }
         
-    	//Set coordinates
-    	Point3d p = new Point3d();
-    	p.x = iAt.getX();
-    	p.y = iAt.getY();
-    	p.z = iAt.getZ();
-    	atom.setPoint3d(p);
-    	
     	return atom;
     }
     
