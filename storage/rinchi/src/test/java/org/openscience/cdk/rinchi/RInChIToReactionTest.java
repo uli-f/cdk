@@ -53,6 +53,11 @@ public class RInChIToReactionTest extends CDKTestCase {
 	}
 	
 	public void doubleConversionTestForExampleFile(String rinchiFile, boolean useCDK_MDL_IO, boolean useCDK_MDL_IO2) throws Exception {
+		doubleConversionTestForExampleFile(rinchiFile, useCDK_MDL_IO, useCDK_MDL_IO2, true);
+	}
+	
+	public void doubleConversionTestForExampleFile(String rinchiFile, 
+			boolean useCDK_MDL_IO, boolean useCDK_MDL_IO2, boolean compareRAuxInfo) throws Exception {
 		//RInChI --> Reaction
 		Map<String, String> rfi = RInChIGeneratorTest.readRinchiFullInfoFromResourceFile(rinchiFile);
 		String rinchi = rfi.get("RInChI");
@@ -67,7 +72,8 @@ public class RInChIToReactionTest extends CDKTestCase {
 		Assert.assertNotNull(gen);
 		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, gen.getRInChIStatus());
 		Assert.assertEquals("RinChI:", rinchi, gen.getRInChI());
-		Assert.assertEquals("RAuxInfo:", auxInfo, gen.getAuxInfo());
+		if (compareRAuxInfo)
+			Assert.assertEquals("RAuxInfo:", auxInfo, gen.getAuxInfo());
 		Assert.assertEquals("Long-RInChIKey:", rfi.get("Long-RInChIKey"), gen.getLongRInChIKey());
 		Assert.assertEquals("Short-RInChIKey:", rfi.get("Short-RInChIKey"), gen.getShortRInChIKey());
 		Assert.assertEquals("Web-RInChIKey:", rfi.get("Web-RInChIKey"), gen.getWebRInChIKey());
@@ -109,7 +115,7 @@ public class RInChIToReactionTest extends CDKTestCase {
 	public void testExample_Inverted_stereochemistry() throws Exception {		
 		doubleConversionTestForExampleFile("examples/Inverted_stereochemistry.txt", true, true);
 		//doubleConversionTestForExampleFile("examples/Inverted_stereochemistry.txt", false, true);
-		//doubleConversionTestForExampleFile("examples/Inverted_stereochemistry.txt", true, false);
+		doubleConversionTestForExampleFile("examples/Inverted_stereochemistry.txt", true, false, false); //RAuxInfo is not compared
 	}
 	
 	@Test
