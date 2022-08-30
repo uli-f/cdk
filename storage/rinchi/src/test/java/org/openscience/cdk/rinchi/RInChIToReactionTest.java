@@ -114,7 +114,8 @@ public class RInChIToReactionTest extends CDKTestCase {
 	@Test
 	public void testExample_Inverted_stereochemistry() throws Exception {		
 		doubleConversionTestForExampleFile("examples/Inverted_stereochemistry.txt", true, true);
-		//doubleConversionTestForExampleFile("examples/Inverted_stereochemistry.txt", false, true);
+		doubleConversionTestForExampleFile("examples/Inverted_stereochemistry.txt", false, false, false);
+		doubleConversionTestForExampleFile("examples/Inverted_stereochemistry.txt", false, true, false); //RAuxInfo is not compared
 		doubleConversionTestForExampleFile("examples/Inverted_stereochemistry.txt", true, false, false); //RAuxInfo is not compared
 	}
 	

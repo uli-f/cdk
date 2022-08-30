@@ -43,6 +43,7 @@ import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
 
 import io.github.dan2097.jnainchi.InchiAtom;
 import io.github.dan2097.jnainchi.InchiBond;
+import io.github.dan2097.jnainchi.InchiBondStereo;
 import io.github.dan2097.jnarinchi.FileTextOutput;
 import io.github.dan2097.jnarinchi.FileTextStatus;
 import io.github.dan2097.jnarinchi.JnaRinchi;
@@ -276,14 +277,36 @@ public class RInChIToReaction {
     		break;	
     	}
     	
+    	IBond.Stereo stereo = inchiBondStereoToCDKBondStereoTo(iBo.getStereo());
+    	
     	if (order == null || at0 == null || at1 == null) {
     		reactionGenerationErrors.add(curComponentErrorContext + 
     				"Unable to convert InchiBond to CDK bond: " + order.toString());
 			return null;
 		}	
 		else
-			return new Bond(at0, at1, order);
+			return new Bond(at0, at1, order, stereo);
     }
+    
+    private IBond.Stereo inchiBondStereoToCDKBondStereoTo(InchiBondStereo inchiBondStereo) {
+		switch (inchiBondStereo) {
+		case SINGLE_1DOWN:
+			return IBond.Stereo.DOWN;
+		case SINGLE_2DOWN:
+			return IBond.Stereo.DOWN_INVERTED;
+		case SINGLE_1UP:
+			return IBond.Stereo.UP;
+		case SINGLE_2UP:
+			return IBond.Stereo.UP_INVERTED;
+		case SINGLE_1EITHER:
+			return IBond.Stereo.UP_OR_DOWN;
+		case SINGLE_2EITHER:
+			return IBond.Stereo.UP_OR_DOWN_INVERTED;	
+		case DOUBLE_EITHER:
+			return IBond.Stereo.E_OR_Z;	
+		}
+    	return IBond.Stereo.NONE;
+	}
     
     private String getAllReactionGenerationErrors() {
 		StringBuilder sb = new StringBuilder(); 
