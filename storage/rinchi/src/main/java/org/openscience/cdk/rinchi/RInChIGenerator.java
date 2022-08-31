@@ -30,6 +30,9 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.interfaces.IStereoElement;
+import org.openscience.cdk.interfaces.ITetrahedralChirality;
+import org.openscience.cdk.interfaces.ITetrahedralChirality.Stereo;
 import org.openscience.cdk.io.MDLRXNWriter;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
@@ -38,6 +41,8 @@ import io.github.dan2097.jnainchi.InchiAtom;
 import io.github.dan2097.jnainchi.InchiBond;
 import io.github.dan2097.jnainchi.InchiBondStereo;
 import io.github.dan2097.jnainchi.InchiBondType;
+import io.github.dan2097.jnainchi.InchiStereo;
+import io.github.dan2097.jnainchi.InchiStereoParity;
 import io.github.dan2097.jnarinchi.JnaRinchi;
 import io.github.dan2097.jnarinchi.ReactionComponentRole;
 import io.github.dan2097.jnarinchi.ReactionFileFormat;
@@ -266,6 +271,12 @@ public class RInChIGenerator {
 			if (iBo != null)
 				ric.addBond(iBo);
 		}
+		//Convert stereo elements
+		for (IStereoElement stereoEl : mol.stereoElements()) {
+			InchiStereo stereo = cdkStereoElementToInchiStereo(stereoEl, atomInchiAtomMap);
+			if (stereo != null)
+				ric.addStereo(stereo);
+		}
 		return ric;
 	}
 	
@@ -343,6 +354,56 @@ public class RInChIGenerator {
 			return InchiBondStereo.DOUBLE_EITHER;
 		}
 		return InchiBondStereo.NONE;
+	}
+	
+	private InchiStereo cdkStereoElementToInchiStereo (IStereoElement stereoEl, Map<IAtom,InchiAtom> atomInchiAtomMap) {
+		if (stereoEl instanceof ITetrahedralChirality) {
+			ITetrahedralChirality thc = (ITetrahedralChirality) stereoEl;
+			InchiAtom centralAtom = atomInchiAtomMap.get(thc.getChiralAtom());
+			
+			//Within CDK implicit hydrohen and lone pairs are encoded 
+			//by adding the central atom to the ligand list
+			//In InchiStereo there is a special atom, InchiStereo.STEREO_IMPLICIT_H
+			//used for the case if implicit H ligand. 
+			//The lone pairs are treated as CDK.			
+			InchiAtom atom1 = atomInchiAtomMap.get(thc.getLigands()[0]);
+			if (atom1 == centralAtom) { 
+				//atom1 is either implicit hydrogen or a lone pair.				
+				if (atom1.getImplicitHydrogen() > 0)
+					atom1 = InchiStereo.STEREO_IMPLICIT_H;				
+			}
+			InchiAtom atom2 = atomInchiAtomMap.get(thc.getLigands()[1]);
+			if (atom2 == centralAtom) { 
+				//atom2 is either implicit hydrogen or a lone pair				
+				if (atom2.getImplicitHydrogen() > 0)
+					atom2 = InchiStereo.STEREO_IMPLICIT_H;				
+			}
+			InchiAtom atom3 = atomInchiAtomMap.get(thc.getLigands()[2]);
+			if (atom3 == centralAtom) { 
+				//atom3 is either implicit hydrogen or a lone pair				
+				if (atom3.getImplicitHydrogen() > 0)
+					atom3 = InchiStereo.STEREO_IMPLICIT_H;				
+			}
+			InchiAtom atom4 = atomInchiAtomMap.get(thc.getLigands()[3]);
+			if (atom4 == centralAtom) { 
+				//atom4 is either implicit hydrogen or a lone pair				
+				if (atom4.getImplicitHydrogen() > 0)
+					atom4 = InchiStereo.STEREO_IMPLICIT_H;				
+			}
+			
+			//TODO check parity computation !! - this a temporary code 
+			InchiStereoParity parity;
+			if (thc.getStereo() == Stereo.ANTI_CLOCKWISE)
+				parity = InchiStereoParity.EVEN;
+			else
+				parity = InchiStereoParity.ODD;
+			 
+			return InchiStereo.createTetrahedralStereo(centralAtom, atom1, atom2, atom3, atom4, parity);
+		}
+		
+		//TODO handle allene atoms and double bonds
+		
+		return null;
 	}
 	
 	private String getAllRinchiInputGenerationErrors() {
