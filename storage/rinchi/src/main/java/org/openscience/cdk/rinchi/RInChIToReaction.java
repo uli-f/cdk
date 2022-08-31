@@ -38,12 +38,15 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.interfaces.IStereoElement;
 import org.openscience.cdk.io.MDLRXNV2000Reader;
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
 
 import io.github.dan2097.jnainchi.InchiAtom;
 import io.github.dan2097.jnainchi.InchiBond;
 import io.github.dan2097.jnainchi.InchiBondStereo;
+import io.github.dan2097.jnainchi.InchiStereo;
+import io.github.dan2097.jnainchi.InchiStereoType;
 import io.github.dan2097.jnarinchi.FileTextOutput;
 import io.github.dan2097.jnarinchi.FileTextStatus;
 import io.github.dan2097.jnarinchi.JnaRinchi;
@@ -215,7 +218,18 @@ public class RInChIToReaction {
     		IBond bond = getBond(iBo, inchiAtom2AtomMap);
     		if (bond != null) 
     			mol.addBond(bond);
-    	}	
+    	}
+    	//Convert stereos
+    	if (!ric.getStereos().isEmpty()) {
+    		List<IStereoElement> stereoElements = new ArrayList<>();
+    		for (InchiStereo stereo : ric.getStereos()) {
+    			IStereoElement stereoEl = inchiStereoToCDKStereoElement (stereo, inchiAtom2AtomMap);
+    			if (stereoEl != null)
+    				stereoElements.add(stereoEl);
+    		}
+    		if (!stereoElements.isEmpty())
+    			mol.setStereoElements(stereoElements);
+    	}
     	
     	if (configureMolecules) {
     		try {
@@ -307,6 +321,14 @@ public class RInChIToReaction {
 		}
     	return IBond.Stereo.NONE;
 	}
+    
+    private IStereoElement inchiStereoToCDKStereoElement (InchiStereo stereo, Map<InchiAtom,IAtom> inchiAtom2AtomMap) {
+    	if (stereo.getType() == InchiStereoType.Tetrahedral) {
+    		//TODO
+    	}
+    	//TODO
+    	return null;
+    }
     
     private String getAllReactionGenerationErrors() {
 		StringBuilder sb = new StringBuilder(); 
