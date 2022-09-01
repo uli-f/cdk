@@ -391,12 +391,39 @@ public class RInChIGenerator {
 					atom4 = InchiStereo.STEREO_IMPLICIT_H;				
 			}
 			
-			//TODO check parity computation !! - this a temporary code 
+			//MDL Parity definition: 
+			//View the center from a position such that the bond connecting the highest-numbered atom (4) 
+			//projects behind the plane formed by atoms 1, 2 and 3.
+			//Sighting towards atom number 4 through the plane (123), you see that the three remaining atoms can be arranged 
+			//in either a clockwise (parity = 1, ODD) or counterclockwise (parity = 2, EVEN)
+			//A hydrogen atom should be considered the highest numbered atom, in this case atom 4
+			//
+			//CDK Tetrahedral Chirality specification:
+			//the first ligand points towards to observer, and the three other ligands point away from the observer; 
+			//the stereo then defines the order of the second, third, and fourth ligand to be clockwise or anti-clockwise.	
+			//			
+			// In the scheme bellow: 
+			// MDL: observer --> 1,2,3 --> 4   clockwise (parity = 1, ODD)
+			// CDK: observer --> 1 --> 2,3,4   clockwise  
+			// 
+			//
+			//          in the plane  (3)
+			//                         |
+			//                         |
+			// MDL observer --->      cen ....(4) behind the plane
+			//                       /   \\
+			//                      /     \\
+			//      in the plane  (2)      (1)  in front of the plain 
+			//                                
+			//                              ^                             
+			//                              |
+			//                              CDK observer
+			
 			InchiStereoParity parity;
-			if (thc.getStereo() == Stereo.ANTI_CLOCKWISE)
-				parity = InchiStereoParity.EVEN;
+			if (thc.getStereo() == Stereo.CLOCKWISE)
+				parity = InchiStereoParity.ODD;  //parity = 1
 			else
-				parity = InchiStereoParity.ODD;
+				parity = InchiStereoParity.EVEN; //parity = 2
 			 
 			return InchiStereo.createTetrahedralStereo(centralAtom, atom1, atom2, atom3, atom4, parity);
 		}
