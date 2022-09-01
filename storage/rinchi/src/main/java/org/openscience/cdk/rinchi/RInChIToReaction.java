@@ -356,13 +356,46 @@ public class RInChIToReaction {
     			iAt = inchiStereo.getCentralAtom(); //mapping central atom to get IAtom ligand
     		ligands[3] = inchiAtom2AtomMap.get(iAt);
     		
-    		Stereo stereo = Stereo.ANTI_CLOCKWISE;
-    		//TODO handle stereo conversion
+    		
+    		//MDL Parity definition: 
+    		//View the center from a position such that the bond connecting the highest-numbered atom (4) 
+    		//projects behind the plane formed by atoms 1, 2 and 3.
+    		//Sighting towards atom number 4 through the plane (123), you see that the three remaining atoms can be arranged 
+    		//in either a clockwise (parity = 1, ODD) or counterclockwise (parity = 2, EVEN)
+    		//A hydrogen atom should be considered the highest numbered atom, in this case atom 4
+    		//
+    		//CDK Tetrahedral Chirality specification:
+    		//the first ligand points towards to observer, and the three other ligands point away from the observer; 
+    		//the stereo then defines the order of the second, third, and fourth ligand to be clockwise or anti-clockwise.	
+    		//			
+    		// In the scheme bellow: 
+    		// MDL: observer --> 1,2,3 --> 4   clockwise (parity = 1, ODD)
+    		// CDK: observer --> 1 --> 2,3,4   clockwise  
+    		// 
+    		//
+    		//          in the plane  (3)
+    		//                         |
+    		//                         |
+    		// MDL observer --->      cen ....(4) behind the plane
+    		//                       /   \\
+    		//                      /     \\
+    		//      in the plane  (2)      (1)  in front of the plain 
+    		//                                
+    		//                              ^                             
+    		//                              |
+    		//                                           
+    		//                              CDK observer
+    		
+    		Stereo stereo;
+    		if (inchiStereo.getParity() == InchiStereoParity.ODD)
+    			stereo = Stereo.CLOCKWISE;
+    		else
+    			stereo = Stereo.ANTI_CLOCKWISE;
+    		
     		return new TetrahedralChirality(chiralAtom, ligands, stereo);
     	}
     	
     	//TODO hadnle other types of stereo elements
-    	
     	return null;
     }
     
