@@ -39,13 +39,17 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.interfaces.IStereoElement;
+import org.openscience.cdk.interfaces.ITetrahedralChirality;
+import org.openscience.cdk.interfaces.ITetrahedralChirality.Stereo;
 import org.openscience.cdk.io.MDLRXNV2000Reader;
+import org.openscience.cdk.stereo.TetrahedralChirality;
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
 
 import io.github.dan2097.jnainchi.InchiAtom;
 import io.github.dan2097.jnainchi.InchiBond;
 import io.github.dan2097.jnainchi.InchiBondStereo;
 import io.github.dan2097.jnainchi.InchiStereo;
+import io.github.dan2097.jnainchi.InchiStereoParity;
 import io.github.dan2097.jnainchi.InchiStereoType;
 import io.github.dan2097.jnarinchi.FileTextOutput;
 import io.github.dan2097.jnarinchi.FileTextStatus;
@@ -322,11 +326,43 @@ public class RInChIToReaction {
     	return IBond.Stereo.NONE;
 	}
     
-    private IStereoElement inchiStereoToCDKStereoElement (InchiStereo stereo, Map<InchiAtom,IAtom> inchiAtom2AtomMap) {
-    	if (stereo.getType() == InchiStereoType.Tetrahedral) {
-    		//TODO
+    private IStereoElement inchiStereoToCDKStereoElement (InchiStereo inchiStereo, Map<InchiAtom,IAtom> inchiAtom2AtomMap) {
+    	if (inchiStereo.getType() == InchiStereoType.Tetrahedral) {
+    		//Within CDK implicit hydrogen and lone pairs are encoded 
+    		//by adding the central atom in the ligand list
+    		//In InchiStereo there is a special atom, InchiStereo.STEREO_IMPLICIT_H,
+    		//used for implicit H ligand. 
+    		//The lone pairs are treated the same way in CDK and InchiStereo.
+    		IAtom chiralAtom = inchiAtom2AtomMap.get(inchiStereo.getCentralAtom());
+    		IAtom[] ligands = new IAtom[4];
+    		
+    		InchiAtom iAt = inchiStereo.getAtoms()[0];
+    		if (iAt == InchiStereo.STEREO_IMPLICIT_H)
+    			iAt = inchiStereo.getCentralAtom(); //mapping central atom to get IAtom ligand
+    		ligands[0] = inchiAtom2AtomMap.get(iAt);
+    		
+    		iAt = inchiStereo.getAtoms()[1];
+    		if (iAt == InchiStereo.STEREO_IMPLICIT_H)
+    			iAt = inchiStereo.getCentralAtom(); //mapping central atom to get IAtom ligand
+    		ligands[1] = inchiAtom2AtomMap.get(iAt);
+    		
+    		iAt = inchiStereo.getAtoms()[2];
+    		if (iAt == InchiStereo.STEREO_IMPLICIT_H)
+    			iAt = inchiStereo.getCentralAtom(); //mapping central atom to get IAtom ligand
+    		ligands[2] = inchiAtom2AtomMap.get(iAt);
+    		
+    		iAt = inchiStereo.getAtoms()[3];
+    		if (iAt == InchiStereo.STEREO_IMPLICIT_H)
+    			iAt = inchiStereo.getCentralAtom(); //mapping central atom to get IAtom ligand
+    		ligands[3] = inchiAtom2AtomMap.get(iAt);
+    		
+    		Stereo stereo = Stereo.ANTI_CLOCKWISE;
+    		//TODO handle stereo conversion
+    		return new TetrahedralChirality(chiralAtom, ligands, stereo);
     	}
-    	//TODO
+    	
+    	//TODO hadnle other types of stereo elements
+    	
     	return null;
     }
     

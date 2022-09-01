@@ -361,11 +361,11 @@ public class RInChIGenerator {
 			ITetrahedralChirality thc = (ITetrahedralChirality) stereoEl;
 			InchiAtom centralAtom = atomInchiAtomMap.get(thc.getChiralAtom());
 			
-			//Within CDK implicit hydrohen and lone pairs are encoded 
-			//by adding the central atom to the ligand list
-			//In InchiStereo there is a special atom, InchiStereo.STEREO_IMPLICIT_H
-			//used for the case if implicit H ligand. 
-			//The lone pairs are treated as CDK.			
+			//Within CDK implicit hydrogen and lone pairs are encoded 
+    		//by adding the central atom in the ligand list
+    		//In InchiStereo there is a special atom, InchiStereo.STEREO_IMPLICIT_H,
+    		//used for implicit H ligand. 
+    		//The lone pairs are treated the same way in CDK and InchiStereo.		
 			InchiAtom atom1 = atomInchiAtomMap.get(thc.getLigands()[0]);
 			if (atom1 == centralAtom) { 
 				//atom1 is either implicit hydrogen or a lone pair.				
