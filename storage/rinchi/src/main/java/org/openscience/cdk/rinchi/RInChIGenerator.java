@@ -29,6 +29,7 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IAtomContainerSet;
 import org.openscience.cdk.interfaces.IBond;
+import org.openscience.cdk.interfaces.IPseudoAtom;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.interfaces.IStereoElement;
 import org.openscience.cdk.interfaces.ITetrahedralChirality;
@@ -281,7 +282,18 @@ public class RInChIGenerator {
 	}
 	
 	private InchiAtom getInchiAtom (IAtom atom) {		
-		//TODO handle non standard atoms e.g. IPseudoAtom
+		//Handle non standard atoms (IPseudoAtom)		
+		if (atom instanceof IPseudoAtom) {
+			IPseudoAtom pAtom = (IPseudoAtom) atom;
+			if (pAtom.getLabel()!=null)
+				return new InchiAtom(pAtom.getLabel());
+			
+			rinchiInputGenerationErrors.add("Unable to convert CDK IPseudoAtom to InchiAtom:" 
+					+ (pAtom.getLabel()!=null?(" label " + pAtom.getLabel()):"") + " " 
+					+ (pAtom.getSymbol()!=null?(" symbol " + pAtom.getSymbol()):""));
+			return null;
+		}
+		
 		String atSymbol = atom.getSymbol();
 		InchiAtom inchiAtom = new InchiAtom(atSymbol);
 		//Set charge
