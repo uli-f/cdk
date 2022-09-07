@@ -292,7 +292,10 @@ public class RInChIToReaction {
     		break;
     	case TRIPLE:
     		order = IBond.Order.TRIPLE;
-    		break;	
+    		break;
+    	case ALTERN:
+    		order = IBond.Order.UNSET;
+    		break;
     	}
     	
     	IBond.Stereo stereo = inchiBondStereoToCDKBondStereoTo(iBo.getStereo());
@@ -302,8 +305,12 @@ public class RInChIToReaction {
     				"Unable to convert InchiBond to CDK bond: " + order.toString());
 			return null;
 		}	
-		else
-			return new Bond(at0, at1, order, stereo);
+		else {
+			IBond bond = new Bond(at0, at1, order, stereo);
+			if (order == IBond.Order.UNSET) //this case is for aromatic bonds
+				bond.setIsAromatic(true);
+			return bond;
+		}	
     }
     
     private IBond.Stereo inchiBondStereoToCDKBondStereoTo(InchiBondStereo inchiBondStereo) {

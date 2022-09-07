@@ -333,7 +333,11 @@ public class RInChIGenerator {
 			break;
 		case TRIPLE:
 			boType = InchiBondType.TRIPLE;
-			break;	
+			break;
+		case UNSET:
+			if (bond.isAromatic())
+				boType = InchiBondType.ALTERN;
+			break;
 		}
 		if (boType == null || at0 == null || at1 == null) {
 			rinchiInputGenerationErrors.add("Unable to convert CDK bond to InchiBond: " 
