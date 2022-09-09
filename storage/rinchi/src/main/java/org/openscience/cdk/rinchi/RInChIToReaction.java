@@ -42,12 +42,14 @@ import org.openscience.cdk.interfaces.IStereoElement;
 import org.openscience.cdk.interfaces.ITetrahedralChirality;
 import org.openscience.cdk.interfaces.ITetrahedralChirality.Stereo;
 import org.openscience.cdk.io.MDLRXNV2000Reader;
+import org.openscience.cdk.io.MDLV2000Writer.SPIN_MULTIPLICITY;
 import org.openscience.cdk.stereo.TetrahedralChirality;
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
 
 import io.github.dan2097.jnainchi.InchiAtom;
 import io.github.dan2097.jnainchi.InchiBond;
 import io.github.dan2097.jnainchi.InchiBondStereo;
+import io.github.dan2097.jnainchi.InchiRadical;
 import io.github.dan2097.jnainchi.InchiStereo;
 import io.github.dan2097.jnainchi.InchiStereoParity;
 import io.github.dan2097.jnainchi.InchiStereoType;
@@ -405,6 +407,20 @@ public class RInChIToReaction {
     	//TODO hadnle other types of stereo elements
     	return null;
     }
+    
+    private SPIN_MULTIPLICITY cdkSpinMultiplicityToInchiRadical(InchiRadical radical) {
+		
+    	switch (radical) {
+    	case SINGLET:
+    		return SPIN_MULTIPLICITY.DivalentSinglet;
+    	case DOUBLET:
+    		return SPIN_MULTIPLICITY.Monovalent;
+    	case TRIPLET:
+    		return SPIN_MULTIPLICITY.DivalentTriplet;
+		}
+		
+		return SPIN_MULTIPLICITY.None;
+	}
     
     private String getAllReactionGenerationErrors() {
 		StringBuilder sb = new StringBuilder(); 
