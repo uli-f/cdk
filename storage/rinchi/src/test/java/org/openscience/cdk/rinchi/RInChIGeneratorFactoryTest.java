@@ -31,6 +31,7 @@ import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.test.CDKTestCase;
 
+import io.github.dan2097.jnarinchi.RinchiOptions;
 import io.github.dan2097.jnarinchi.RinchiStatus;
 
 public class RInChIGeneratorFactoryTest extends CDKTestCase {
@@ -134,6 +135,130 @@ public class RInChIGeneratorFactoryTest extends CDKTestCase {
 		Assert.assertEquals("Reactant 1 atom count: ", 2, reaction3.getReactants().getAtomContainer(0).getAtomCount());
 		Assert.assertEquals("Reactant 2 atom count: ", 4, reaction3.getReactants().getAtomContainer(1).getAtomCount());
 		Assert.assertEquals("Product atom count: ", 6, reaction3.getProducts().getAtomContainer(0).getAtomCount());
+	}
+	
+	@Test
+	public void tes02_benzene_kekulized() throws CDKException {
+		//Create kekulized benzene
+		IAtomContainer mol = new AtomContainer();
+		IAtom a0 = new Atom("C");
+		a0.setImplicitHydrogenCount(1);
+		a0.setIsAromatic(true);
+		mol.addAtom(a0);
+		IAtom a1 = new Atom("C");
+		a1.setImplicitHydrogenCount(1);
+		a1.setIsAromatic(true);
+		mol.addAtom(a1);
+		IAtom a2 = new Atom("C");
+		a2.setImplicitHydrogenCount(1);
+		a2.setIsAromatic(true);
+		mol.addAtom(a2);
+		IAtom a3 = new Atom("C");
+		a3.setImplicitHydrogenCount(1);
+		a3.setIsAromatic(true);
+		mol.addAtom(a3);
+		IAtom a4 = new Atom("C");
+		a4.setImplicitHydrogenCount(1);
+		a4.setIsAromatic(true);
+		mol.addAtom(a4);
+		IAtom a5 = new Atom("C");
+		a5.setImplicitHydrogenCount(1);
+		a5.setIsAromatic(true);
+		mol.addAtom(a5);
+		IBond b0 = new Bond(a0 ,a1 ,IBond.Order.DOUBLE);
+		b0.setIsAromatic(true);
+		mol.addBond(b0);
+		IBond b1 = new Bond(a1 ,a2 ,IBond.Order.SINGLE);
+		b1.setIsAromatic(true);
+		mol.addBond(b1);
+		IBond b2 = new Bond(a2 ,a3 ,IBond.Order.DOUBLE);
+		b2.setIsAromatic(true);
+		mol.addBond(b2);
+		IBond b3 = new Bond(a3 ,a4 ,IBond.Order.SINGLE);
+		b3.setIsAromatic(true);
+		mol.addBond(b3);
+		IBond b4 = new Bond(a4 ,a5 ,IBond.Order.DOUBLE);
+		b4.setIsAromatic(true);
+		mol.addBond(b4);
+		IBond b5 = new Bond(a0 ,a5 ,IBond.Order.SINGLE);
+		b5.setIsAromatic(true);
+		mol.addBond(b5);
+
+		//Create reaction and set benzene as a reagent
+		IReaction reaction = new Reaction();
+		reaction.addReactant(mol);
+
+		//Generate RInChI
+		RInChIGenerator gen = RInChIGeneratorFactory.getInstance().getRInChIGenerator(reaction);
+		Assert.assertEquals("RInChI status: ", RinchiStatus.SUCCESS, gen.getRInChIStatus());		
+		Assert.assertEquals("RInChI for benzene: ", "RInChI=1.00.1S/<>C6H6/c1-2-4-6-5-3-1/h1-6H/d-", gen.getRInChI());
+		//Generate RInChI using CDK MDL writer
+		RInChIGenerator gen2 = RInChIGeneratorFactory.getInstance().getRInChIGenerator(reaction, RinchiOptions.DEFAULT_OPTIONS, true);
+		Assert.assertEquals("RInChI status: ", RinchiStatus.SUCCESS, gen2.getRInChIStatus());		
+		Assert.assertEquals("RInChI for benzene: ", "RInChI=1.00.1S/<>C6H6/c1-2-4-6-5-3-1/h1-6H/d-", gen2.getRInChI());		
+	}
+
+	@Test
+	public void tes03_benzene_aromatic() throws CDKException {
+		//Create aromatic benzene for testing conversion of CDK bonds of type UNSET flagged as aromatic
+		IAtomContainer mol = new AtomContainer();
+		IAtom a0 = new Atom("C");
+		a0.setImplicitHydrogenCount(1);
+		a0.setIsAromatic(true);
+		mol.addAtom(a0);
+		IAtom a1 = new Atom("C");
+		a1.setImplicitHydrogenCount(1);
+		a1.setIsAromatic(true);
+		mol.addAtom(a1);
+		IAtom a2 = new Atom("C");
+		a2.setImplicitHydrogenCount(1);
+		a2.setIsAromatic(true);
+		mol.addAtom(a2);
+		IAtom a3 = new Atom("C");
+		a3.setImplicitHydrogenCount(1);
+		a3.setIsAromatic(true);
+		mol.addAtom(a3);
+		IAtom a4 = new Atom("C");
+		a4.setImplicitHydrogenCount(1);
+		a4.setIsAromatic(true);
+		mol.addAtom(a4);
+		IAtom a5 = new Atom("C");
+		a5.setImplicitHydrogenCount(1);
+		a5.setIsAromatic(true);
+		mol.addAtom(a5);
+		IBond b0 = new Bond(a0 ,a1 ,IBond.Order.UNSET);
+		b0.setIsAromatic(true);
+		mol.addBond(b0);
+		IBond b1 = new Bond(a1 ,a2 ,IBond.Order.UNSET);
+		b1.setIsAromatic(true);
+		mol.addBond(b1);
+		IBond b2 = new Bond(a2 ,a3 ,IBond.Order.UNSET);
+		b2.setIsAromatic(true);
+		mol.addBond(b2);
+		IBond b3 = new Bond(a3 ,a4 ,IBond.Order.UNSET);
+		b3.setIsAromatic(true);
+		mol.addBond(b3);
+		IBond b4 = new Bond(a4 ,a5 ,IBond.Order.UNSET);
+		b4.setIsAromatic(true);
+		mol.addBond(b4);
+		IBond b5 = new Bond(a0 ,a5 ,IBond.Order.UNSET);
+		b5.setIsAromatic(true);
+		mol.addBond(b5);
+
+		//Create reaction and set benzene as a reagent
+		IReaction reaction = new Reaction();
+		reaction.addReactant(mol);
+
+		//Generate RInChI
+		RInChIGenerator gen = RInChIGeneratorFactory.getInstance().getRInChIGenerator(reaction);
+		Assert.assertEquals("RInChI status: ", RinchiStatus.SUCCESS, gen.getRInChIStatus());		
+		Assert.assertEquals("RInChI for benzene: ", "RInChI=1.00.1S/<>C6H6/c1-2-4-6-5-3-1/h1-6H/d-", gen.getRInChI());
+		/*
+		//Generate RInChI using CDK MDL writer
+		RInChIGenerator gen2 = RInChIGeneratorFactory.getInstance().getRInChIGenerator(reaction, RinchiOptions.DEFAULT_OPTIONS, true);
+		Assert.assertEquals("RInChI status: ", RinchiStatus.SUCCESS, gen2.getRInChIStatus());		
+		Assert.assertEquals("RInChI for benzene: ", "RInChI=1.00.1S/<>C6H6/c1-2-4-6-5-3-1/h1-6H/d-", gen2.getRInChI());
+		*/
 	}
 
 }
