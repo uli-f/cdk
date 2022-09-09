@@ -35,6 +35,7 @@ import org.openscience.cdk.interfaces.IStereoElement;
 import org.openscience.cdk.interfaces.ITetrahedralChirality;
 import org.openscience.cdk.interfaces.ITetrahedralChirality.Stereo;
 import org.openscience.cdk.io.MDLRXNWriter;
+import org.openscience.cdk.io.MDLV2000Writer.SPIN_MULTIPLICITY;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 
@@ -42,6 +43,7 @@ import io.github.dan2097.jnainchi.InchiAtom;
 import io.github.dan2097.jnainchi.InchiBond;
 import io.github.dan2097.jnainchi.InchiBondStereo;
 import io.github.dan2097.jnainchi.InchiBondType;
+import io.github.dan2097.jnainchi.InchiRadical;
 import io.github.dan2097.jnainchi.InchiStereo;
 import io.github.dan2097.jnainchi.InchiStereoParity;
 import io.github.dan2097.jnarinchi.JnaRinchi;
@@ -447,6 +449,18 @@ public class RInChIGenerator {
 		//TODO handle allene atoms and double bonds
 		
 		return null;
+	}
+	
+	private InchiRadical cdkSpinMultiplicityToInchiRadical(SPIN_MULTIPLICITY spinMultiplicity) {
+		switch (spinMultiplicity) {
+		case DivalentSinglet:
+			return InchiRadical.SINGLET;
+		case Monovalent:
+			return InchiRadical.DOUBLET;
+		case DivalentTriplet:
+			return InchiRadical.TRIPLET;
+		}
+		return InchiRadical.NONE;
 	}
 	
 	private String getAllRinchiInputGenerationErrors() {
