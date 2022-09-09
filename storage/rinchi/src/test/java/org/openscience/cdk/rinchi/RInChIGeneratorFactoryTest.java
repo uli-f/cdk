@@ -253,12 +253,19 @@ public class RInChIGeneratorFactoryTest extends CDKTestCase {
 		RInChIGenerator gen = RInChIGeneratorFactory.getInstance().getRInChIGenerator(reaction);
 		Assert.assertEquals("RInChI status: ", RinchiStatus.SUCCESS, gen.getRInChIStatus());		
 		Assert.assertEquals("RInChI for benzene: ", "RInChI=1.00.1S/<>C6H6/c1-2-4-6-5-3-1/h1-6H/d-", gen.getRInChI());
-		/*
+		
 		//Generate RInChI using CDK MDL writer
-		RInChIGenerator gen2 = RInChIGeneratorFactory.getInstance().getRInChIGenerator(reaction, RinchiOptions.DEFAULT_OPTIONS, true);
-		Assert.assertEquals("RInChI status: ", RinchiStatus.SUCCESS, gen2.getRInChIStatus());		
-		Assert.assertEquals("RInChI for benzene: ", "RInChI=1.00.1S/<>C6H6/c1-2-4-6-5-3-1/h1-6H/d-", gen2.getRInChI());
-		*/
+		boolean MDLRXNWriterExceptionForAromaticBonds = false;
+		try {
+			RInChIGenerator gen2 = RInChIGeneratorFactory.getInstance().getRInChIGenerator(reaction, RinchiOptions.DEFAULT_OPTIONS, true);
+		} 
+		catch (Exception x) {
+			//MDLRXNWiter throws Exception for aromatic bonds of type UNSET
+			MDLRXNWriterExceptionForAromaticBonds = true;
+		}
+		Assert.assertEquals("MDLRXNWriter Exception For Aromatic Bonds: ", true, MDLRXNWriterExceptionForAromaticBonds);		
+		
+		
 	}
 
 }
