@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -279,6 +280,35 @@ public class RInChIGenerator {
 			InchiStereo stereo = cdkStereoElementToInchiStereo(stereoEl, atomInchiAtomMap);
 			if (stereo != null)
 				ric.addStereo(stereo);
+		}
+		//Convert radicals
+		if (mol.getSingleElectronCount() > 0) {
+			 for (int i = 0; i < mol.getAtomCount(); i++) {
+				 IAtom atom = mol.getAtom(i);
+				 int eCount = mol.getConnectedSingleElectronsCount(atom);
+				 switch (eCount) {
+				 case 0:
+					 continue;
+				 case 1:
+					 //SPIN_MULTIPLICITY.Monovalent
+					 atomInchiAtomMap.get(atom).setRadical(InchiRadical.DOUBLET); 
+					 break;
+				 case 2:
+					 SPIN_MULTIPLICITY multiplicity = atom.getProperty(CDKConstants.SPIN_MULTIPLICITY);
+					 if (multiplicity != null) {
+						InchiRadical radical = cdkSpinMultiplicityToInchiRadical(multiplicity);
+						atomInchiAtomMap.get(atom).setRadical(radical);
+					 }	 
+					 else {
+						 // information loss: divalent but singlet or triplet?
+						 // no conversion;
+					 }
+					 break;
+				 default:
+					 //Invalid number of radicals;
+					 break;
+				 }
+			 }
 		}
 		return ric;
 	}
