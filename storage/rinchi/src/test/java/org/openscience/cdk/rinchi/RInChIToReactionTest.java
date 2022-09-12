@@ -112,6 +112,20 @@ public class RInChIToReactionTest extends CDKTestCase {
 	}
 	
 	@Test
+	public void testExample_1_reactant__X() throws Exception {		
+		doubleConversionTestForExampleFile("examples/1_reactant_-_X.txt", true, true);
+		doubleConversionTestForExampleFile("examples/1_reactant_-_X.txt", false, false);
+		doubleConversionTestForExampleFile("examples/1_reactant_-_X.txt", false, true);
+		doubleConversionTestForExampleFile("examples/1_reactant_-_X.txt", true, false);
+	}
+	
+	@Test
+	public void testExample_Esterification_01_flat() throws Exception {		
+		doubleConversionTestForExampleFile("examples/Esterification_01_flat.txt", false, false);
+		
+	}
+	
+	@Test
 	public void testExample_Inverted_stereochemistry() throws Exception {		
 		doubleConversionTestForExampleFile("examples/Inverted_stereochemistry.txt", true, true);
 		doubleConversionTestForExampleFile("examples/Inverted_stereochemistry.txt", false, false, false); //RAuxInfo is not compared
