@@ -32,6 +32,7 @@ import javax.vecmath.Point3d;
 import org.openscience.cdk.Atom;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.Bond;
+import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.Reaction;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
@@ -236,6 +237,20 @@ public class RInChIToReaction {
     		if (!stereoElements.isEmpty())
     			mol.setStereoElements(stereoElements);
     	}
+    	//Covert radicals
+    	for (int i = 0; i < ric.getAtoms().size(); i++) {    		
+    		InchiAtom iAt = ric.getAtoms().get(i);
+    		if (iAt.getRadical() == InchiRadical.NONE)
+    			continue;
+    		SPIN_MULTIPLICITY multiplicity = cdkSpinMultiplicityToInchiRadical(iAt.getRadical());
+    		IAtom atom = mol.getAtom(i);
+    		if (atom != null) { 
+    			//check is needed because iAt might have not been converted    			
+    			atom.setProperty(CDKConstants.SPIN_MULTIPLICITY, multiplicity);
+    			for (int e = 0; e < multiplicity.getSingleElectrons(); e++)
+    				mol.addSingleElectron(i);
+    		}
+    	}	
     	
     	if (configureMolecules) {
     		try {
