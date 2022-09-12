@@ -23,12 +23,14 @@ import org.junit.Test;
 import org.openscience.cdk.Atom;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.Bond;
+import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.Reaction;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.io.MDLV2000Writer.SPIN_MULTIPLICITY;
 import org.openscience.cdk.test.CDKTestCase;
 
 import io.github.dan2097.jnarinchi.RinchiOptions;
@@ -263,9 +265,83 @@ public class RInChIGeneratorFactoryTest extends CDKTestCase {
 			//MDLRXNWiter throws Exception for aromatic bonds of type UNSET
 			MDLRXNWriterExceptionForAromaticBonds = true;
 		}
-		Assert.assertEquals("MDLRXNWriter Exception For Aromatic Bonds: ", true, MDLRXNWriterExceptionForAromaticBonds);		
+		Assert.assertEquals("MDLRXNWriter Exception For Aromatic Bonds: ", true, MDLRXNWriterExceptionForAromaticBonds);
+	}
+	
+	@Test
+	public void tes04_radical_doublet() throws CDKException {
+		//Create propane doublet radical (monovalent)
+		IAtomContainer mol = new AtomContainer();
+		IAtom a0 = new Atom("C");
+		a0.setImplicitHydrogenCount(2);		
+		mol.addAtom(a0);
+		IAtom a1 = new Atom("C");
+		a1.setImplicitHydrogenCount(2);		
+		mol.addAtom(a1);
+		IAtom a2 = new Atom("C");
+		a2.setImplicitHydrogenCount(3);
+		mol.addAtom(a2);		
+		IBond b0 = new Bond(a0 ,a1 ,IBond.Order.SINGLE);
+		mol.addBond(b0);
+		IBond b1 = new Bond(a1 ,a2 ,IBond.Order.SINGLE);
+		mol.addBond(b1);
+		//Set radical info
+		a0.setProperty(CDKConstants.SPIN_MULTIPLICITY, SPIN_MULTIPLICITY.Monovalent);
+		mol.addSingleElectron(0);
+						
+		//Create reaction and set propane as a reagent
+		IReaction reaction = new Reaction();
+		reaction.addReactant(mol);
 		
+		//Generate RInChI
+		RInChIGenerator gen = RInChIGeneratorFactory.getInstance().getRInChIGenerator(reaction);
+		Assert.assertEquals("RInChI status: ", RinchiStatus.SUCCESS, gen.getRInChIStatus());		
+		Assert.assertEquals("RInChI for propane radical: ", "RInChI=1.00.1S/<>C3H7/c1-3-2/h1,3H2,2H3/d-", gen.getRInChI());
+		Assert.assertEquals("RAuxInfo for propane radical: ", "RAuxInfo=1.00.1/<>0/N:1,3,2/CRV:1d/rA:3nC.2CC/rB:s1;s2;/rC:;;;", gen.getAuxInfo());
+				
+		//Generate RInChI using CDK MDL writer
+		RInChIGenerator gen2 = RInChIGeneratorFactory.getInstance().getRInChIGenerator(reaction, RinchiOptions.DEFAULT_OPTIONS, true);
+		Assert.assertEquals("RInChI for propane radical: ", "RInChI=1.00.1S/<>C3H7/c1-3-2/h1,3H2,2H3/d-", gen2.getRInChI());
+		Assert.assertEquals("RAuxInfo for propane radical: ", "RAuxInfo=1.00.1/<>0/N:1,3,2/CRV:1d/rA:3nC.2CC/rB:s1;s2;/rC:;;;", gen2.getAuxInfo());				
+	}
+	
+	@Test
+	public void tes05_radical_triplet() throws CDKException {
+		//Create propane triple radical (divalent)
+		//!!! propane singlet radical produces the same RAuxInfo (bug or feature in RInChI - unknown ??)
+		IAtomContainer mol = new AtomContainer();
+		IAtom a0 = new Atom("C");
+		a0.setImplicitHydrogenCount(1);		
+		mol.addAtom(a0);
+		IAtom a1 = new Atom("C");
+		a1.setImplicitHydrogenCount(2);		
+		mol.addAtom(a1);
+		IAtom a2 = new Atom("C");
+		a2.setImplicitHydrogenCount(3);
+		mol.addAtom(a2);		
+		IBond b0 = new Bond(a0 ,a1 ,IBond.Order.SINGLE);
+		mol.addBond(b0);
+		IBond b1 = new Bond(a1 ,a2 ,IBond.Order.SINGLE);
+		mol.addBond(b1);
+		//Set radical info		
+		a0.setProperty(CDKConstants.SPIN_MULTIPLICITY, SPIN_MULTIPLICITY.DivalentTriplet);
+		mol.addSingleElectron(0);
+		mol.addSingleElectron(0);
+						
+		//Create reaction and set propane as a reagent
+		IReaction reaction = new Reaction();
+		reaction.addReactant(mol);
 		
+		//Generate RInChI
+		RInChIGenerator gen = RInChIGeneratorFactory.getInstance().getRInChIGenerator(reaction);
+		Assert.assertEquals("RInChI status: ", RinchiStatus.SUCCESS, gen.getRInChIStatus());		
+		Assert.assertEquals("RInChI for propane radical: ", "RInChI=1.00.1S/<>C3H6/c1-3-2/h1H,3H2,2H3/d-", gen.getRInChI());
+		Assert.assertEquals("RAuxInfo for propane radical: ", "RAuxInfo=1.00.1/<>0/N:1,3,2/CRV:1t/rA:3nC.3CC/rB:s1;s2;/rC:;;;", gen.getAuxInfo());
+				
+		//Generate RInChI using CDK MDL writer
+		RInChIGenerator gen2 = RInChIGeneratorFactory.getInstance().getRInChIGenerator(reaction, RinchiOptions.DEFAULT_OPTIONS, true);
+		Assert.assertEquals("RInChI for propane radical: ", "RInChI=1.00.1S/<>C3H6/c1-3-2/h1H,3H2,2H3/d-", gen2.getRInChI());
+		Assert.assertEquals("RAuxInfo for propane radical: ", "RAuxInfo=1.00.1/<>0/N:1,3,2/CRV:1t/rA:3nC.3CC/rB:s1;s2;/rC:;;;", gen2.getAuxInfo());						
 	}
 
 }
