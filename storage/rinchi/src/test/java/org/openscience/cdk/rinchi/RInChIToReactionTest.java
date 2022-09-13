@@ -79,6 +79,47 @@ public class RInChIToReactionTest extends CDKTestCase {
 		Assert.assertEquals("Web-RInChIKey:", rfi.get("Web-RInChIKey"), gen.getWebRInChIKey());
 	}
 	
+	public void doubleConversionTestForExampleFile_excludeAgents(String rinchiFile, 
+			boolean useCDK_MDL_IO, boolean useCDK_MDL_IO2) throws Exception {
+		//RInChI --> Reaction
+		Map<String, String> rfi = RInChIGeneratorTest.readRinchiFullInfoFromResourceFile(rinchiFile);
+		String rinchi = rfi.get("RInChI");
+		String auxInfo = rfi.get("RAuxInfo");
+		RInChIToReaction r2r = RInChIGeneratorFactory.getInstance().getRInChIToReaction(rinchi, auxInfo, useCDK_MDL_IO);
+		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, r2r.getStatus());
+		IReaction reaction = r2r.getReaction();
+		Assert.assertNotNull(reaction);
+		//Reaction --> RInChI 
+		/*
+		RInChIGenerator gen = RInChIGeneratorFactory.getInstance().
+			 	getRInChIGenerator(reaction, RinchiOptions.DEFAULT_OPTIONS, useCDK_MDL_IO2);
+		Assert.assertNotNull(gen);
+		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, gen.getRInChIStatus());
+		Assert.assertEquals("RinChI:", rinchi, gen.getRInChI());
+		*/
+	}
+	
+	private String removeAgents(String rinchi) {
+		//RInChI=1.00.1S/layer2<>layer3<>layer4/d(+,-,=)/u#2-#3-#4
+		//Agents are on the layer4
+		String tokens[] = rinchi.split("<>");
+		
+		if (tokens.length != 3) {
+			//layer4 is missing (< 3) 
+			//or something else happen (e.g. incorrect rinchi for > 3)
+			return rinchi; 
+		}	
+		
+		String newToken;
+		int pos = tokens[2].indexOf("/d");
+		if (pos == -1)
+			newToken = "";
+		else
+			newToken = tokens[2].substring(pos);
+		
+		return tokens[0] + "<>" + tokens[1] + "<>" + newToken;
+	}
+	
 	@Test
 	public void testExample_1_reactant__A() throws Exception {		
 		doubleConversionTestForExampleFile("examples/1_reactant_-_A.txt", true, true);
