@@ -413,8 +413,11 @@ public class RInChIToReaction {
     		Stereo stereo;
     		if (inchiStereo.getParity() == InchiStereoParity.ODD)
     			stereo = Stereo.CLOCKWISE;
-    		else
+    		else {
     			stereo = Stereo.ANTI_CLOCKWISE;
+    			//Potential information "loss": 
+    			//InchiStereoParity.UNDEFINED type is also saved as ANTI_CLOCKWISE
+    		}	
     		
     		return new TetrahedralChirality(chiralAtom, ligands, stereo);
     	}

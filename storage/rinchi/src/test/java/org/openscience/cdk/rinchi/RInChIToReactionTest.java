@@ -122,7 +122,25 @@ public class RInChIToReactionTest extends CDKTestCase {
 	@Test
 	public void testExample_Esterification_01_flat() throws Exception {		
 		doubleConversionTestForExampleFile("examples/Esterification_01_flat.txt", false, false);
-		
+		//useCDK_MDL_IO = true is not tested because reaction agents are not supported
+	}
+	
+	@Test
+	public void testExample_Esterification_01() throws Exception {		
+		doubleConversionTestForExampleFile("examples/Esterification_01.txt", false, false);
+		//useCDK_MDL_IO = true is not tested since reaction agents are not supported with this option
+	}
+	
+	@Test
+	public void testExample_Esterification_02() throws Exception {		
+		doubleConversionTestForExampleFile("examples/Esterification_02.txt", false, false);
+		//useCDK_MDL_IO = true is not tested since reaction agents are not supported with this option
+	}
+	
+	@Test
+	public void testExample_Esterification_03() throws Exception {		
+		doubleConversionTestForExampleFile("examples/Esterification_03.txt", false, false);
+		//useCDK_MDL_IO = true is not tested since reaction agents are not supported with this option
 	}
 	
 	@Test
@@ -131,6 +149,12 @@ public class RInChIToReactionTest extends CDKTestCase {
 		doubleConversionTestForExampleFile("examples/Inverted_stereochemistry.txt", false, false);
 		doubleConversionTestForExampleFile("examples/Inverted_stereochemistry.txt", false, true);
 		doubleConversionTestForExampleFile("examples/Inverted_stereochemistry.txt", true, false); 
+	}
+	
+	@Test
+	public void testExample_Multiplesteps() throws Exception {		
+		doubleConversionTestForExampleFile("examples/Multiplesteps.txt", false, false);
+		//useCDK_MDL_IO = true is not tested since reaction agents are not supported with this option
 	}
 	
 	@Test
@@ -150,6 +174,11 @@ public class RInChIToReactionTest extends CDKTestCase {
 	}
 	
 	@Test
+	public void testExample_No_reactant___no_product() throws Exception {		
+		doubleConversionTestForExampleFile("examples/No_reactant_-_no_product.txt", false, false);
+	}
+	
+	@Test
 	public void testExample_no_structure__1_product() throws Exception {		
 		doubleConversionTestForExampleFile("examples/no_structure_-_1_product.txt", true, true);
 		doubleConversionTestForExampleFile("examples/no_structure_-_1_product.txt", false, false);
@@ -157,6 +186,11 @@ public class RInChIToReactionTest extends CDKTestCase {
 		doubleConversionTestForExampleFile("examples/no_structure_-_1_product.txt", true, false);		
 	}
 	
+	@Test
+	public void testExample_No_Structure_0_02() throws Exception {		
+		doubleConversionTestForExampleFile("examples/No_Structure_0-02.txt", false, false);
+	}
+		
 	@Test
 	public void testExample_nostruct__X() throws Exception {		
 		doubleConversionTestForExampleFile("examples/nostruct_-_X.txt", true, true);
@@ -175,7 +209,10 @@ public class RInChIToReactionTest extends CDKTestCase {
 	
 	@Test
 	public void testExample_RingOpening01() throws Exception {		
-		doubleConversionTestForExampleFile("examples/RingOpening01.txt", true, true);		
+		doubleConversionTestForExampleFile("examples/RingOpening01.txt", true, true);
+		doubleConversionTestForExampleFile("examples/RingOpening01.txt", false, false);
+		doubleConversionTestForExampleFile("examples/RingOpening01.txt", false, true);
+		//doubleConversionTestForExampleFile("examples/RingOpening01.txt", true, false);	
 	}
 	
 	@Test
