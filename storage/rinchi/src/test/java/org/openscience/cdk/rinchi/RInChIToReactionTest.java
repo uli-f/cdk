@@ -23,7 +23,11 @@ import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.openscience.cdk.interfaces.IAtom;
+import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
+import org.openscience.cdk.interfaces.IStereoElement;
+import org.openscience.cdk.stereo.StereoElementFactory;
 import org.openscience.cdk.test.CDKTestCase;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
@@ -56,8 +60,8 @@ public class RInChIToReactionTest extends CDKTestCase {
 		doubleConversionTestForExampleFile(rinchiFile, useCDK_MDL_IO, useCDK_MDL_IO2, true);
 	}
 	
-	public void doubleConversionTestForExampleFile(String rinchiFile, 
-			boolean useCDK_MDL_IO, boolean useCDK_MDL_IO2, boolean compareRAuxInfo) throws Exception {
+	public void doubleConversionTestForExampleFile(String rinchiFile, boolean useCDK_MDL_IO, boolean useCDK_MDL_IO2, 
+			boolean compareRAuxInfo) throws Exception {
 		//RInChI --> Reaction
 		Map<String, String> rfi = RInChIGeneratorTest.readRinchiFullInfoFromResourceFile(rinchiFile);
 		String rinchi = rfi.get("RInChI");
@@ -198,14 +202,9 @@ public class RInChIToReactionTest extends CDKTestCase {
 	@Test
 	public void testExample_Inverted_stereochemistry() throws Exception {		
 		doubleConversionTestForExampleFile("examples/Inverted_stereochemistry.txt", true, true);
-		doubleConversionTestForExampleFile("examples/Inverted_stereochemistry.txt", true, false);		
-		//RAuxInfo is not compared because RInChI native library returns only relative chirality as 2D/3D coordinates
-		//which is taken into account by the RInChI notation string. 
-		//RAuxInfo uses absolute chirality information and it will be not generated the same way 
-		//if absolute chjirality is not present in the molecules
-		doubleConversionTestForExampleFile("examples/Inverted_stereochemistry.txt", false, false, false);
-		doubleConversionTestForExampleFile("examples/Inverted_stereochemistry.txt", false, true, false);
-		 
+		doubleConversionTestForExampleFile("examples/Inverted_stereochemistry.txt", true, false);
+		doubleConversionTestForExampleFile("examples/Inverted_stereochemistry.txt", false, false);
+		doubleConversionTestForExampleFile("examples/Inverted_stereochemistry.txt", false, true); 
 	}
 	
 	@Test
@@ -272,13 +271,10 @@ public class RInChIToReactionTest extends CDKTestCase {
 	@Test
 	public void testExample_RingOpening01() throws Exception {		
 		doubleConversionTestForExampleFile("examples/RingOpening01.txt", true, true);
-		//RAuxInfo is not compared because RInChI native library returns only relative chirality as 2D/3D coordinates
-		//which is taken into account by the RInChI notation string. 
-		//RAuxInfo uses absolute chirality information and it will be not generated the same way 
-		//if absolute chjirality is not present in the molecules
-		doubleConversionTestForExampleFile("examples/RingOpening01.txt", false, false, false);
-		doubleConversionTestForExampleFile("examples/RingOpening01.txt", false, true, false);
-		//doubleConversionTestForExampleFile("examples/RingOpening01.txt", true, false);	
+		doubleConversionTestForExampleFile("examples/RingOpening01.txt", true, false);
+		doubleConversionTestForExampleFile("examples/RingOpening01.txt", false, false);
+		doubleConversionTestForExampleFile("examples/RingOpening01.txt", false, true);
+			
 	}
 	
 	@Test
