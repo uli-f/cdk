@@ -171,8 +171,23 @@ public class RInChIGenerator {
 			try {
 				// Serialize Reaction to MDL RXN
 				StringWriter writer = new StringWriter(10000);		        
-				MDLRXNWriter mdlWriter = new MDLRXNWriter(writer);				
-				mdlWriter.write(reaction);
+				MDLRXNWriter mdlWriter = new MDLRXNWriter(writer);
+				
+				//If agents are present, they are not written in the RXN file, but 
+				//their number is added into the count line.
+				//The latter causes error/exception in the native RInChI RXN reader:
+				//RInChI generation problem: class rinchi::MdlRxnfileReaderError: 
+				//Reading from 'std::istream', line 5: 
+				//Invalid component count line - must be 6 characters long
+				//Therefore the agents are removed before conversion
+				if (!reaction.getAgents().isEmpty()) {
+					IReaction reaction0 = (IReaction) reaction.clone();
+					reaction0.getAgents().removeAllAtomContainers();
+					mdlWriter.write(reaction0);
+				}	
+				else
+					mdlWriter.write(reaction);
+					
 				mdlWriter.close();		        
 				String fileText = writer.toString(); 
 				rinchiOutput = JnaRinchi.fileTextToRinchi(ReactionFileFormat.RXN, fileText, options);
