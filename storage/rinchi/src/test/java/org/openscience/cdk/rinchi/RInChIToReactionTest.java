@@ -198,9 +198,14 @@ public class RInChIToReactionTest extends CDKTestCase {
 	@Test
 	public void testExample_Inverted_stereochemistry() throws Exception {		
 		doubleConversionTestForExampleFile("examples/Inverted_stereochemistry.txt", true, true);
-		doubleConversionTestForExampleFile("examples/Inverted_stereochemistry.txt", false, false);
-		doubleConversionTestForExampleFile("examples/Inverted_stereochemistry.txt", false, true);
-		doubleConversionTestForExampleFile("examples/Inverted_stereochemistry.txt", true, false); 
+		doubleConversionTestForExampleFile("examples/Inverted_stereochemistry.txt", true, false);		
+		//RAuxInfo is not compared because RInChI native library returns only relative chirality as 2D/3D coordinates
+		//which is taken into account by the RInChI notation string. 
+		//RAuxInfo uses absolute chirality information and it will be not generated the same way 
+		//if absolute chjirality is not present in the molecules
+		doubleConversionTestForExampleFile("examples/Inverted_stereochemistry.txt", false, false, false);
+		doubleConversionTestForExampleFile("examples/Inverted_stereochemistry.txt", false, true, false);
+		 
 	}
 	
 	@Test
@@ -267,8 +272,12 @@ public class RInChIToReactionTest extends CDKTestCase {
 	@Test
 	public void testExample_RingOpening01() throws Exception {		
 		doubleConversionTestForExampleFile("examples/RingOpening01.txt", true, true);
-		doubleConversionTestForExampleFile("examples/RingOpening01.txt", false, false);
-		doubleConversionTestForExampleFile("examples/RingOpening01.txt", false, true);
+		//RAuxInfo is not compared because RInChI native library returns only relative chirality as 2D/3D coordinates
+		//which is taken into account by the RInChI notation string. 
+		//RAuxInfo uses absolute chirality information and it will be not generated the same way 
+		//if absolute chjirality is not present in the molecules
+		doubleConversionTestForExampleFile("examples/RingOpening01.txt", false, false, false);
+		doubleConversionTestForExampleFile("examples/RingOpening01.txt", false, true, false);
 		//doubleConversionTestForExampleFile("examples/RingOpening01.txt", true, false);	
 	}
 	
