@@ -89,14 +89,13 @@ public class RInChIToReactionTest extends CDKTestCase {
 		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, r2r.getStatus());
 		IReaction reaction = r2r.getReaction();
 		Assert.assertNotNull(reaction);
-		//Reaction --> RInChI 
-		/*
+		//Reaction --> RInChI
+		String expectedRinchi = removeAgents(rinchi);
 		RInChIGenerator gen = RInChIGeneratorFactory.getInstance().
 			 	getRInChIGenerator(reaction, RinchiOptions.DEFAULT_OPTIONS, useCDK_MDL_IO2);
 		Assert.assertNotNull(gen);
 		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, gen.getRInChIStatus());
-		Assert.assertEquals("RinChI:", rinchi, gen.getRInChI());
-		*/
+		Assert.assertEquals("RinChI with excluded agents:", expectedRinchi, gen.getRInChI());
 	}
 	
 	private String removeAgents(String rinchi) {
@@ -105,8 +104,8 @@ public class RInChIToReactionTest extends CDKTestCase {
 		String tokens[] = rinchi.split("<>");
 		
 		if (tokens.length != 3) {
-			//layer4 is missing (< 3) 
-			//or something else happen (e.g. incorrect rinchi for > 3)
+			//layer4 is missing (tokens.length < 3) 
+			//or something else happen (e.g. incorrect rinchi, tokens.length > 3)
 			return rinchi; 
 		}	
 		
@@ -117,7 +116,7 @@ public class RInChIToReactionTest extends CDKTestCase {
 		else
 			newToken = tokens[2].substring(pos);
 		
-		return tokens[0] + "<>" + tokens[1] + "<>" + newToken;
+		return tokens[0] + "<>" + tokens[1] + newToken;
 	}
 	
 	@Test
@@ -163,25 +162,37 @@ public class RInChIToReactionTest extends CDKTestCase {
 	@Test
 	public void testExample_Esterification_01_flat() throws Exception {		
 		doubleConversionTestForExampleFile("examples/Esterification_01_flat.txt", false, false);
-		//useCDK_MDL_IO = true is not tested because reaction agents are not supported
+		//For flags useCDK_MDL_IO/useCDK_MDL_IO2 = true, reaction agents are not converted
+		doubleConversionTestForExampleFile_excludeAgents("examples/Esterification_01_flat.txt", true, true);
+		doubleConversionTestForExampleFile_excludeAgents("examples/Esterification_01_flat.txt", true, false);
+		doubleConversionTestForExampleFile_excludeAgents("examples/Esterification_01_flat.txt", false, true);
 	}
 	
 	@Test
 	public void testExample_Esterification_01() throws Exception {		
 		doubleConversionTestForExampleFile("examples/Esterification_01.txt", false, false);
-		//useCDK_MDL_IO = true is not tested since reaction agents are not supported with this option
+		//For flags useCDK_MDL_IO/useCDK_MDL_IO2 = true, reaction agents are not converted
+		doubleConversionTestForExampleFile_excludeAgents("examples/Esterification_01.txt", true, true);
+		doubleConversionTestForExampleFile_excludeAgents("examples/Esterification_01.txt", true, false);
+		doubleConversionTestForExampleFile_excludeAgents("examples/Esterification_01.txt", false, true);
 	}
 	
 	@Test
 	public void testExample_Esterification_02() throws Exception {		
 		doubleConversionTestForExampleFile("examples/Esterification_02.txt", false, false);
-		//useCDK_MDL_IO = true is not tested since reaction agents are not supported with this option
+		//For flags useCDK_MDL_IO/useCDK_MDL_IO2 = true, reaction agents are not converted
+		doubleConversionTestForExampleFile_excludeAgents("examples/Esterification_02.txt", true, true);
+		doubleConversionTestForExampleFile_excludeAgents("examples/Esterification_02.txt", true, false);
+		doubleConversionTestForExampleFile_excludeAgents("examples/Esterification_02.txt", false, true);
 	}
 	
 	@Test
 	public void testExample_Esterification_03() throws Exception {		
 		doubleConversionTestForExampleFile("examples/Esterification_03.txt", false, false);
-		//useCDK_MDL_IO = true is not tested since reaction agents are not supported with this option
+		//For flags useCDK_MDL_IO/useCDK_MDL_IO2 = true, reaction agents are not converted
+		doubleConversionTestForExampleFile_excludeAgents("examples/Esterification_03.txt", true, true);
+		doubleConversionTestForExampleFile_excludeAgents("examples/Esterification_03.txt", true, false);
+		doubleConversionTestForExampleFile_excludeAgents("examples/Esterification_03.txt", false, true);
 	}
 	
 	@Test
@@ -195,7 +206,10 @@ public class RInChIToReactionTest extends CDKTestCase {
 	@Test
 	public void testExample_Multiplesteps() throws Exception {		
 		doubleConversionTestForExampleFile("examples/Multiplesteps.txt", false, false);
-		//useCDK_MDL_IO = true is not tested since reaction agents are not supported with this option
+		//For flags useCDK_MDL_IO/useCDK_MDL_IO2 = true, reaction agents are not converted
+		doubleConversionTestForExampleFile_excludeAgents("examples/Multiplesteps.txt", true, true);
+		doubleConversionTestForExampleFile_excludeAgents("examples/Multiplesteps.txt", true, false);
+		doubleConversionTestForExampleFile_excludeAgents("examples/Multiplesteps.txt", false, true);
 	}
 	
 	@Test
@@ -217,6 +231,7 @@ public class RInChIToReactionTest extends CDKTestCase {
 	@Test
 	public void testExample_No_reactant___no_product() throws Exception {		
 		doubleConversionTestForExampleFile("examples/No_reactant_-_no_product.txt", false, false);
+		//conversion with useCDK_MDL_IO option is not working for this case
 	}
 	
 	@Test
@@ -230,6 +245,7 @@ public class RInChIToReactionTest extends CDKTestCase {
 	@Test
 	public void testExample_No_Structure_0_02() throws Exception {		
 		doubleConversionTestForExampleFile("examples/No_Structure_0-02.txt", false, false);
+		//conversion with useCDK_MDL_IO option is not working for this case
 	}
 		
 	@Test
