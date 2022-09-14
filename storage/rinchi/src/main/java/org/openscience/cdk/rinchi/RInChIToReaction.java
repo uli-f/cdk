@@ -44,12 +44,14 @@ import org.openscience.cdk.interfaces.ITetrahedralChirality;
 import org.openscience.cdk.interfaces.ITetrahedralChirality.Stereo;
 import org.openscience.cdk.io.MDLRXNV2000Reader;
 import org.openscience.cdk.io.MDLV2000Writer.SPIN_MULTIPLICITY;
+import org.openscience.cdk.stereo.StereoElementFactory;
 import org.openscience.cdk.stereo.TetrahedralChirality;
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
 
 import io.github.dan2097.jnainchi.InchiAtom;
 import io.github.dan2097.jnainchi.InchiBond;
 import io.github.dan2097.jnainchi.InchiBondStereo;
+import io.github.dan2097.jnainchi.InchiInput;
 import io.github.dan2097.jnainchi.InchiRadical;
 import io.github.dan2097.jnainchi.InchiStereo;
 import io.github.dan2097.jnainchi.InchiStereoParity;
@@ -210,6 +212,7 @@ public class RInChIToReaction {
     	IAtomContainer mol = new AtomContainer();
     	Map<InchiAtom,IAtom> inchiAtom2AtomMap = new HashMap<>();
     	MolCoordinatesType molCoordType = StereoUtils.getMolCoordinatesType(ric);
+    	
     	//Convert atoms
     	for (int i = 0; i < ric.getAtoms().size(); i++) {    		
     		InchiAtom iAt = ric.getAtoms().get(i);
@@ -219,6 +222,7 @@ public class RInChIToReaction {
     			mol.addAtom(atom);
     		}
     	}
+    	
     	//Convert bonds
     	for (int i = 0; i < ric.getBonds().size(); i++) {    		
     		InchiBond iBo = ric.getBonds().get(i);
@@ -226,7 +230,8 @@ public class RInChIToReaction {
     		if (bond != null) 
     			mol.addBond(bond);
     	}
-    	//Convert stereos
+    	
+    	//Convert stereos / generate stereo elements
     	if (!ric.getStereos().isEmpty()) {
     		List<IStereoElement> stereoElements = new ArrayList<>();
     		for (InchiStereo stereo : ric.getStereos()) {
@@ -237,6 +242,20 @@ public class RInChIToReaction {
     		if (!stereoElements.isEmpty())
     			mol.setStereoElements(stereoElements);
     	}
+    	else {
+    		//No stereo elements available and 
+    		//trying to generate them from 2D/3D coordinates
+    		//
+    		//Generally this case should be expected always because
+    		//RInChI native library returns chirality via 2D/3D coordinates in the RXN/RDFile text
+    		//However  RAuxInfo requires the "chiral flag" which is set only when 
+    		//stereo elements are set in the molecule 
+    		if (molCoordType == MolCoordinatesType._2D)
+				mol.setStereoElements(StereoElementFactory.using2DCoordinates(mol).createAll());
+			else if (molCoordType == MolCoordinatesType._3D)
+				mol.setStereoElements(StereoElementFactory.using3DCoordinates(mol).createAll());
+    	}
+    	
     	//Covert radicals
     	for (int i = 0; i < ric.getAtoms().size(); i++) {    		
     		InchiAtom iAt = ric.getAtoms().get(i);
