@@ -27,14 +27,17 @@ import java.util.Properties;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.Reaction;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.interfaces.IStereoElement;
+import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IDoubleBondStereochemistry;
 import org.openscience.cdk.interfaces.IDoubleBondStereochemistry.Conformation;
 import org.openscience.cdk.io.MDLRXNV2000Reader;
 import org.openscience.cdk.io.IChemObjectReader.Mode;
+import org.openscience.cdk.io.MDLV2000Writer.SPIN_MULTIPLICITY;
 import org.openscience.cdk.test.CDKTestCase;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
@@ -267,7 +270,7 @@ public class RInChIGeneratorTest extends CDKTestCase {
 	}
 	
 	@Test
-	public void testStereoDoubleBond03() throws Exception {
+	public void testStereoDoubleBond_with_Agents() throws Exception {
 		//CC#CC > [Li].[NH3] > C/C=C\C		
 		//Get RInChI from RDFile (using Jna-RInchi on a lower level)
 		String reactText = readFileTextFromResourceFile("reaction-data/Birch_reduction.rdf");		
@@ -295,6 +298,33 @@ public class RInChIGeneratorTest extends CDKTestCase {
 			Assert.assertEquals("DoubleBondStereochemistry comformation: ", Conformation.OPPOSITE, dbse.getStereo());
 			break; //only one stereo element is expected
 		}
+	}
+	
+	@Test
+	public void testReadicalReaction01() throws Exception {
+		//
+		IReaction reaction = readReactionFromResourceRXNFile("reaction-data/Radical_reaction.rxn");
+		//Reaction --> RInChI
+		RInChIGenerator gen = RInChIGeneratorFactory.getInstance().
+				getRInChIGenerator(reaction, RinchiOptions.DEFAULT_OPTIONS);
+		Assert.assertNotNull(gen);
+		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, gen.getRInChIStatus());
+		
+		//RInChI --> Reaction
+		RInChIToReaction r2r = RInChIGeneratorFactory.getInstance().getRInChIToReaction(gen.getRInChI(), gen.getAuxInfo());
+		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, r2r.getStatus());
+		IReaction reaction2 = r2r.getReaction();
+		Assert.assertNotNull(reaction2);
+		//Check radicals
+		IAtomContainer reactant = reaction.getReactants().getAtomContainer(0);
+		int nReactantRadicals = 0;
+		for (IAtom a: reactant.atoms()) {
+			Object mult = a.getProperty(CDKConstants.SPIN_MULTIPLICITY);
+			if (mult != null) 
+				if ((SPIN_MULTIPLICITY) mult == SPIN_MULTIPLICITY.Monovalent)
+					nReactantRadicals++;
+		}
+		Assert.assertEquals("nReactantRadicals:", 1, nReactantRadicals);
 	}
 	
 }
