@@ -18,7 +18,9 @@
  */
 package org.openscience.cdk.rinchi;
 
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -37,7 +39,9 @@ import org.openscience.cdk.test.CDKTestCase;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 
+import io.github.dan2097.jnarinchi.JnaRinchi;
 import io.github.dan2097.jnarinchi.RinchiOptions;
+import io.github.dan2097.jnarinchi.RinchiOutput;
 import io.github.dan2097.jnarinchi.RinchiStatus;
 
 
@@ -82,6 +86,21 @@ public class RInChIGeneratorTest extends CDKTestCase {
 		reaction = reader.read(reaction);
 		reader.close();
 		return reaction;
+	}
+	
+	public static String readFileTextFromResourceFile(String fileName) {
+		StringBuilder sb = new StringBuilder();
+		try (InputStream is = RInChIGeneratorTest.class.getResourceAsStream(fileName);
+				BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				sb.append(line).append("\n");
+			}
+			return sb.toString();
+		}
+		catch (Exception e) {
+			return null;
+		}
 	}
 	
 	public void genericExampleTest(String reactionFile, String rinchiFile, boolean useCDK_MDL_IO) throws Exception {
@@ -238,6 +257,37 @@ public class RInChIGeneratorTest extends CDKTestCase {
 			break; //only one stereo element is expected
 		}
 		IAtomContainer prod = reaction2.getProducts().getAtomContainer(0);
+		Assert.assertNotNull(prod.stereoElements());
+		for (IStereoElement<?,?> se : prod.stereoElements()) {
+			Assert.assertEquals("Instance of IDoubleBondStereochemistry: ", true, (se instanceof IDoubleBondStereochemistry));
+			IDoubleBondStereochemistry dbse = (IDoubleBondStereochemistry)se;
+			Assert.assertEquals("DoubleBondStereochemistry comformation: ", Conformation.OPPOSITE, dbse.getStereo());
+			break; //only one stereo element is expected
+		}
+	}
+	
+	@Test
+	public void testStereoDoubleBond03() throws Exception {
+		//CC#CC > [Li].[NH3] > C/C=C\C		
+		//Get RInChI from RDFile (using Jna-RInchi on a lower level)
+		String reactText = readFileTextFromResourceFile("reaction-data/Birch_reduction.rdf");		
+		RinchiOutput rinchiOut = JnaRinchi.fileTextToRinchi(reactText);		
+		//RInChI --> Reaction
+		RInChIToReaction r2r = RInChIGeneratorFactory.getInstance().getRInChIToReaction(rinchiOut.getRinchi(), rinchiOut.getAuxInfo());
+		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, r2r.getStatus());
+		IReaction reaction = r2r.getReaction();
+		Assert.assertNotNull(reaction);
+		//Check reaction components count
+		Assert.assertEquals("Number of reactants:", 1, reaction.getReactantCount());
+		Assert.assertEquals("Number of products:", 1, reaction.getProductCount());
+		Assert.assertEquals("Number of agents:", 2, reaction.getAgents().getAtomContainerCount());
+		//Check agents:
+		Assert.assertEquals("Agent 1 atom:", "N", reaction.getAgents().getAtomContainer(0).getAtom(0).getSymbol());
+		Assert.assertEquals("Agent 1 implicit H atoms:", new Integer(3), 
+					reaction.getAgents().getAtomContainer(0).getAtom(0).getImplicitHydrogenCount());
+		Assert.assertEquals("Agent 2 atom:", "Li", reaction.getAgents().getAtomContainer(1).getAtom(0).getSymbol());
+		//Check double bond stereo
+		IAtomContainer prod = reaction.getProducts().getAtomContainer(0);
 		Assert.assertNotNull(prod.stereoElements());
 		for (IStereoElement<?,?> se : prod.stereoElements()) {
 			Assert.assertEquals("Instance of IDoubleBondStereochemistry: ", true, (se instanceof IDoubleBondStereochemistry));
