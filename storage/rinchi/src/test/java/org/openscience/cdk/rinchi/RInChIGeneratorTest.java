@@ -132,7 +132,7 @@ public class RInChIGeneratorTest extends CDKTestCase {
 	@Test
 	public void testStereoDoubleBond01() throws Exception {
 		//CC#CC>>C/C=C\C
-		IReaction reaction = readReactionFromResourceRXNFile("reaction-data/Lidlar_hydrogenation.rxn");
+		IReaction reaction = readReactionFromResourceRXNFile("reaction-data/Lindlar_hydrogenation.rxn");
 		//Reaction --> RInChI
 		RInChIGenerator gen = RInChIGeneratorFactory.getInstance().
 				getRInChIGenerator(reaction, RinchiOptions.DEFAULT_OPTIONS);
@@ -157,7 +157,7 @@ public class RInChIGeneratorTest extends CDKTestCase {
 	@Test
 	public void testStereoDoubleBond01_B() throws Exception {
 		//CC#CC>>C/C=C\C
-		IReaction reaction = readReactionFromResourceRXNFile("reaction-data/Lidlar_hydrogenation.rxn");
+		IReaction reaction = readReactionFromResourceRXNFile("reaction-data/Lindlar_hydrogenation.rxn");
 		//Testing with option: useCDK_MDL_IO = true
 		//Reaction --> RInChI
 		RInChIGenerator gen = RInChIGeneratorFactory.getInstance().
