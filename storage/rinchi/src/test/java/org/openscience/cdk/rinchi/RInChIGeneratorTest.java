@@ -131,6 +131,7 @@ public class RInChIGeneratorTest extends CDKTestCase {
 	
 	@Test
 	public void testStereoDoubleBond01() throws Exception {
+		//CC#CC>>C/C=C\C
 		IReaction reaction = readReactionFromResourceRXNFile("reaction-data/Lidlar_hydrogenation.rxn");
 		//Reaction --> RInChI
 		RInChIGenerator gen = RInChIGeneratorFactory.getInstance().
@@ -142,13 +143,106 @@ public class RInChIGeneratorTest extends CDKTestCase {
 		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, r2r.getStatus());
 		IReaction reaction2 = r2r.getReaction();
 		Assert.assertNotNull(reaction2);
-		//Check double stereo bond stereo
+		//Check double bond stereo
 		IAtomContainer prod = reaction2.getProducts().getAtomContainer(0);
 		Assert.assertNotNull(prod.stereoElements());
 		for (IStereoElement<?,?> se : prod.stereoElements()) {
 			Assert.assertEquals("Instance of IDoubleBondStereochemistry: ", true, (se instanceof IDoubleBondStereochemistry));
 			IDoubleBondStereochemistry dbse = (IDoubleBondStereochemistry)se;
 			Assert.assertEquals("DoubleBondStereochemistry comformation: ", Conformation.TOGETHER, dbse.getStereo());
+			break; //only one stereo element is expected
+		}
+	}
+	
+	@Test
+	public void testStereoDoubleBond01_B() throws Exception {
+		//CC#CC>>C/C=C\C
+		IReaction reaction = readReactionFromResourceRXNFile("reaction-data/Lidlar_hydrogenation.rxn");
+		//Testing with option: useCDK_MDL_IO = true
+		//Reaction --> RInChI
+		RInChIGenerator gen = RInChIGeneratorFactory.getInstance().
+				getRInChIGenerator(reaction, RinchiOptions.DEFAULT_OPTIONS, true);
+		Assert.assertNotNull(gen);
+		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, gen.getRInChIStatus());
+		//RInChI --> Reaction
+		RInChIToReaction r2r = RInChIGeneratorFactory.getInstance().getRInChIToReaction(gen.getRInChI(), gen.getAuxInfo(), true);
+		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, r2r.getStatus());
+		IReaction reaction2 = r2r.getReaction();
+		Assert.assertNotNull(reaction2);
+		//Check double bond stereo
+		IAtomContainer prod = reaction2.getProducts().getAtomContainer(0);
+		Assert.assertNotNull(prod.stereoElements());
+		for (IStereoElement<?,?> se : prod.stereoElements()) {
+			Assert.assertEquals("Instance of IDoubleBondStereochemistry: ", true, (se instanceof IDoubleBondStereochemistry));
+			IDoubleBondStereochemistry dbse = (IDoubleBondStereochemistry)se;
+			Assert.assertEquals("DoubleBondStereochemistry comformation: ", Conformation.TOGETHER, dbse.getStereo());
+			break; //only one stereo element is expected
+		}
+	}
+	
+	@Test
+	public void testStereoDoubleBond02() throws Exception {
+		//C/C=C\C>>C/C=C/C
+		IReaction reaction = readReactionFromResourceRXNFile("reaction-data/Cis_trans_isomerization.rxn");
+		//Reaction --> RInChI
+		RInChIGenerator gen = RInChIGeneratorFactory.getInstance().
+				getRInChIGenerator(reaction, RinchiOptions.DEFAULT_OPTIONS);
+		Assert.assertNotNull(gen);
+		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, gen.getRInChIStatus());
+		//RInChI --> Reaction
+		RInChIToReaction r2r = RInChIGeneratorFactory.getInstance().getRInChIToReaction(gen.getRInChI(), gen.getAuxInfo());
+		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, r2r.getStatus());
+		IReaction reaction2 = r2r.getReaction();
+		Assert.assertNotNull(reaction2);
+		//Check double stereo bond stereo
+		IAtomContainer reagent = reaction2.getReactants().getAtomContainer(0);
+		Assert.assertNotNull(reagent.stereoElements());
+		for (IStereoElement<?,?> se : reagent.stereoElements()) {
+			Assert.assertEquals("Instance of IDoubleBondStereochemistry: ", true, (se instanceof IDoubleBondStereochemistry));
+			IDoubleBondStereochemistry dbse = (IDoubleBondStereochemistry)se;
+			Assert.assertEquals("DoubleBondStereochemistry comformation: ", Conformation.TOGETHER, dbse.getStereo());
+			break; //only one stereo element is expected
+		}
+		IAtomContainer prod = reaction2.getProducts().getAtomContainer(0);
+		Assert.assertNotNull(prod.stereoElements());
+		for (IStereoElement<?,?> se : prod.stereoElements()) {
+			Assert.assertEquals("Instance of IDoubleBondStereochemistry: ", true, (se instanceof IDoubleBondStereochemistry));
+			IDoubleBondStereochemistry dbse = (IDoubleBondStereochemistry)se;
+			Assert.assertEquals("DoubleBondStereochemistry comformation: ", Conformation.OPPOSITE, dbse.getStereo());
+			break; //only one stereo element is expected
+		}
+	}
+	
+	@Test
+	public void testStereoDoubleBond02_B() throws Exception {
+		//C/C=C\C>>C/C=C/C
+		IReaction reaction = readReactionFromResourceRXNFile("reaction-data/Cis_trans_isomerization.rxn");
+		//Testing with option: useCDK_MDL_IO = true
+		//Reaction --> RInChI
+		RInChIGenerator gen = RInChIGeneratorFactory.getInstance().
+				getRInChIGenerator(reaction, RinchiOptions.DEFAULT_OPTIONS, true);
+		Assert.assertNotNull(gen);
+		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, gen.getRInChIStatus());
+		//RInChI --> Reaction
+		RInChIToReaction r2r = RInChIGeneratorFactory.getInstance().getRInChIToReaction(gen.getRInChI(), gen.getAuxInfo(), true);
+		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, r2r.getStatus());
+		IReaction reaction2 = r2r.getReaction();
+		Assert.assertNotNull(reaction2);
+		//Check double stereo bond stereo
+		IAtomContainer reagent = reaction2.getReactants().getAtomContainer(0);
+		Assert.assertNotNull(reagent.stereoElements());
+		for (IStereoElement<?,?> se : reagent.stereoElements()) {
+			Assert.assertEquals("Instance of IDoubleBondStereochemistry: ", true, (se instanceof IDoubleBondStereochemistry));
+			IDoubleBondStereochemistry dbse = (IDoubleBondStereochemistry)se;
+			Assert.assertEquals("DoubleBondStereochemistry comformation: ", Conformation.TOGETHER, dbse.getStereo());
+			break; //only one stereo element is expected
+		}
+		IAtomContainer prod = reaction2.getProducts().getAtomContainer(0);
+		Assert.assertNotNull(prod.stereoElements());
+		for (IStereoElement<?,?> se : prod.stereoElements()) {
+			Assert.assertEquals("Instance of IDoubleBondStereochemistry: ", true, (se instanceof IDoubleBondStereochemistry));
+			IDoubleBondStereochemistry dbse = (IDoubleBondStereochemistry)se;
+			Assert.assertEquals("DoubleBondStereochemistry comformation: ", Conformation.OPPOSITE, dbse.getStereo());
 			break; //only one stereo element is expected
 		}
 	}
