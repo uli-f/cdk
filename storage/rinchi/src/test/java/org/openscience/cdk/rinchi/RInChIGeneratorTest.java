@@ -302,7 +302,9 @@ public class RInChIGeneratorTest extends CDKTestCase {
 	
 	@Test
 	public void testReadicalReaction01() throws Exception {
-		//
+		//Radical chain reaction of halogenation 
+		//[CH2-radical](C)(C)C + Br-Br --> Br-radical + BrC(C)(C)C
+		
 		IReaction reaction = readReactionFromResourceRXNFile("reaction-data/Radical_reaction.rxn");
 		//Reaction --> RInChI
 		RInChIGenerator gen = RInChIGeneratorFactory.getInstance().
@@ -315,8 +317,13 @@ public class RInChIGeneratorTest extends CDKTestCase {
 		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, r2r.getStatus());
 		IReaction reaction2 = r2r.getReaction();
 		Assert.assertNotNull(reaction2);
-		//Check radicals
-		IAtomContainer reactant = reaction.getReactants().getAtomContainer(0);
+		
+		//Check reactant radicals
+		int reactantIndex = -1;
+		for (int i = 0; i < reaction.getProducts().getAtomContainerCount(); i++)
+			if (reaction.getReactants().getAtomContainer(i).getAtomCount() == 4) //[CH2](C)(C)C
+				reactantIndex = i;		
+		IAtomContainer reactant = reaction.getReactants().getAtomContainer(reactantIndex);
 		int nReactantRadicals = 0;
 		for (IAtom a: reactant.atoms()) {
 			Object mult = a.getProperty(CDKConstants.SPIN_MULTIPLICITY);
@@ -325,6 +332,20 @@ public class RInChIGeneratorTest extends CDKTestCase {
 					nReactantRadicals++;
 		}
 		Assert.assertEquals("nReactantRadicals:", 1, nReactantRadicals);
+		//Check product radicals
+		int productIndex = -1;
+		for (int i = 0; i < reaction.getProducts().getAtomContainerCount(); i++)
+			if (reaction.getProducts().getAtomContainer(i).getAtomCount() == 1) // [Br]
+				productIndex = i;
+		IAtomContainer product = reaction.getProducts().getAtomContainer(productIndex);
+		int nProductRadicals = 0;
+		for (IAtom a: product.atoms()) {
+			Object mult = a.getProperty(CDKConstants.SPIN_MULTIPLICITY);
+			if (mult != null) 
+				if ((SPIN_MULTIPLICITY) mult == SPIN_MULTIPLICITY.Monovalent)
+					nProductRadicals++;
+		}
+		Assert.assertEquals("ProductRadicals:", 1, nProductRadicals);
 	}
 	
 }
