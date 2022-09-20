@@ -18,13 +18,41 @@
  */
 package org.openscience.cdk.rinchi;
 
-import java.util.List;
-
+/**
+ * <p>Factory providing access to {@link RInChIGenerator} and {@link RInChIToReaction}.
+ * See those classes for examples of use. These methods make use of the
+ * JNA-RInChI library.
+ *
+ * <p>The {@link RInChIGeneratorFactory} is a singleton class, which means that there
+ * exists only one instance of the class. An instance of this class is obtained
+ * with:
+ * <pre>
+ * RInChIGeneratorFactory factory = RInChIGeneratorFactory.getInstance();
+ * </pre>
+ *
+ * <p>RInChI/Reaction interconversion is implemented in this way so that we can
+ * check whether or not the native code required is available. If the native
+ * code cannot be loaded during the first call to  <code>getInstance</code>
+ * method (when the instance is created) a {@link CDKException} will be thrown. The
+ * most common problem is that the native code is not in the * the correct
+ * location. 
+ * See:
+ * <ul>
+ * <li>https://github.com/dan2097/jna-inchi
+ * <li>http://www.iupac.org/inchi/
+ * <li>https://www.inchi-trust.org/
+ * </ul>
+ *
+ * @author Nikolay Kochev
+ * @cdk.module rinchi
+ * @cdk.githash
+ */
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IReaction;
 
 import io.github.dan2097.jnarinchi.RinchiFlag;
 import io.github.dan2097.jnarinchi.RinchiOptions;
+
 
 public class RInChIGeneratorFactory {
 
