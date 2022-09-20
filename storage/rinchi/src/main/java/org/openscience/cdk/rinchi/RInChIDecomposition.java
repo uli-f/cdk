@@ -26,6 +26,18 @@ import io.github.dan2097.jnarinchi.ReactionDirection;
 import io.github.dan2097.jnarinchi.RinchiDecompositionOutput;
 import io.github.dan2097.jnarinchi.RinchiDecompositionStatus;
 
+/**
+ * <p>This class decomposes a RInChI into individual InChIs and auxInfo (if available) 
+ * for each reaction component. Also components roles (reactant, product, agent) are returned
+ * as well as the reaction direction 
+ *  
+ * It places calls to a JNA wrapper for the RInChI C++ library (io.github.dan2097.jnarinchi).
+ * 
+ *
+ * @author Nikolay Kochev
+ * @cdk.module rinchi
+ * @cdk.githash
+ */
 public class RInChIDecomposition {
 
 	protected RinchiDecompositionOutput	rinchiDecompositionOutput = null;
