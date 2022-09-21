@@ -19,7 +19,8 @@
 package org.openscience.cdk.rinchi;
 
 /**
- * <p>Factory providing access to {@link RInChIGenerator} and {@link RInChIToReaction}.
+ * <p>Factory providing access to {@link RInChIGenerator}, {@link RInChIToReaction}
+ * and {@link RInChIDecomposition}.
  * See those classes for examples of use. These methods make use of the
  * JNA-RInChI library.
  *
