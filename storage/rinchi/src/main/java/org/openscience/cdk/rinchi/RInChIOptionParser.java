@@ -64,7 +64,7 @@ public class RInChIOptionParser {
 					// Note: locale sensitive e.g. 0,01 but we can not pass in milliseconds so doesn't matter so much
 					options.withTimeoutMilliSeconds((int)(1000*Double.parseDouble(substring)));
 				} catch (NumberFormatException ex) {
-					logger.warn("Invalid timtoue:" + substring);
+					logger.warn("Invalid timeout:" + substring);
 				}
 				break;
 			default:
