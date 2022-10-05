@@ -36,16 +36,66 @@ import org.openscience.cdk.test.CDKTestCase;
 import io.github.dan2097.jnarinchi.RinchiOptions;
 import io.github.dan2097.jnarinchi.RinchiStatus;
 
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
+import static org.junit.Assert.*;
+
 public class RInChIGeneratorFactoryTest extends CDKTestCase {
 
 	@Test
 	public void testGetInstance() throws CDKException {
 		RInChIGeneratorFactory factory = RInChIGeneratorFactory.getInstance();
-		Assert.assertNotNull(factory);
+		assertNotNull(factory);
+	}
+
+	@Test
+	public void testGetInstance_multipleCalls_sameInstance() throws CDKException {
+		RInChIGeneratorFactory factory1 = RInChIGeneratorFactory.getInstance();
+		assertNotNull(factory1);
+
+		RInChIGeneratorFactory factory2 = RInChIGeneratorFactory.getInstance();
+		assertNotNull(factory2);
+
+		RInChIGeneratorFactory factory3 = RInChIGeneratorFactory.getInstance();
+		assertNotNull(factory3);
+
+		assertSame("Asserting that getInstance returns the same instance with every call", factory1, factory2);
+		assertSame("Asserting that getInstance returns the same instance with every call", factory2, factory3);
+	}
+
+	@Test
+	public void testGetInstance_threadSafety() throws InterruptedException, CDKException {
+		RInChIGeneratorFactory singletonInstance = RInChIGeneratorFactory.getInstance();
+
+		int numberOfMethodCalls = 10000;
+		ConcurrentLinkedQueue<RInChIGeneratorFactory> factoryInstancesQueue = new ConcurrentLinkedQueue<>();
+		ExecutorService executorService = Executors.newFixedThreadPool(numberOfMethodCalls / 10);
+
+		for (int i = 0; i < numberOfMethodCalls; i++) {
+			executorService.execute(() -> {
+				try {
+					RInChIGeneratorFactory factory = RInChIGeneratorFactory.getInstance();
+					factoryInstancesQueue.add(factory);
+				} catch (CDKException exception) {
+					fail("Exception when instantiating RInChIGeneratorFactory: " + exception.getClass() + ", " + exception.getMessage());
+				}
+			});
+		}
+
+		executorService.shutdown();
+		assertTrue(executorService.awaitTermination(5, TimeUnit.SECONDS));
+
+		Assert.assertEquals(numberOfMethodCalls, factoryInstancesQueue.size());
+		for (RInChIGeneratorFactory factory: factoryInstancesQueue) {
+			assertSame(singletonInstance, factory);
+		}
 	}
 	
 	@Test
-	public void tes01() throws CDKException {
+	public void test01() throws CDKException {
 		//Create Diels–Alder Reaction using CDK
 		//Reactant 1
 		IAtomContainer mol1 = new AtomContainer();
@@ -97,11 +147,11 @@ public class RInChIGeneratorFactoryTest extends CDKTestCase {
 		//Generate RInChI
 		RInChIGenerator gen = RInChIGeneratorFactory.getInstance().getRInChIGenerator(reaction);
 		Assert.assertEquals("RInChI status: ", RinchiStatus.SUCCESS, gen.getRInChIStatus());		
-		Assert.assertEquals("Forward reaction RInChI: ", true, gen.getRInChI().endsWith("/d+"));
+		Assert.assertTrue("Forward reaction RInChI: ", gen.getRInChI().endsWith("/d+"));
 		
 		//Generate RInChI with option ForceEquilibrium		
 		RInChIGenerator gen_eq = RInChIGeneratorFactory.getInstance().getRInChIGenerator(reaction, "ForceEquilibrium");
-		Assert.assertEquals("Equilibrium reaction RInChI: ", true, gen_eq.getRInChI().endsWith("/d="));
+		Assert.assertTrue("Equilibrium reaction RInChI: ", gen_eq.getRInChI().endsWith("/d="));
 				
 		//Create reverse reaction and generate RInChI
 		IReaction reaction2 = new Reaction();
@@ -109,7 +159,7 @@ public class RInChIGeneratorFactoryTest extends CDKTestCase {
 		reaction2.addProduct(mol1);
 		reaction2.addProduct(mol2);
 		RInChIGenerator gen2 = RInChIGeneratorFactory.getInstance().getRInChIGenerator(reaction2);
-		Assert.assertEquals("Backward reaction RInChI: ", true, gen2.getRInChI().endsWith("/d-"));
+		Assert.assertTrue("Backward reaction RInChI: ", gen2.getRInChI().endsWith("/d-"));
 		
 		//Backward, forward and equilibrium RInChIs differ only in their last char
 		int n = gen.getRInChI().length();
@@ -119,8 +169,7 @@ public class RInChIGeneratorFactoryTest extends CDKTestCase {
 				gen.getRInChI().substring(0, n-1), gen_eq.getRInChI().substring(0, n-1));
 		
 		//Backward, forward and equilibrium RInChIs-Keys differ only in their 19-th char
-		int k = gen.getLongRInChIKey().length();
-		Assert.assertEquals("Forward and backward Long-RInChI-Key comparison: ", 
+		Assert.assertEquals("Forward and backward Long-RInChI-Key comparison: ",
 				gen.getLongRInChIKey().substring(0, 18), gen2.getLongRInChIKey().substring(0, 18));
 		Assert.assertEquals("Forward and backward Long-RInChI-Key comparison: ", 
 				gen.getLongRInChIKey().substring(19), gen2.getLongRInChIKey().substring(19));
@@ -140,7 +189,7 @@ public class RInChIGeneratorFactoryTest extends CDKTestCase {
 	}
 	
 	@Test
-	public void tes02_benzene_kekulized() throws CDKException {
+	public void test02_benzene_kekulized() throws CDKException {
 		//Create kekulized benzene
 		IAtomContainer mol = new AtomContainer();
 		IAtom a0 = new Atom("C");
@@ -201,7 +250,7 @@ public class RInChIGeneratorFactoryTest extends CDKTestCase {
 	}
 
 	@Test
-	public void tes03_benzene_aromatic() throws CDKException {
+	public void test03_benzene_aromatic() throws CDKException {
 		//Create aromatic benzene for testing conversion of CDK bonds of type UNSET flagged as aromatic
 		IAtomContainer mol = new AtomContainer();
 		IAtom a0 = new Atom("C");
@@ -257,19 +306,12 @@ public class RInChIGeneratorFactoryTest extends CDKTestCase {
 		Assert.assertEquals("RInChI for benzene: ", "RInChI=1.00.1S/<>C6H6/c1-2-4-6-5-3-1/h1-6H/d-", gen.getRInChI());
 		
 		//Generate RInChI using CDK MDL writer
-		boolean MDLRXNWriterExceptionForAromaticBonds = false;
-		try {
-			RInChIGenerator gen2 = RInChIGeneratorFactory.getInstance().getRInChIGenerator(reaction, RinchiOptions.DEFAULT_OPTIONS, true);
-		} 
-		catch (Exception x) {
-			//MDLRXNWiter throws Exception for aromatic bonds of type UNSET
-			MDLRXNWriterExceptionForAromaticBonds = true;
-		}
-		Assert.assertEquals("MDLRXNWriter Exception For Aromatic Bonds: ", true, MDLRXNWriterExceptionForAromaticBonds);
+		//MDLRXNWriter throws Exception for aromatic bonds of type UNSET
+		Assert.assertThrows("MDLRXNWriter Exception For Aromatic Bonds: ", CDKException.class, () -> RInChIGeneratorFactory.getInstance().getRInChIGenerator(reaction, RinchiOptions.DEFAULT_OPTIONS, true));
 	}
 	
 	@Test
-	public void tes04_radical_doublet() throws CDKException {
+	public void test04_radical_doublet() throws CDKException {
 		//Create propane doublet radical (monovalent)
 		IAtomContainer mol = new AtomContainer();
 		IAtom a0 = new Atom("C");
@@ -306,7 +348,7 @@ public class RInChIGeneratorFactoryTest extends CDKTestCase {
 	}
 	
 	@Test
-	public void tes05_radical_triplet() throws CDKException {
+	public void test05_radical_triplet() throws CDKException {
 		//Create propane triple radical (divalent)
 		//!!! propane singlet radical produces the same RAuxInfo (bug or feature in RInChI - unknown ??)
 		IAtomContainer mol = new AtomContainer();
