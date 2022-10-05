@@ -19,7 +19,6 @@
 package org.openscience.cdk.rinchi;
 
 import java.io.BufferedReader;
-import java.io.InputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,18 +28,13 @@ import java.util.Map;
 import javax.vecmath.Point2d;
 import javax.vecmath.Point3d;
 
-import org.openscience.cdk.Atom;
-import org.openscience.cdk.AtomContainer;
-import org.openscience.cdk.Bond;
-import org.openscience.cdk.CDKConstants;
-import org.openscience.cdk.Reaction;
+import org.openscience.cdk.*;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.interfaces.IStereoElement;
-import org.openscience.cdk.interfaces.ITetrahedralChirality;
 import org.openscience.cdk.interfaces.ITetrahedralChirality.Stereo;
 import org.openscience.cdk.io.MDLRXNV2000Reader;
 import org.openscience.cdk.io.MDLV2000Writer.SPIN_MULTIPLICITY;
@@ -51,7 +45,6 @@ import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
 import io.github.dan2097.jnainchi.InchiAtom;
 import io.github.dan2097.jnainchi.InchiBond;
 import io.github.dan2097.jnainchi.InchiBondStereo;
-import io.github.dan2097.jnainchi.InchiInput;
 import io.github.dan2097.jnainchi.InchiRadical;
 import io.github.dan2097.jnainchi.InchiStereo;
 import io.github.dan2097.jnainchi.InchiStereoParity;
@@ -68,60 +61,56 @@ import io.github.dan2097.jnarinchi.cheminfo.StereoUtils.MolCoordinatesType;
 import io.github.dan2097.jnarinchi.cheminfo.StereoUtils;
 
 /**
- * <p>This class generates a CDK IReaction from a RInChI string (and optionally aux info).
- * It places calls to a JNA wrapper for the RInChI C++ library (io.github.dan2097.jnarinchi).
- * Native C++ code exports output only as MDL RXN/RDfile formats. Therefore IReacton generation
- * process includes conversion from MDL format. The latter can be done in two ways:
- * (1) using JnaRinchi converter (default);
- * (2) using CDK MDL RXN Reader (set via input flag variable: useCDK_MDL_IO = true).
- *
- * 
+ * This class generates the IUPAC Reaction International Chemical Identifier (RInChI) for a CDK IReaction object.
+ * <br>
+ * This class places calls to a JNA wrapper for the RInChI C++ library (io.github.dan2097.jnarinchi).
+ * Native C++ code takes as an input only MDL RXN and MDL RDfile formats. Therefor, the RInChI generation
+ * process includes the conversion from an IReaction object to MDL format. This conversion can be carried out by
+ * <ol>
+ *     <li>JnaRinchi converter (default)</li>
+ *     <li>CDK MDL RXN Writer (by providing a value of <code>true</code> for the argument <code>useCDK_MDL_IO</code>
+ *     when instantiating this object via its the Factory class method
+ *     {@link RInChIGeneratorFactory#getRInChIToReaction(String, String, boolean)}).</li>
+ * </ol>
  *
  * @author Nikolay Kochev
- *
  * @cdk.module rinchi
  * @cdk.githash
  */
 public class RInChIToReaction {
-	
 	protected RinchiInputFromRinchiOutput rInpFromRinchiOutput = null;
-	
 	protected FileTextOutput fileTextOutput = null;
-	
 	protected IReaction reaction;
-	
-	protected boolean useCDK_MDL_IO = false;
-	
+	protected final boolean useCDK_MDL_IO;
 	protected boolean configureMolecules = false;
-	
-	private List<String> reactionGenerationErrors = new ArrayList<>();
+	private final List<String> reactionGenerationErrors = new ArrayList<>();
 	private String curComponentErrorContext = "";
 		
 	/**
-     * Constructor. Generates CDK Reaction from RInChI.
-     * @param rinchi RInChI string     * 
-     * @throws CDKException
+     * Consumes a RInChI and produces a CDK Reaction.
+     * @param rinchi RInChI string
+     * @throws CDKException if an error is encountered
      */
 	protected RInChIToReaction(String rinchi) throws CDKException {
 		this (rinchi, "", false);
 	}
 	
 	/**
-     * Constructor. Generates CDK Reaction from RInChI.
+	 * Consumes a RInChI with associated auxiliary information and produces a CDK Reaction.
      * @param rinchi RInChI string
-     * @param auxInfo RInChI aux info string
-     * @throws CDKException
+     * @param auxInfo RInChI auxiliary information (AuxInfo) string
+     * @throws CDKException if an error is encountered
      */
 	protected RInChIToReaction(String rinchi, String auxInfo) throws CDKException {
 		this (rinchi, auxInfo, false);
 	}
 	
 	/**
-     * Constructor. Generates CDK Reaction from RInChI.
+	 * Consumes a RInChI with associated auxiliary information and produces a CDK Reaction.
      * @param rinchi RInChI string
-     * @param auxInfo RInChI aux info string
-     * @param useCDK_MDL_IO determines whether to use CDK MDL RXN Reader
-     * @throws CDKException
+	 * @param auxInfo RInChI auxiliary information (AuxInfo) string
+     * @param useCDK_MDL_IO determines whether to use CDK MDL RXN Reader for the conversion
+     * @throws CDKException if an error is encountered
      */
 	protected RInChIToReaction(String rinchi, String auxInfo, boolean useCDK_MDL_IO) throws CDKException {
 		if (rinchi == null)
@@ -130,44 +119,48 @@ public class RInChIToReaction {
 			throw new IllegalArgumentException("Null RInChI aux info string provided");
 		
 		this.useCDK_MDL_IO = useCDK_MDL_IO;
+
 		if (useCDK_MDL_IO) {
-			//Using CDK RXN Reader to make a Reaction object directly from the file text output
+			// use CDK RXN Reader to make a Reaction object directly from the file text output
 			fileTextOutput = JnaRinchi.rinchiToFileText(rinchi, auxInfo, ReactionFileFormat.RXN);
 			generateReactionFromMDLRXNFile();
 		}			
-		else {	
+		else {
 			this.rInpFromRinchiOutput = JnaRinchi.getRinchiInputFromRinchi(rinchi, auxInfo);
 			generateReactionFromRinchi();
 		}	
 	}
 	
 	/**
-     * Gets reaction from RnChI, and converts RInChI library data structure (RinchiInput object)
-     * into an IReaction.
+     * Produces a reaction from RnChI.
+	 * The RInChI library data structure (RinchiInput object) is converted to an {@link IReaction}.
      *
-     * @throws CDKException
+     * @throws CDKException if an error is encountered
      */
     protected void generateReactionFromRinchi() throws CDKException {
     	if (rInpFromRinchiOutput.getStatus() == RinchiStatus.ERROR)
     		throw new CDKException(rInpFromRinchiOutput.getErrorMessage());
-    	    	
-    	RinchiInput rInput = rInpFromRinchiOutput.getRinchiInput();
-    	reaction = new Reaction();
-    	List<RinchiInputComponent> compList = rInput.getComponents();
-    	for (int i = 0; i < compList.size(); i++) {    		
-    		RinchiInputComponent ric = compList.get(i);
+
+    	RinchiInput rinchInput = rInpFromRinchiOutput.getRinchiInput();
+    	reaction = DefaultChemObjectBuilder.getInstance().newInstance(IReaction.class);
+
+    	List<RinchiInputComponent> rinchInputComponents = rinchInput.getComponents();
+    	for (int i = 0; i < rinchInputComponents.size(); i++) {
+    		RinchiInputComponent rinchiInputComponent = rinchInputComponents.get(i);
     		curComponentErrorContext = "Component " + (i+1) + " ";
-    		IAtomContainer mol = getComponentMolecule(ric);
-    		if (mol != null) {    		
-    			switch (ric.getRole()) {
+    		IAtomContainer atomContainer = getComponentMolecule(rinchiInputComponent);
+
+			//Empty structures are allowed
+    		if (atomContainer != null) {
+    			switch (rinchiInputComponent.getRole()) {
     			case REAGENT:
-    				reaction.addReactant(mol);
+    				reaction.addReactant(atomContainer);
     				break;
     			case PRODUCT:
-    				reaction.addProduct(mol);
+    				reaction.addProduct(atomContainer);
     				break;
     			case AGENT:
-    				reaction.addAgent(mol);
+    				reaction.addAgent(atomContainer);
     				break;
     			}
     		}
@@ -175,7 +168,7 @@ public class RInChIToReaction {
     	
     	if (!reactionGenerationErrors.isEmpty()) {
     		//Replacing rInpFromRinchiOutput with a new one with status ERROR
-    		this.rInpFromRinchiOutput = new RinchiInputFromRinchiOutput(rInput, RinchiStatus.ERROR, -1, 
+    		this.rInpFromRinchiOutput = new RinchiInputFromRinchiOutput(rinchInput, RinchiStatus.ERROR, -1,
     				"Unable to create Reaction object from RinchiInput: " + getAllReactionGenerationErrors());
     		throw new CDKException(rInpFromRinchiOutput.getErrorMessage());
     	}
@@ -183,143 +176,141 @@ public class RInChIToReaction {
     
         
     /**
-     * Gets reaction from MDL RXN file obtained from RInChI library data structure.
-     *
-     * @throws CDKException
+	 * Produces a reaction from RnChI.
+	 * The MDL RXN file is obtained from the RInChI library data structure and then
+	 * converted to an {@link IReaction} by the {@link MDLRXNV2000Reader} of CDK.
+	 *
+	 * @throws CDKException if an error is encountered
      */
     protected void generateReactionFromMDLRXNFile() throws CDKException {
     	if (fileTextOutput.getStatus() == FileTextStatus.ERROR)
     		throw new CDKException(fileTextOutput.getErrorMessage());
     		
     	try {
-    		BufferedReader inputBufReader = new BufferedReader(
-    				new StringReader(fileTextOutput.getReactionFileText()));
-    		MDLRXNV2000Reader reader = new MDLRXNV2000Reader(inputBufReader);
-    		IReaction reaction = new Reaction();
-    		reaction = reader.read(reaction);     	
+    		BufferedReader bufferedReader = new BufferedReader(new StringReader(fileTextOutput.getReactionFileText()));
+    		MDLRXNV2000Reader reader = new MDLRXNV2000Reader(bufferedReader);
+    		this.reaction = reader.read(DefaultChemObjectBuilder.getInstance().newInstance(IReaction.class));
     		this.rInpFromRinchiOutput = new RinchiInputFromRinchiOutput(null, RinchiStatus.SUCCESS, 0, "");
-    		this.reaction = reaction;
     		reader.close();
     	} 
-    	catch (Exception e) {
+    	catch (Exception exception) {
     		this.rInpFromRinchiOutput = new RinchiInputFromRinchiOutput(null, RinchiStatus.ERROR, -1, 
-    				"Error on generating Reaction via MDL RXN Reader: " + e.getMessage());
+    				"Error on generating Reaction via MDL RXN Reader: " + exception.getMessage());
     		throw new CDKException(rInpFromRinchiOutput.getErrorMessage());
     	}
     }
     
-    private IAtomContainer getComponentMolecule(RinchiInputComponent ric) {
-    	IAtomContainer mol = new AtomContainer();
-    	Map<InchiAtom,IAtom> inchiAtom2AtomMap = new HashMap<>();
-    	MolCoordinatesType molCoordType = StereoUtils.getMolCoordinatesType(ric);
+    private IAtomContainer getComponentMolecule(RinchiInputComponent rinchiInputComponent) {
+    	final IAtomContainer atomContainer = new AtomContainer();
+    	final Map<InchiAtom,IAtom> inchiAtom2AtomMap = new HashMap<>();
+    	final MolCoordinatesType molCoordinatesType = StereoUtils.getMolCoordinatesType(rinchiInputComponent);
     	
     	//Convert atoms
-    	for (int i = 0; i < ric.getAtoms().size(); i++) {    		
-    		InchiAtom iAt = ric.getAtoms().get(i);
-    		IAtom atom = getAtom(iAt, molCoordType);
-    		if (atom != null) {
-    			inchiAtom2AtomMap.put(iAt, atom);
-    			mol.addAtom(atom);
-    		}
+    	for (int i = 0; i < rinchiInputComponent.getAtoms().size(); i++) {
+    		final InchiAtom inchiAtom = rinchiInputComponent.getAtoms().get(i);
+    		final IAtom atom = getAtom(inchiAtom, molCoordinatesType);
+   			inchiAtom2AtomMap.put(inchiAtom, atom);
+  			atomContainer.addAtom(atom);
     	}
     	
     	//Convert bonds
-    	for (int i = 0; i < ric.getBonds().size(); i++) {    		
-    		InchiBond iBo = ric.getBonds().get(i);
-    		IBond bond = getBond(iBo, inchiAtom2AtomMap);
+    	for (int i = 0; i < rinchiInputComponent.getBonds().size(); i++) {
+    		final InchiBond inchiBond = rinchiInputComponent.getBonds().get(i);
+    		IBond bond = getBond(inchiBond, inchiAtom2AtomMap);
     		if (bond != null) 
-    			mol.addBond(bond);
+    			atomContainer.addBond(bond);
     	}
     	
     	//Convert stereos / generate stereo elements
-    	if (!ric.getStereos().isEmpty()) {
-    		List<IStereoElement> stereoElements = new ArrayList<>();
-    		for (InchiStereo stereo : ric.getStereos()) {
-    			IStereoElement stereoEl = inchiStereoToCDKStereoElement (stereo, inchiAtom2AtomMap);
-    			if (stereoEl != null)
-    				stereoElements.add(stereoEl);
+    	if (!rinchiInputComponent.getStereos().isEmpty()) {
+    		final List<IStereoElement> stereoElements = new ArrayList<>();
+    		for (InchiStereo stereo : rinchiInputComponent.getStereos()) {
+    			final IStereoElement stereoElement = inchiStereoToCDKStereoElement (stereo, inchiAtom2AtomMap);
+    			if (stereoElement != null)
+    				stereoElements.add(stereoElement);
     		}
     		if (!stereoElements.isEmpty())
-    			mol.setStereoElements(stereoElements);
+    			atomContainer.setStereoElements(stereoElements);
     	}
     	else {
-    		//No stereo elements available and 
-    		//trying to generate them from 2D/3D coordinates
+    		// No stereo elements available and trying to generate them from 2D/3D coordinates
     		//
-    		//Generally this case should be expected always because
-    		//RInChI native library returns chirality via 2D/3D coordinates in the RXN/RDFile text
-    		//However  RAuxInfo requires the "chiral flag" which is set only when 
-    		//stereo elements are set in the molecule 
-    		if (molCoordType == MolCoordinatesType._2D)
-				mol.setStereoElements(StereoElementFactory.using2DCoordinates(mol).createAll());
-			else if (molCoordType == MolCoordinatesType._3D)
-				mol.setStereoElements(StereoElementFactory.using3DCoordinates(mol).createAll());
+    		// Generally, this case should be always expected because
+    		// RInChI native library returns chirality via 2D/3D coordinates in the RXN/RDFile text
+    		// However, RAuxInfo requires the "chiral flag" which is set only when
+    		// stereo elements are set in the molecule
+    		if (molCoordinatesType == MolCoordinatesType._2D)
+				atomContainer.setStereoElements(StereoElementFactory.using2DCoordinates(atomContainer).createAll());
+			else if (molCoordinatesType == MolCoordinatesType._3D)
+				atomContainer.setStereoElements(StereoElementFactory.using3DCoordinates(atomContainer).createAll());
     	}
     	
-    	//Covert radicals
-    	for (int i = 0; i < ric.getAtoms().size(); i++) {    		
-    		InchiAtom iAt = ric.getAtoms().get(i);
-    		if (iAt.getRadical() == InchiRadical.NONE)
+    	//Convert radicals
+    	for (int i = 0; i < rinchiInputComponent.getAtoms().size(); i++) {
+    		final InchiAtom inchiAtom = rinchiInputComponent.getAtoms().get(i);
+    		if (inchiAtom.getRadical() == InchiRadical.NONE)
     			continue;
-    		SPIN_MULTIPLICITY multiplicity = cdkSpinMultiplicityToInchiRadical(iAt.getRadical());
-    		IAtom atom = mol.getAtom(i);
+    		SPIN_MULTIPLICITY multiplicity = cdkSpinMultiplicityToInchiRadical(inchiAtom.getRadical());
+    		IAtom atom = atomContainer.getAtom(i);
     		if (atom != null) { 
-    			//check is needed because iAt might have not been converted    			
+    			//check is needed because inchiAtom might have not been converted
     			atom.setProperty(CDKConstants.SPIN_MULTIPLICITY, multiplicity);
     			for (int e = 0; e < multiplicity.getSingleElectrons(); e++)
-    				mol.addSingleElectron(i);
+    				atomContainer.addSingleElectron(i);
     		}
     	}	
     	
     	if (configureMolecules) {
     		try {
-    			AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(mol);
+    			AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(atomContainer);
     		}
-    		catch (Exception x) {
+    		catch (Exception exception) {
     			reactionGenerationErrors.add(curComponentErrorContext + 
-    					"AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms: " + x.getMessage());
+    					"AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms: " + exception.getMessage());
     		}
     	}	
 
-    	return mol;
+    	return atomContainer;
     }
     
-    private IAtom getAtom(InchiAtom iAt, MolCoordinatesType coordType) {
-    	IAtom atom = new Atom(iAt.getElName());
-    	//Set charge
-    	int q = iAt.getCharge();
-    	if (q != 0)
-    		atom.setFormalCharge(q);
+    private IAtom getAtom(InchiAtom inchiAtom, MolCoordinatesType coordType) {
+    	final IAtom atom = new Atom(inchiAtom.getElName());
+
+		//Set charge
+    	int charge = inchiAtom.getCharge();
+    	if (charge != 0)
+    		atom.setFormalCharge(charge);
     	
-    	atom.setImplicitHydrogenCount(iAt.getImplicitHydrogen());
+    	atom.setImplicitHydrogenCount(inchiAtom.getImplicitHydrogen());
     	
     	//Set isotope
-        if(iAt.getIsotopicMass() > 0)        	
-        	atom.setMassNumber(iAt.getIsotopicMass());
+        if(inchiAtom.getIsotopicMass() > 0)
+        	atom.setMassNumber(inchiAtom.getIsotopicMass());
 
         //Set coordinates 2D or 3D
         if (coordType == MolCoordinatesType._2D) {
         	Point2d p = new Point2d();
-        	p.x = iAt.getX();
-        	p.y = iAt.getY();
+        	p.x = inchiAtom.getX();
+        	p.y = inchiAtom.getY();
         	atom.setPoint2d(p);
         } 
         else if (coordType == MolCoordinatesType._3D) {
         	Point3d p = new Point3d();
-        	p.x = iAt.getX();
-        	p.y = iAt.getY();
-        	p.z = iAt.getZ();
+        	p.x = inchiAtom.getX();
+        	p.y = inchiAtom.getY();
+        	p.z = inchiAtom.getZ();
         	atom.setPoint3d(p);
         }
         
     	return atom;
     }
     
-    private IBond getBond(InchiBond iBo, Map<InchiAtom,IAtom> inchiAtom2AtomMap) {
-    	IAtom at0 = inchiAtom2AtomMap.get(iBo.getStart());
-    	IAtom at1 = inchiAtom2AtomMap.get(iBo.getEnd());
+    private IBond getBond(InchiBond inchiBond, Map<InchiAtom,IAtom> inchiAtom2AtomMap) {
+    	final IAtom atom1 = inchiAtom2AtomMap.get(inchiBond.getStart());
+    	final IAtom atom2 = inchiAtom2AtomMap.get(inchiBond.getEnd());
     	IBond.Order order = null;
-    	switch (iBo.getType()) {
+
+    	switch (inchiBond.getType()) {
     	case SINGLE:
     		order = IBond.Order.SINGLE;
     		break;
@@ -334,15 +325,15 @@ public class RInChIToReaction {
     		break;
     	}
     	
-    	IBond.Stereo stereo = inchiBondStereoToCDKBondStereoTo(iBo.getStereo());
+    	final IBond.Stereo stereo = inchiBondStereoToCDKBondStereoTo(inchiBond.getStereo());
     	
-    	if (order == null || at0 == null || at1 == null) {
+    	if (order == null || atom1 == null || atom2 == null) {
     		reactionGenerationErrors.add(curComponentErrorContext + 
-    				"Unable to convert InchiBond to CDK bond: " + order.toString());
+    				"Unable to convert InchiBond to CDK bond: " + (order == null ? "null" : order.toString()));
 			return null;
 		}	
 		else {
-			IBond bond = new Bond(at0, at1, order, stereo);
+			final IBond bond = new Bond(atom1, atom2, order, stereo);
 			if (order == IBond.Order.UNSET) //this case is for aromatic bonds
 				bond.setIsAromatic(true);
 			return bond;
@@ -366,6 +357,7 @@ public class RInChIToReaction {
 		case DOUBLE_EITHER:
 			return IBond.Stereo.E_OR_Z;	
 		}
+
     	return IBond.Stereo.NONE;
 	}
     
@@ -376,30 +368,29 @@ public class RInChIToReaction {
     		//In InchiStereo there is a special atom, InchiStereo.STEREO_IMPLICIT_H,
     		//used for implicit H ligand. 
     		//The lone pairs are treated the same way in CDK and InchiStereo.
-    		IAtom chiralAtom = inchiAtom2AtomMap.get(inchiStereo.getCentralAtom());
-    		IAtom[] ligands = new IAtom[4];
+    		final IAtom chiralAtom = inchiAtom2AtomMap.get(inchiStereo.getCentralAtom());
+    		final IAtom[] ligands = new IAtom[4];
     		
-    		InchiAtom iAt = inchiStereo.getAtoms()[0];
-    		if (iAt == InchiStereo.STEREO_IMPLICIT_H)
-    			iAt = inchiStereo.getCentralAtom(); //mapping central atom to get IAtom ligand
-    		ligands[0] = inchiAtom2AtomMap.get(iAt);
-    		
-    		iAt = inchiStereo.getAtoms()[1];
-    		if (iAt == InchiStereo.STEREO_IMPLICIT_H)
-    			iAt = inchiStereo.getCentralAtom(); //mapping central atom to get IAtom ligand
-    		ligands[1] = inchiAtom2AtomMap.get(iAt);
-    		
-    		iAt = inchiStereo.getAtoms()[2];
-    		if (iAt == InchiStereo.STEREO_IMPLICIT_H)
-    			iAt = inchiStereo.getCentralAtom(); //mapping central atom to get IAtom ligand
-    		ligands[2] = inchiAtom2AtomMap.get(iAt);
-    		
-    		iAt = inchiStereo.getAtoms()[3];
-    		if (iAt == InchiStereo.STEREO_IMPLICIT_H)
-    			iAt = inchiStereo.getCentralAtom(); //mapping central atom to get IAtom ligand
-    		ligands[3] = inchiAtom2AtomMap.get(iAt);
-    		
-    		
+    		InchiAtom inchiAtom0 = inchiStereo.getAtoms()[0];
+    		if (inchiAtom0 == InchiStereo.STEREO_IMPLICIT_H)
+    			inchiAtom0 = inchiStereo.getCentralAtom(); //mapping central atom to get IAtom ligand
+    		ligands[0] = inchiAtom2AtomMap.get(inchiAtom0);
+
+			InchiAtom inchiAtom1 = inchiStereo.getAtoms()[1];
+    		if (inchiAtom1 == InchiStereo.STEREO_IMPLICIT_H)
+    			inchiAtom1 = inchiStereo.getCentralAtom(); //mapping central atom to get IAtom ligand
+    		ligands[1] = inchiAtom2AtomMap.get(inchiAtom1);
+
+			InchiAtom inchiAtom2 = inchiStereo.getAtoms()[2];
+    		if (inchiAtom2 == InchiStereo.STEREO_IMPLICIT_H)
+    			inchiAtom2 = inchiStereo.getCentralAtom(); //mapping central atom to get IAtom ligand
+    		ligands[2] = inchiAtom2AtomMap.get(inchiAtom2);
+
+			InchiAtom inchiAtom3 = inchiStereo.getAtoms()[3];
+    		if (inchiAtom3 == InchiStereo.STEREO_IMPLICIT_H)
+    			inchiAtom3 = inchiStereo.getCentralAtom(); //mapping central atom to get IAtom ligand
+    		ligands[3] = inchiAtom2AtomMap.get(inchiAtom3);
+
     		//MDL Parity definition: 
     		//View the center from a position such that the bond connecting the highest-numbered atom (4) 
     		//projects behind the plane formed by atoms 1, 2 and 3.
@@ -429,19 +420,18 @@ public class RInChIToReaction {
     		//                                           
     		//                              CDK observer
     		
-    		Stereo stereo;
-    		if (inchiStereo.getParity() == InchiStereoParity.ODD)
-    			stereo = Stereo.CLOCKWISE;
+    		if (inchiStereo.getParity() == InchiStereoParity.ODD) {
+				return new TetrahedralChirality(chiralAtom, ligands, Stereo.CLOCKWISE);
+			}
     		else {
-    			stereo = Stereo.ANTI_CLOCKWISE;
-    			//Potential information "loss": 
+				return new TetrahedralChirality(chiralAtom, ligands, Stereo.ANTI_CLOCKWISE);
+    			//Potential information "loss":
     			//InchiStereoParity.UNDEFINED type is also saved as ANTI_CLOCKWISE
-    		}	
-    		
-    		return new TetrahedralChirality(chiralAtom, ligands, stereo);
+    		}
     	}
     	
-    	//TODO hadnle other types of stereo elements
+    	//TODO handle other types of stereo elements
+
     	return null;
     }
     
@@ -463,12 +453,13 @@ public class RInChIToReaction {
 		StringBuilder sb = new StringBuilder(); 
 		for (String err: reactionGenerationErrors)
 			sb.append(err).append("\n");
+
 		return sb.toString();
 	}
     
 	/**
      * Returns generated reaction.
-     * @return A Reaction object
+     * @return the reaction object generated from the RInChI
      */
 	public IReaction getReaction() {
 		return reaction;
@@ -483,24 +474,27 @@ public class RInChIToReaction {
 			return rInpFromRinchiOutput.getStatus();
 		else
 			return null;
-	}	
-	
+	}
+
 	/**
      * Gets generated error messages.
+	 * @return generated error messages
      */
     public String getErrorMessage() {
         return rInpFromRinchiOutput.getErrorMessage();
     }
-    
-    /**
-     * Gets flag for using CDK MDL input/output utilities.
-     */
+
+	/**
+	 * Returns the flag that indicates whether CDK MDL input/output capabilities are used for conversion.
+	 *
+	 * @return <code>false</code> if the conversion is carried out by JnaRinchi, <code>true</code> if the conversion is carried out by CDK MDL IO
+	 */
 	public boolean isUseCDK_MDL_IO() {
 		return useCDK_MDL_IO;
 	}
 	/**
      * Gets the RinchiInput object used for data conversion. 
-     * Function returns null when isUseCDK_MDL_IO() == null
+	 * @return the RinchiInput object used for conversion or <code>null</code> if {@link #isUseCDK_MDL_IO()} is <code>null</code>
      */
 	public RinchiInput getResultRinchiInputObject() {
 		if (rInpFromRinchiOutput != null)
