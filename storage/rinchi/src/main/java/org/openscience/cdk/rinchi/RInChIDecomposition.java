@@ -134,7 +134,8 @@ public class RInChIDecomposition {
 		}
 
 		if (rinchiDecompositionOutput.getInchis().length != rinchiDecompositionOutput.getAuxInfos().length) {
-			throw new IllegalStateException("Different number of InChIs and AuxInfo: There are " + rinchiDecompositionOutput.getInchis().length + " InChIs and " + rinchiDecompositionOutput.getAuxInfos().length + " AuxInfo.");
+			throw new IllegalStateException("Different number of InChIs and AuxInfo: There are " +
+					rinchiDecompositionOutput.getInchis().length + " InChIs and " + rinchiDecompositionOutput.getAuxInfos().length + " AuxInfo.");
 		}
 
 		Map<String,String> inchiAuxInfoMap = new HashMap<>(rinchiDecompositionOutput.getInchis().length);
@@ -145,4 +146,26 @@ public class RInChIDecomposition {
 		return Collections.unmodifiableMap(inchiAuxInfoMap);
 	}
 
+	/**
+	 * Returns a map with (InChI, reaction component role) pairs.
+	 * @return unmodifiable map of (InChI, reaction component role) pairs
+	 * @throws IllegalStateException thrown if the number of InChIs and reaction component roles is not equal
+	 */
+	public Map<String, ReactionComponentRole> getInchiReactionComponentRoleMap() {
+		if (rinchiDecompositionOutput.getInchis() == null || rinchiDecompositionOutput.getRoles() == null) {
+			return Collections.unmodifiableMap(new HashMap<>());
+		}
+
+		if (rinchiDecompositionOutput.getInchis().length != rinchiDecompositionOutput.getRoles().length) {
+			throw new IllegalStateException("Different number of InChIs and reaction component roles: There are " +
+					rinchiDecompositionOutput.getInchis().length + " InChIs and " + rinchiDecompositionOutput.getRoles().length + " reaction component roles.");
+		}
+
+		Map<String, ReactionComponentRole> inchiReactionComponentRolesMap = new HashMap<>(rinchiDecompositionOutput.getInchis().length);
+		for (int i = 0; i < rinchiDecompositionOutput.getInchis().length; i++) {
+			inchiReactionComponentRolesMap.put(rinchiDecompositionOutput.getInchis()[i], rinchiDecompositionOutput.getRoles()[i]);
+		}
+
+		return Collections.unmodifiableMap(inchiReactionComponentRolesMap);
+	}
 }
