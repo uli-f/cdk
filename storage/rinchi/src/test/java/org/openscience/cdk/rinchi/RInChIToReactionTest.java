@@ -22,24 +22,17 @@ package org.openscience.cdk.rinchi;
 import java.util.Map;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.openscience.cdk.interfaces.IAtom;
-import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IReaction;
-import org.openscience.cdk.interfaces.IStereoElement;
-import org.openscience.cdk.stereo.StereoElementFactory;
 import org.openscience.cdk.test.CDKTestCase;
-import org.openscience.cdk.tools.ILoggingTool;
-import org.openscience.cdk.tools.LoggingToolFactory;
 
 import io.github.dan2097.jnarinchi.RinchiOptions;
 import io.github.dan2097.jnarinchi.RinchiStatus;
 
 
 public class RInChIToReactionTest extends CDKTestCase {
-	
-	private static final ILoggingTool logger = LoggingToolFactory.createLoggingTool(RInChIToReactionTest.class);
-	
+
 	public void doubleConversionTest(String rinchi, String auxInfo, boolean useCDK_MDL_IO, boolean useCDK_MDL_IO2) throws Exception {
 		//RInChI --> Reaction
 		RInChIToReaction r2r = RInChIGeneratorFactory.getInstance().getRInChIToReaction(rinchi, auxInfo, useCDK_MDL_IO);
@@ -105,7 +98,7 @@ public class RInChIToReactionTest extends CDKTestCase {
 	private String removeAgents(String rinchi) {
 		//RInChI=1.00.1S/layer2<>layer3<>layer4/d(+,-,=)/u#2-#3-#4
 		//Agents are on the layer4
-		String tokens[] = rinchi.split("<>");
+		String[] tokens = rinchi.split("<>");
 		
 		if (tokens.length != 3) {
 			//layer4 is missing (tokens.length < 3) 
@@ -316,5 +309,118 @@ public class RInChIToReactionTest extends CDKTestCase {
 		doubleConversionTest("RInChI=1.00.1S/C6H10O/c7-6-4-2-1-3-5-6/h4,7H,1-3,5H2/i5+1<>CH4/h1H4/d+", "", false, true);
 		doubleConversionTest("RInChI=1.00.1S/C6H10O/c7-6-4-2-1-3-5-6/h4,7H,1-3,5H2/i5+1<>CH4/h1H4/d+", "", true, false);
 	}
-	
+
+	@Test
+	public void testExample_no_reactants_one_product() throws Exception {
+		doubleConversionTest("RInChI=1.00.1S/<>C8H8O2/c9-8(10)6-7-4-2-1-3-5-7/h1-5H,6H2,(H,9,10)/d+", "", true, true);
+		doubleConversionTest("RInChI=1.00.1S/<>C8H8O2/c9-8(10)6-7-4-2-1-3-5-7/h1-5H,6H2,(H,9,10)/d+", "", false, false);
+		doubleConversionTest("RInChI=1.00.1S/<>C8H8O2/c9-8(10)6-7-4-2-1-3-5-7/h1-5H,6H2,(H,9,10)/d+", "", false, true);
+		doubleConversionTest("RInChI=1.00.1S/<>C8H8O2/c9-8(10)6-7-4-2-1-3-5-7/h1-5H,6H2,(H,9,10)/d+", "", true, false);
+	}
+
+	// TODO test fails due to stereochemistry layer
+	@Ignore
+	@Test
+	public void testExample_nostruct_one_in_products() throws Exception {
+		doubleConversionTest("RInChI=1.00.1S/C4H8O/c1-3-4(2)5-3/h3-4H,1-2H3/t3-,4?/m0/s1<>" +
+				"C4H9BrO/c1-3(5)4(2)6/h3-4,6H,1-2H3/t3-,4+/m1/s1!Na.H2O/h;1H2/q+1;/p-1/d-/u1-0-0",
+				"", true, true);
+		doubleConversionTest("RInChI=1.00.1S/C4H8O/c1-3-4(2)5-3/h3-4H,1-2H3/t3-,4?/m0/s1<>" +
+						"C4H9BrO/c1-3(5)4(2)6/h3-4,6H,1-2H3/t3-,4+/m1/s1!Na.H2O/h;1H2/q+1;/p-1/d-/u1-0-0",
+				"", false, false);
+		doubleConversionTest("RInChI=1.00.1S/C4H8O/c1-3-4(2)5-3/h3-4H,1-2H3/t3-,4?/m0/s1<>" +
+						"C4H9BrO/c1-3(5)4(2)6/h3-4,6H,1-2H3/t3-,4+/m1/s1!Na.H2O/h;1H2/q+1;/p-1/d-/u1-0-0",
+				"", false, true);
+		doubleConversionTest("RInChI=1.00.1S/C4H8O/c1-3-4(2)5-3/h3-4H,1-2H3/t3-,4?/m0/s1<>" +
+						"C4H9BrO/c1-3(5)4(2)6/h3-4,6H,1-2H3/t3-,4+/m1/s1!Na.H2O/h;1H2/q+1;/p-1/d-/u1-0-0",
+				"", true, false);
+	}
+
+	// TODO test fails due to stereochemistry layer
+	@Ignore
+	@Test
+	public void testExample_nostruct_one_in_reactants() throws Exception {
+		doubleConversionTest("RInChI=1.00.1S/C4H8O/c1-3-4(2)5-3/h3-4H,1-2H3/t3-,4?/m0/s1<>" +
+				"C4H9BrO/c1-3(5)4(2)6/h3-4,6H,1-2H3/t3-,4+/m1/s1!Na.H2O/h;1H2/q+1;/p-1/d-/u0-1-0",
+				"", true, true);
+		doubleConversionTest("RInChI=1.00.1S/C4H8O/c1-3-4(2)5-3/h3-4H,1-2H3/t3-,4?/m0/s1<>" +
+						"C4H9BrO/c1-3(5)4(2)6/h3-4,6H,1-2H3/t3-,4+/m1/s1!Na.H2O/h;1H2/q+1;/p-1/d-/u0-1-0",
+				"", false, false);
+		doubleConversionTest("RInChI=1.00.1S/C4H8O/c1-3-4(2)5-3/h3-4H,1-2H3/t3-,4?/m0/s1<>" +
+						"C4H9BrO/c1-3(5)4(2)6/h3-4,6H,1-2H3/t3-,4+/m1/s1!Na.H2O/h;1H2/q+1;/p-1/d-/u0-1-0",
+				"", false, true);
+		doubleConversionTest("RInChI=1.00.1S/C4H8O/c1-3-4(2)5-3/h3-4H,1-2H3/t3-,4?/m0/s1<>" +
+						"C4H9BrO/c1-3(5)4(2)6/h3-4,6H,1-2H3/t3-,4+/m1/s1!Na.H2O/h;1H2/q+1;/p-1/d-/u0-1-0",
+				"", true, false);
+	}
+
+	// TODO test fails due to stereochemistry layer
+	@Ignore
+	@Test
+	public void testExample_nostruct_two_in_reactants() throws Exception {
+		doubleConversionTest("RInChI=1.00.1S/C4H8O/c1-3-4(2)5-3/h3-4H,1-2H3/t3-,4?/m0/s1<>" +
+				"C4H9BrO/c1-3(5)4(2)6/h3-4,6H,1-2H3/t3-,4+/m1/s1!Na.H2O/h;1H2/q+1;/p-1/d-/u0-2-0",
+				"", true, true);
+		doubleConversionTest("RInChI=1.00.1S/C4H8O/c1-3-4(2)5-3/h3-4H,1-2H3/t3-,4?/m0/s1<>" +
+						"C4H9BrO/c1-3(5)4(2)6/h3-4,6H,1-2H3/t3-,4+/m1/s1!Na.H2O/h;1H2/q+1;/p-1/d-/u0-2-0",
+				"", false, false);
+		doubleConversionTest("RInChI=1.00.1S/C4H8O/c1-3-4(2)5-3/h3-4H,1-2H3/t3-,4?/m0/s1<>" +
+						"C4H9BrO/c1-3(5)4(2)6/h3-4,6H,1-2H3/t3-,4+/m1/s1!Na.H2O/h;1H2/q+1;/p-1/d-/u0-2-0",
+				"", false, true);
+		doubleConversionTest("RInChI=1.00.1S/C4H8O/c1-3-4(2)5-3/h3-4H,1-2H3/t3-,4?/m0/s1<>" +
+						"C4H9BrO/c1-3(5)4(2)6/h3-4,6H,1-2H3/t3-,4+/m1/s1!Na.H2O/h;1H2/q+1;/p-1/d-/u0-2-0",
+				"", true, false);
+	}
+
+	// TODO test fails due to stereochemistry layer
+	@Ignore
+	@Test
+	public void testExample_R005a() throws Exception {
+		doubleConversionTest("RInChI=1.00.1S/C4H8O/c1-3-4(2)5-3/h3-4H,1-2H3/t3-,4?/m0/s1<>" +
+						"C4H9BrO/c1-3(5)4(2)6/h3-4,6H,1-2H3/t3-,4+/m1/s1!Na.H2O/h;1H2/q+1;/p-1/d-",
+				"", true, true);
+		doubleConversionTest("RInChI=1.00.1S/C4H8O/c1-3-4(2)5-3/h3-4H,1-2H3/t3-,4?/m0/s1<>" +
+						"C4H9BrO/c1-3(5)4(2)6/h3-4,6H,1-2H3/t3-,4+/m1/s1!Na.H2O/h;1H2/q+1;/p-1/d-",
+				"", false, false);
+		doubleConversionTest("RInChI=1.00.1S/C4H8O/c1-3-4(2)5-3/h3-4H,1-2H3/t3-,4?/m0/s1<>" +
+						"C4H9BrO/c1-3(5)4(2)6/h3-4,6H,1-2H3/t3-,4+/m1/s1!Na.H2O/h;1H2/q+1;/p-1/d-",
+				"", false, true);
+		doubleConversionTest("RInChI=1.00.1S/C4H8O/c1-3-4(2)5-3/h3-4H,1-2H3/t3-,4?/m0/s1<>" +
+						"C4H9BrO/c1-3(5)4(2)6/h3-4,6H,1-2H3/t3-,4+/m1/s1!Na.H2O/h;1H2/q+1;/p-1/d-",
+				"", true, false);
+	}
+
+	// TODO test fails due to stereochemistry layer
+	@Ignore
+	@Test
+	public void testExample_R005a_with_agents() throws Exception {
+		doubleConversionTest("RInChI=1.00.1S/C4H8O/c1-3-4(2)5-3/h3-4H,1-2H3/t3-,4-/m0/s1<>" +
+				"C4H9BrO/c1-3(5)4(2)6/h3-4,6H,1-2H3/t3-,4+/m1/s1!Na.H2O/h;1H2/q+1;/p-1<>" +
+				"ClH.Na/h1H;/q;+1/p-1!ClH/h1H!H2O/h1H2/d-",
+				"", true, true);
+		doubleConversionTest("RInChI=1.00.1S/C4H8O/c1-3-4(2)5-3/h3-4H,1-2H3/t3-,4-/m0/s1<>" +
+						"C4H9BrO/c1-3(5)4(2)6/h3-4,6H,1-2H3/t3-,4+/m1/s1!Na.H2O/h;1H2/q+1;/p-1<>" +
+						"ClH.Na/h1H;/q;+1/p-1!ClH/h1H!H2O/h1H2/d-",
+				"", false, false);
+		doubleConversionTest("RInChI=1.00.1S/C4H8O/c1-3-4(2)5-3/h3-4H,1-2H3/t3-,4-/m0/s1<>" +
+						"C4H9BrO/c1-3(5)4(2)6/h3-4,6H,1-2H3/t3-,4+/m1/s1!Na.H2O/h;1H2/q+1;/p-1<>" +
+						"ClH.Na/h1H;/q;+1/p-1!ClH/h1H!H2O/h1H2/d-",
+				"", false, true);
+		doubleConversionTest("RInChI=1.00.1S/C4H8O/c1-3-4(2)5-3/h3-4H,1-2H3/t3-,4-/m0/s1<>" +
+						"C4H9BrO/c1-3(5)4(2)6/h3-4,6H,1-2H3/t3-,4+/m1/s1!Na.H2O/h;1H2/q+1;/p-1<>" +
+						"ClH.Na/h1H;/q;+1/p-1!ClH/h1H!H2O/h1H2/d-",
+				"", true, false);
+	}
+
+	@Test
+	public void testExample_two_reactants_no_products() throws Exception {
+		doubleConversionTest("RInChI=1.00.1S/<>C5H12O/c1-4(2)5(3)6/h4-6H,1-3H3!C8H8O2/c9-8(10)6-7-4-2-1-3-5-7/h1-5H,6H2,(H,9,10)/d-",
+				"", true, true);
+		doubleConversionTest("RInChI=1.00.1S/<>C5H12O/c1-4(2)5(3)6/h4-6H,1-3H3!C8H8O2/c9-8(10)6-7-4-2-1-3-5-7/h1-5H,6H2,(H,9,10)/d-",
+				"", false, false);
+		doubleConversionTest("RInChI=1.00.1S/<>C5H12O/c1-4(2)5(3)6/h4-6H,1-3H3!C8H8O2/c9-8(10)6-7-4-2-1-3-5-7/h1-5H,6H2,(H,9,10)/d-",
+				"", false, true);
+		doubleConversionTest("RInChI=1.00.1S/<>C5H12O/c1-4(2)5(3)6/h4-6H,1-3H3!C8H8O2/c9-8(10)6-7-4-2-1-3-5-7/h1-5H,6H2,(H,9,10)/d-",
+				"", true, false);
+	}
 }
