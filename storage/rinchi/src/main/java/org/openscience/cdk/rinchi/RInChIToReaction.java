@@ -151,7 +151,7 @@ public class RInChIToReaction {
     	if (rInpFromRinchiOutput.getStatus() == RinchiStatus.ERROR)
     		throw new CDKException(rInpFromRinchiOutput.getErrorMessage());
     	    	
-    	RinchiInput rInput = rInpFromRinchiOutput.getRinchInput();
+    	RinchiInput rInput = rInpFromRinchiOutput.getRinchiInput();
     	reaction = new Reaction();
     	List<RinchiInputComponent> compList = rInput.getComponents();
     	for (int i = 0; i < compList.size(); i++) {    		
@@ -504,7 +504,7 @@ public class RInChIToReaction {
      */
 	public RinchiInput getResultRinchiInputObject() {
 		if (rInpFromRinchiOutput != null)
-			return rInpFromRinchiOutput.getRinchInput();
+			return rInpFromRinchiOutput.getRinchiInput();
 		else 
 			return null;
 	}
