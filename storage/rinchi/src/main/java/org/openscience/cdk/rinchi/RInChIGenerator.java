@@ -190,7 +190,7 @@ public class RInChIGenerator {
 					
 				mdlWriter.close();		        
 				String fileText = writer.toString(); 
-				rinchiOutput = JnaRinchi.fileTextToRinchi(ReactionFileFormat.RXN, fileText, options);
+				rinchiOutput = JnaRinchi.fileTextToRinchi(fileText, options, ReactionFileFormat.RXN);
 				//if (rinchiOutput.getStatus() == RinchiStatus.ERROR)
 				//	LOGGER.debug("MDL RXN file text\n" + fileText);
 			}
