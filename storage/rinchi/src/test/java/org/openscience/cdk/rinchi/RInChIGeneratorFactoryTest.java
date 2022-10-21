@@ -75,13 +75,9 @@ public class RInChIGeneratorFactoryTest extends CDKTestCase {
 		ExecutorService executorService = Executors.newFixedThreadPool(numberOfMethodCalls / 10);
 
 		for (int i = 0; i < numberOfMethodCalls; i++) {
-			executorService.execute(() -> {
-				try {
+			executorService.execute(() -> {				
 					RInChIGeneratorFactory factory = RInChIGeneratorFactory.getInstance();
 					factoryInstancesQueue.add(factory);
-				} catch (CDKException exception) {
-					fail("Exception when instantiating RInChIGeneratorFactory: " + exception.getClass() + ", " + exception.getMessage());
-				}
 			});
 		}
 
