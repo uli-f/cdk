@@ -24,7 +24,7 @@ import io.github.dan2097.jnarinchi.JnaRinchi;
 import io.github.dan2097.jnarinchi.ReactionComponentRole;
 import io.github.dan2097.jnarinchi.ReactionDirection;
 import io.github.dan2097.jnarinchi.RinchiDecompositionOutput;
-import io.github.dan2097.jnarinchi.RinchiDecompositionStatus;
+import io.github.dan2097.jnarinchi.Status;
 
 import java.util.*;
 
@@ -69,7 +69,7 @@ public class RInChIDecomposition {
 	private RinchiDecompositionOutput decompose(String rinchi, String auxInfo) throws CDKException {
 		RinchiDecompositionOutput output = JnaRinchi.decomposeRinchi(rinchi, auxInfo);
 		
-		if (output.getStatus() == RinchiDecompositionStatus.ERROR)
+		if (output.getStatus() == Status.ERROR)
 			throw new CDKException("RInChI decomposition error: " + output.getErrorMessage());
 
 		return output;
@@ -79,7 +79,7 @@ public class RInChIDecomposition {
      * Access the status of the RInChI Decomposition output.
      * @return the status
      */
-	public RinchiDecompositionStatus getStatus() { 
+	public Status getStatus() { 
 		return rinchiDecompositionOutput.getStatus();
 	}
 	
