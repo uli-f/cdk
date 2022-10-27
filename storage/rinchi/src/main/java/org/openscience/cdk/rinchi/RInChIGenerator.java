@@ -55,7 +55,8 @@ import io.github.dan2097.jnarinchi.RinchiKeyStatus;
 import io.github.dan2097.jnarinchi.RinchiKeyType;
 import io.github.dan2097.jnarinchi.RinchiOptions;
 import io.github.dan2097.jnarinchi.RinchiOutput;
-import io.github.dan2097.jnarinchi.RinchiStatus;
+import io.github.dan2097.jnarinchi.Status;
+
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 
@@ -193,26 +194,26 @@ public class RInChIGenerator {
 			}
 			catch (Exception x) {
 				String errMsg = "Unable to write MDL RXN file for reaction: " + x.getMessage();
-				rinchiOutput = new RinchiOutput("", "", RinchiStatus.ERROR, -1, errMsg);
+				rinchiOutput = new RinchiOutput("", "", Status.ERROR, -1, errMsg);
 			}
 		}
 		else {
 			RinchiInput rInp = getRinchiInputFromReaction();
 			if (rInp == null) {
 				String errMsg = "Unable to convert CDK Reaction to RinchiInput: " + getAllRinchiInputGenerationErrors();
-				rinchiOutput = new RinchiOutput("", "", RinchiStatus.ERROR, -1, errMsg);
+				rinchiOutput = new RinchiOutput("", "", Status.ERROR, -1, errMsg);
 			}
 			else
 				rinchiOutput = JnaRinchi.toRinchi(rInp, options);
 		}
 
-		if (rinchiOutput.getStatus() == RinchiStatus.ERROR)
+		if (rinchiOutput.getStatus() == Status.ERROR)
 			throw new CDKException("RInChI generation problem: " + rinchiOutput.getErrorMessage());
 	}
 
 	private void generateRInChIKey(RinchiKeyType type) throws CDKException {
 		RinchiKeyOutput rkOut;
-		if (rinchiOutput.getStatus() == RinchiStatus.ERROR) {
+		if (rinchiOutput.getStatus() == Status.ERROR) {
 			String err = "Unable to generate RInChIKey since, no RInChI is generated!";
 			rkOut = new RinchiKeyOutput("", type, RinchiKeyStatus.ERROR, -1, err);
 		} else {
@@ -548,7 +549,7 @@ public class RInChIGenerator {
      * Returns the status of the RInChI output.
      * @return the status
      */
-	public RinchiStatus getRInChIStatus() {
+	public Status getRInChIStatus() {
 		return rinchiOutput.getStatus();
 	}
 

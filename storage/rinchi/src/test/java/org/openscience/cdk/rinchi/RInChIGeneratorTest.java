@@ -47,7 +47,7 @@ import org.openscience.cdk.tools.LoggingToolFactory;
 import io.github.dan2097.jnarinchi.JnaRinchi;
 import io.github.dan2097.jnarinchi.RinchiOptions;
 import io.github.dan2097.jnarinchi.RinchiOutput;
-import io.github.dan2097.jnarinchi.RinchiStatus;
+import io.github.dan2097.jnarinchi.Status;
 
 public class RInChIGeneratorTest extends CDKTestCase {
 	private static final ILoggingTool logger = LoggingToolFactory.createLoggingTool(RInChIGeneratorTest.class);
@@ -109,7 +109,7 @@ public class RInChIGeneratorTest extends CDKTestCase {
 		 RInChIGenerator gen = RInChIGeneratorFactory.getInstance().
 				 	getRInChIGenerator(reaction, RinchiOptions.DEFAULT_OPTIONS, useCDK_MDL_IO);
 		 Assert.assertNotNull(gen);
-		 Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, gen.getRInChIStatus());
+		 Assert.assertEquals("RInChI status:", Status.SUCCESS, gen.getRInChIStatus());
 		 Assert.assertEquals("RinChI:", rfi.get("RInChI"), gen.getRInChI());
 
 		 if (rfi.containsKey("RAuxInfo"))
@@ -213,7 +213,7 @@ public class RInChIGeneratorTest extends CDKTestCase {
 		IReaction reaction = readReactionFromResourceRXNFile(filename);
 		RInChIGenerator rinchiGenerator = RInChIGeneratorFactory.getInstance().getRInChIGenerator(reaction, RinchiOptions.DEFAULT_OPTIONS, false);
 		Assert.assertNotNull(rinchiGenerator);
-		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, rinchiGenerator.getRInChIStatus());
+		Assert.assertEquals("RInChI status:", Status.SUCCESS, rinchiGenerator.getRInChIStatus());
 		Assert.assertEquals("RinChI:", expected, rinchiGenerator.getRInChI());
 	}
 
@@ -225,7 +225,7 @@ public class RInChIGeneratorTest extends CDKTestCase {
 		IReaction reaction = readReactionFromResourceRXNFile(filename);
 		RInChIGenerator rinchiGenerator = RInChIGeneratorFactory.getInstance().getRInChIGenerator(reaction, RinchiOptions.DEFAULT_OPTIONS, true);
 		Assert.assertNotNull(rinchiGenerator);
-		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, rinchiGenerator.getRInChIStatus());
+		Assert.assertEquals("RInChI status:", Status.SUCCESS, rinchiGenerator.getRInChIStatus());
 		Assert.assertEquals("RinChI:", expected, rinchiGenerator.getRInChI());
 	}
 
@@ -237,7 +237,7 @@ public class RInChIGeneratorTest extends CDKTestCase {
 		IReaction reaction = readReactionFromResourceRXNFile(filename);
 		RInChIGenerator rinchiGenerator = RInChIGeneratorFactory.getInstance().getRInChIGenerator(reaction, RinchiOptions.DEFAULT_OPTIONS, false);
 		Assert.assertNotNull(rinchiGenerator);
-		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, rinchiGenerator.getRInChIStatus());
+		Assert.assertEquals("RInChI status:", Status.SUCCESS, rinchiGenerator.getRInChIStatus());
 		Assert.assertEquals("RinChI:", expected, rinchiGenerator.getRInChI());
 	}
 
@@ -249,7 +249,7 @@ public class RInChIGeneratorTest extends CDKTestCase {
 		IReaction reaction = readReactionFromResourceRXNFile(filename);
 		RInChIGenerator rinchiGenerator = RInChIGeneratorFactory.getInstance().getRInChIGenerator(reaction, RinchiOptions.DEFAULT_OPTIONS, true);
 		Assert.assertNotNull(rinchiGenerator);
-		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, rinchiGenerator.getRInChIStatus());
+		Assert.assertEquals("RInChI status:", Status.SUCCESS, rinchiGenerator.getRInChIStatus());
 		Assert.assertEquals("RinChI:", expected, rinchiGenerator.getRInChI());
 	}
 
@@ -301,7 +301,7 @@ public class RInChIGeneratorTest extends CDKTestCase {
 		final String reactionText = readFileTextFromResourceFile(reactionFilename);
 		final RinchiOutput rinchiOutput = JnaRinchi.fileTextToRinchi(reactionText);
 
-		Assert.assertEquals("RInChIStatus: ", RinchiStatus.SUCCESS, rinchiOutput.getStatus());
+		Assert.assertEquals("RInChIStatus: ", Status.SUCCESS, rinchiOutput.getStatus());
 		Assert.assertEquals("RInChI error messages: ", "", rinchiOutput.getErrorMessage());
 		Assert.assertEquals("RInChI for " + reactionFilename, expected, rinchiOutput.getRinchi());
 	}
@@ -316,7 +316,7 @@ public class RInChIGeneratorTest extends CDKTestCase {
 		final String reactionText = readFileTextFromResourceFile(reactionFilename);
 		final RinchiOutput rinchiOutput = JnaRinchi.fileTextToRinchi(reactionText);
 
-		Assert.assertEquals("RInChIStatus: ", RinchiStatus.SUCCESS, rinchiOutput.getStatus());
+		Assert.assertEquals("RInChIStatus: ", Status.SUCCESS, rinchiOutput.getStatus());
 		Assert.assertEquals("RInChI error messages: ", "", rinchiOutput.getErrorMessage());
 		Assert.assertEquals("RInChI for " + reactionFilename, expected, rinchiOutput.getRinchi());
 	}
@@ -329,7 +329,7 @@ public class RInChIGeneratorTest extends CDKTestCase {
 		final String reactionText = readFileTextFromResourceFile(reactionFilename);
 		final RinchiOutput rinchiOutput = JnaRinchi.fileTextToRinchi(reactionText);
 
-		Assert.assertEquals("RInChIStatus: ", RinchiStatus.ERROR, rinchiOutput.getStatus());
+		Assert.assertEquals("RInChIStatus: ", Status.ERROR, rinchiOutput.getStatus());
 		Assert.assertTrue("RInChI error messages: ", rinchiOutput.getErrorMessage().contains("rinchi::MdlRDfileReaderError: Reading from 'std::istream', line 87,"));
 		Assert.assertTrue("RInChI error messages: ", rinchiOutput.getErrorMessage().endsWith("rinchi::InChIGeneratorError: Error: no InChI has been created."));
 		Assert.assertEquals("RInChI for " + reactionFilename, expected, rinchiOutput.getRinchi());
@@ -345,7 +345,7 @@ public class RInChIGeneratorTest extends CDKTestCase {
 		final String reactionText = readFileTextFromResourceFile(reactionFilename);
 		final RinchiOutput rinchiOutput = JnaRinchi.fileTextToRinchi(reactionText);
 
-		Assert.assertEquals("RInChIStatus: ", RinchiStatus.SUCCESS, rinchiOutput.getStatus());
+		Assert.assertEquals("RInChIStatus: ", Status.SUCCESS, rinchiOutput.getStatus());
 		Assert.assertEquals("RInChI error messages: ", "", rinchiOutput.getErrorMessage());
 		Assert.assertEquals("RInChI for " + reactionFilename, expected, rinchiOutput.getRinchi());
 	}
@@ -359,7 +359,7 @@ public class RInChIGeneratorTest extends CDKTestCase {
 		final String reactionText = readFileTextFromResourceFile(reactionFilename);
 		final RinchiOutput rinchiOutput = JnaRinchi.fileTextToRinchi(reactionText);
 
-		Assert.assertEquals("RInChIStatus: ", RinchiStatus.SUCCESS, rinchiOutput.getStatus());
+		Assert.assertEquals("RInChIStatus: ", Status.SUCCESS, rinchiOutput.getStatus());
 		Assert.assertEquals("RInChI error messages: ", "", rinchiOutput.getErrorMessage());
 		Assert.assertEquals("RInChI for " + reactionFilename, expected, rinchiOutput.getRinchi());
 	}
@@ -373,7 +373,7 @@ public class RInChIGeneratorTest extends CDKTestCase {
 		final String reactionText = readFileTextFromResourceFile(reactionFilename);
 		final RinchiOutput rinchiOutput = JnaRinchi.fileTextToRinchi(reactionText);
 
-		Assert.assertEquals("RInChIStatus: ", RinchiStatus.SUCCESS, rinchiOutput.getStatus());
+		Assert.assertEquals("RInChIStatus: ", Status.SUCCESS, rinchiOutput.getStatus());
 		Assert.assertEquals("RInChI error messages: ", "", rinchiOutput.getErrorMessage());
 		Assert.assertEquals("RInChI for " + reactionFilename, expected, rinchiOutput.getRinchi());
 	}
@@ -389,7 +389,7 @@ public class RInChIGeneratorTest extends CDKTestCase {
 		final String reactionText = readFileTextFromResourceFile(reactionFilename);
 		final RinchiOutput rinchiOutput = JnaRinchi.fileTextToRinchi(reactionText);
 
-		Assert.assertEquals("RInChIStatus: ", RinchiStatus.SUCCESS, rinchiOutput.getStatus());
+		Assert.assertEquals("RInChIStatus: ", Status.SUCCESS, rinchiOutput.getStatus());
 		Assert.assertEquals("RInChI error messages: ", "", rinchiOutput.getErrorMessage());
 		Assert.assertEquals("RInChI for " + reactionFilename, expected, rinchiOutput.getRinchi());
 	}
@@ -401,7 +401,7 @@ public class RInChIGeneratorTest extends CDKTestCase {
 		final String reactionText = readFileTextFromResourceFile(reactionFilename);
 		final RinchiOutput rinchiOutput = JnaRinchi.fileTextToRinchi(reactionText);
 
-		Assert.assertEquals("RInChIStatus: ", RinchiStatus.SUCCESS, rinchiOutput.getStatus());
+		Assert.assertEquals("RInChIStatus: ", Status.SUCCESS, rinchiOutput.getStatus());
 		Assert.assertEquals("RInChI error messages: ", "", rinchiOutput.getErrorMessage());
 		Assert.assertEquals("RInChI for " + reactionFilename, expected, rinchiOutput.getRinchi());
 	}
@@ -413,7 +413,7 @@ public class RInChIGeneratorTest extends CDKTestCase {
 		final String reactionText = readFileTextFromResourceFile(reactionFilename);
 		final RinchiOutput rinchiOutput = JnaRinchi.fileTextToRinchi(reactionText);
 
-		Assert.assertEquals("RInChIStatus: ", RinchiStatus.SUCCESS, rinchiOutput.getStatus());
+		Assert.assertEquals("RInChIStatus: ", Status.SUCCESS, rinchiOutput.getStatus());
 		Assert.assertEquals("RInChI error messages: ", "", rinchiOutput.getErrorMessage());
 		Assert.assertEquals("RInChI for " + reactionFilename, expected, rinchiOutput.getRinchi());
 	}
@@ -425,7 +425,7 @@ public class RInChIGeneratorTest extends CDKTestCase {
 		final String reactionText = readFileTextFromResourceFile(reactionFilename);
 		final RinchiOutput rinchiOutput = JnaRinchi.fileTextToRinchi(reactionText);
 
-		Assert.assertEquals("RInChIStatus: ", RinchiStatus.SUCCESS, rinchiOutput.getStatus());
+		Assert.assertEquals("RInChIStatus: ", Status.SUCCESS, rinchiOutput.getStatus());
 		Assert.assertEquals("RInChI error messages: ", "", rinchiOutput.getErrorMessage());
 		Assert.assertEquals("RInChI for " + reactionFilename, expected, rinchiOutput.getRinchi());
 	}
@@ -438,10 +438,10 @@ public class RInChIGeneratorTest extends CDKTestCase {
 		RInChIGenerator gen = RInChIGeneratorFactory.getInstance().
 				getRInChIGenerator(reaction, RinchiOptions.DEFAULT_OPTIONS);
 		Assert.assertNotNull(gen);
-		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, gen.getRInChIStatus());
+		Assert.assertEquals("RInChI status:", Status.SUCCESS, gen.getRInChIStatus());
 		//RInChI --> Reaction
 		RInChIToReaction r2r = RInChIGeneratorFactory.getInstance().getRInChIToReaction(gen.getRInChI(), gen.getAuxInfo());
-		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, r2r.getStatus());
+		Assert.assertEquals("RInChI status:", Status.SUCCESS, r2r.getStatus());
 		IReaction reaction2 = r2r.getReaction();
 		Assert.assertNotNull(reaction2);
 		//Check double bond stereo
@@ -464,10 +464,10 @@ public class RInChIGeneratorTest extends CDKTestCase {
 		RInChIGenerator gen = RInChIGeneratorFactory.getInstance().
 				getRInChIGenerator(reaction, RinchiOptions.DEFAULT_OPTIONS, true);
 		Assert.assertNotNull(gen);
-		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, gen.getRInChIStatus());
+		Assert.assertEquals("RInChI status:", Status.SUCCESS, gen.getRInChIStatus());
 		//RInChI --> Reaction
 		RInChIToReaction r2r = RInChIGeneratorFactory.getInstance().getRInChIToReaction(gen.getRInChI(), gen.getAuxInfo(), true);
-		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, r2r.getStatus());
+		Assert.assertEquals("RInChI status:", Status.SUCCESS, r2r.getStatus());
 		IReaction reaction2 = r2r.getReaction();
 		Assert.assertNotNull(reaction2);
 		//Check double bond stereo
@@ -489,10 +489,10 @@ public class RInChIGeneratorTest extends CDKTestCase {
 		RInChIGenerator gen = RInChIGeneratorFactory.getInstance().
 				getRInChIGenerator(reaction, RinchiOptions.DEFAULT_OPTIONS);
 		Assert.assertNotNull(gen);
-		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, gen.getRInChIStatus());
+		Assert.assertEquals("RInChI status:", Status.SUCCESS, gen.getRInChIStatus());
 		//RInChI --> Reaction
 		RInChIToReaction r2r = RInChIGeneratorFactory.getInstance().getRInChIToReaction(gen.getRInChI(), gen.getAuxInfo());
-		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, r2r.getStatus());
+		Assert.assertEquals("RInChI status:", Status.SUCCESS, r2r.getStatus());
 		IReaction reaction2 = r2r.getReaction();
 		Assert.assertNotNull(reaction2);
 		//Check double stereo bond stereo
@@ -523,10 +523,10 @@ public class RInChIGeneratorTest extends CDKTestCase {
 		RInChIGenerator gen = RInChIGeneratorFactory.getInstance().
 				getRInChIGenerator(reaction, RinchiOptions.DEFAULT_OPTIONS, true);
 		Assert.assertNotNull(gen);
-		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, gen.getRInChIStatus());
+		Assert.assertEquals("RInChI status:", Status.SUCCESS, gen.getRInChIStatus());
 		//RInChI --> Reaction
 		RInChIToReaction r2r = RInChIGeneratorFactory.getInstance().getRInChIToReaction(gen.getRInChI(), gen.getAuxInfo(), true);
-		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, r2r.getStatus());
+		Assert.assertEquals("RInChI status:", Status.SUCCESS, r2r.getStatus());
 		IReaction reaction2 = r2r.getReaction();
 		Assert.assertNotNull(reaction2);
 		//Check double stereo bond stereo
@@ -556,7 +556,7 @@ public class RInChIGeneratorTest extends CDKTestCase {
 		RinchiOutput rinchiOut = JnaRinchi.fileTextToRinchi(reactText);		
 		//RInChI --> Reaction
 		RInChIToReaction r2r = RInChIGeneratorFactory.getInstance().getRInChIToReaction(rinchiOut.getRinchi(), rinchiOut.getAuxInfo());
-		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, r2r.getStatus());
+		Assert.assertEquals("RInChI status:", Status.SUCCESS, r2r.getStatus());
 		IReaction reaction = r2r.getReaction();
 		Assert.assertNotNull(reaction);
 		//Check reaction components count
@@ -589,11 +589,11 @@ public class RInChIGeneratorTest extends CDKTestCase {
 		RInChIGenerator gen = RInChIGeneratorFactory.getInstance().
 				getRInChIGenerator(reaction, RinchiOptions.DEFAULT_OPTIONS);
 		Assert.assertNotNull(gen);
-		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, gen.getRInChIStatus());
+		Assert.assertEquals("RInChI status:", Status.SUCCESS, gen.getRInChIStatus());
 		
 		//RInChI --> Reaction
 		RInChIToReaction r2r = RInChIGeneratorFactory.getInstance().getRInChIToReaction(gen.getRInChI(), gen.getAuxInfo());
-		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, r2r.getStatus());
+		Assert.assertEquals("RInChI status:", Status.SUCCESS, r2r.getStatus());
 		IReaction reaction2 = r2r.getReaction();
 		Assert.assertNotNull(reaction2);
 		

@@ -56,7 +56,7 @@ import io.github.dan2097.jnarinchi.ReactionFileFormat;
 import io.github.dan2097.jnarinchi.RinchiInput;
 import io.github.dan2097.jnarinchi.RinchiInputComponent;
 import io.github.dan2097.jnarinchi.RinchiInputFromRinchiOutput;
-import io.github.dan2097.jnarinchi.RinchiStatus;
+import io.github.dan2097.jnarinchi.Status;
 import io.github.dan2097.jnarinchi.cheminfo.StereoUtils.MolCoordinatesType;
 import io.github.dan2097.jnarinchi.cheminfo.StereoUtils;
 
@@ -138,7 +138,7 @@ public class RInChIToReaction {
      * @throws CDKException if an error is encountered
      */
     protected void generateReactionFromRinchi() throws CDKException {
-    	if (rInpFromRinchiOutput.getStatus() == RinchiStatus.ERROR)
+    	if (rInpFromRinchiOutput.getStatus() == Status.ERROR)
     		throw new CDKException(rInpFromRinchiOutput.getErrorMessage());
 
     	RinchiInput rinchInput = rInpFromRinchiOutput.getRinchiInput();
@@ -168,7 +168,7 @@ public class RInChIToReaction {
     	
     	if (!reactionGenerationErrors.isEmpty()) {
     		//Replacing rInpFromRinchiOutput with a new one with status ERROR
-    		this.rInpFromRinchiOutput = new RinchiInputFromRinchiOutput(rinchInput, RinchiStatus.ERROR, -1,
+    		this.rInpFromRinchiOutput = new RinchiInputFromRinchiOutput(rinchInput, Status.ERROR, -1,
     				"Unable to create Reaction object from RinchiInput: " + getAllReactionGenerationErrors());
     		throw new CDKException(rInpFromRinchiOutput.getErrorMessage());
     	}
@@ -190,11 +190,11 @@ public class RInChIToReaction {
     		BufferedReader bufferedReader = new BufferedReader(new StringReader(fileTextOutput.getReactionFileText()));
     		MDLRXNV2000Reader reader = new MDLRXNV2000Reader(bufferedReader);
     		this.reaction = reader.read(DefaultChemObjectBuilder.getInstance().newInstance(IReaction.class));
-    		this.rInpFromRinchiOutput = new RinchiInputFromRinchiOutput(null, RinchiStatus.SUCCESS, 0, "");
+    		this.rInpFromRinchiOutput = new RinchiInputFromRinchiOutput(null, Status.SUCCESS, 0, "");
     		reader.close();
     	} 
     	catch (Exception exception) {
-    		this.rInpFromRinchiOutput = new RinchiInputFromRinchiOutput(null, RinchiStatus.ERROR, -1, 
+    		this.rInpFromRinchiOutput = new RinchiInputFromRinchiOutput(null, Status.ERROR, -1, 
     				"Error on generating Reaction via MDL RXN Reader: " + exception.getMessage());
     		throw new CDKException(rInpFromRinchiOutput.getErrorMessage());
     	}
@@ -469,7 +469,7 @@ public class RInChIToReaction {
      * Access the status of the RInChI output.
      * @return the status
      */
-	public RinchiStatus getStatus() {
+	public Status getStatus() {
 		if (rInpFromRinchiOutput != null)
 			return rInpFromRinchiOutput.getStatus();
 		else

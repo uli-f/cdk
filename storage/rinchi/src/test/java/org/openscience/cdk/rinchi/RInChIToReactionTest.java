@@ -28,7 +28,7 @@ import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.test.CDKTestCase;
 
 import io.github.dan2097.jnarinchi.RinchiOptions;
-import io.github.dan2097.jnarinchi.RinchiStatus;
+import io.github.dan2097.jnarinchi.Status;
 
 
 public class RInChIToReactionTest extends CDKTestCase {
@@ -36,14 +36,14 @@ public class RInChIToReactionTest extends CDKTestCase {
 	public void doubleConversionTest(String rinchi, String auxInfo, boolean useCDK_MDL_IO, boolean useCDK_MDL_IO2) throws Exception {
 		//RInChI --> Reaction
 		RInChIToReaction r2r = RInChIGeneratorFactory.getInstance().getRInChIToReaction(rinchi, auxInfo, useCDK_MDL_IO);
-		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, r2r.getStatus());
+		Assert.assertEquals("RInChI status:", Status.SUCCESS, r2r.getStatus());
 		IReaction reaction = r2r.getReaction();
 		Assert.assertNotNull(reaction);
 		//Reaction --> RInChI
 		RInChIGenerator gen = RInChIGeneratorFactory.getInstance().
 			 	getRInChIGenerator(reaction, RinchiOptions.DEFAULT_OPTIONS, useCDK_MDL_IO2);
 		Assert.assertNotNull(gen);
-		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, gen.getRInChIStatus());
+		Assert.assertEquals("RInChI status:", Status.SUCCESS, gen.getRInChIStatus());
 		Assert.assertEquals("RinChI:", rinchi, gen.getRInChI());
 		if (!auxInfo.isEmpty()) 
 			Assert.assertEquals("RAuxInfo:", auxInfo, gen.getAuxInfo());
@@ -60,14 +60,14 @@ public class RInChIToReactionTest extends CDKTestCase {
 		String rinchi = rfi.get("RInChI");
 		String auxInfo = rfi.get("RAuxInfo");
 		RInChIToReaction r2r = RInChIGeneratorFactory.getInstance().getRInChIToReaction(rinchi, auxInfo, useCDK_MDL_IO);
-		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, r2r.getStatus());
+		Assert.assertEquals("RInChI status:", Status.SUCCESS, r2r.getStatus());
 		IReaction reaction = r2r.getReaction();
 		Assert.assertNotNull(reaction);
 		//Reaction --> RInChI 
 		RInChIGenerator gen = RInChIGeneratorFactory.getInstance().
 			 	getRInChIGenerator(reaction, RinchiOptions.DEFAULT_OPTIONS, useCDK_MDL_IO2);
 		Assert.assertNotNull(gen);
-		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, gen.getRInChIStatus());
+		Assert.assertEquals("RInChI status:", Status.SUCCESS, gen.getRInChIStatus());
 		Assert.assertEquals("RinChI:", rinchi, gen.getRInChI());
 		if (compareRAuxInfo)
 			Assert.assertEquals("RAuxInfo:", auxInfo, gen.getAuxInfo());
@@ -83,7 +83,7 @@ public class RInChIToReactionTest extends CDKTestCase {
 		String rinchi = rfi.get("RInChI");
 		String auxInfo = rfi.get("RAuxInfo");
 		RInChIToReaction r2r = RInChIGeneratorFactory.getInstance().getRInChIToReaction(rinchi, auxInfo, useCDK_MDL_IO);
-		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, r2r.getStatus());
+		Assert.assertEquals("RInChI status:", Status.SUCCESS, r2r.getStatus());
 		IReaction reaction = r2r.getReaction();
 		Assert.assertNotNull(reaction);
 		//Reaction --> RInChI
@@ -91,7 +91,7 @@ public class RInChIToReactionTest extends CDKTestCase {
 		RInChIGenerator gen = RInChIGeneratorFactory.getInstance().
 			 	getRInChIGenerator(reaction, RinchiOptions.DEFAULT_OPTIONS, useCDK_MDL_IO2);
 		Assert.assertNotNull(gen);
-		Assert.assertEquals("RInChI status:",RinchiStatus.SUCCESS, gen.getRInChIStatus());
+		Assert.assertEquals("RInChI status:", Status.SUCCESS, gen.getRInChIStatus());
 		Assert.assertEquals("RinChI with excluded agents:", expectedRinchi, gen.getRInChI());
 	}
 	
