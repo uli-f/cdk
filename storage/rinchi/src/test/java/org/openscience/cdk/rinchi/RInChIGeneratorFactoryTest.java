@@ -34,7 +34,7 @@ import org.openscience.cdk.io.MDLV2000Writer.SPIN_MULTIPLICITY;
 import org.openscience.cdk.test.CDKTestCase;
 
 import io.github.dan2097.jnarinchi.RinchiOptions;
-import io.github.dan2097.jnarinchi.RinchiStatus;
+import io.github.dan2097.jnarinchi.Status;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
@@ -142,7 +142,7 @@ public class RInChIGeneratorFactoryTest extends CDKTestCase {
 		
 		//Generate RInChI
 		RInChIGenerator gen = RInChIGeneratorFactory.getInstance().getRInChIGenerator(reaction);
-		Assert.assertEquals("RInChI status: ", RinchiStatus.SUCCESS, gen.getRInChIStatus());		
+		Assert.assertEquals("RInChI status: ", Status.SUCCESS, gen.getRInChIStatus());		
 		Assert.assertTrue("Forward reaction RInChI: ", gen.getRInChI().endsWith("/d+"));
 		
 		//Generate RInChI with option ForceEquilibrium		
@@ -175,7 +175,7 @@ public class RInChIGeneratorFactoryTest extends CDKTestCase {
 		
 		//Generate back a IReaction object from RInChI
 		RInChIToReaction r2r = RInChIGeneratorFactory.getInstance().getRInChIToReaction(gen.getRInChI());
-		Assert.assertEquals("RInChI status: ", RinchiStatus.SUCCESS, r2r.getStatus());
+		Assert.assertEquals("RInChI status: ", Status.SUCCESS, r2r.getStatus());
 		IReaction reaction3 = r2r.getReaction();
 		Assert.assertEquals("Reactant count: ", 2, reaction3.getReactantCount());
 		Assert.assertEquals("Product count: ", 1, reaction3.getProductCount());
@@ -237,11 +237,11 @@ public class RInChIGeneratorFactoryTest extends CDKTestCase {
 
 		//Generate RInChI
 		RInChIGenerator gen = RInChIGeneratorFactory.getInstance().getRInChIGenerator(reaction);
-		Assert.assertEquals("RInChI status: ", RinchiStatus.SUCCESS, gen.getRInChIStatus());		
+		Assert.assertEquals("RInChI status: ", Status.SUCCESS, gen.getRInChIStatus());		
 		Assert.assertEquals("RInChI for benzene: ", "RInChI=1.00.1S/<>C6H6/c1-2-4-6-5-3-1/h1-6H/d-", gen.getRInChI());
 		//Generate RInChI using CDK MDL writer
 		RInChIGenerator gen2 = RInChIGeneratorFactory.getInstance().getRInChIGenerator(reaction, RinchiOptions.DEFAULT_OPTIONS, true);
-		Assert.assertEquals("RInChI status: ", RinchiStatus.SUCCESS, gen2.getRInChIStatus());		
+		Assert.assertEquals("RInChI status: ", Status.SUCCESS, gen2.getRInChIStatus());		
 		Assert.assertEquals("RInChI for benzene: ", "RInChI=1.00.1S/<>C6H6/c1-2-4-6-5-3-1/h1-6H/d-", gen2.getRInChI());		
 	}
 
@@ -298,7 +298,7 @@ public class RInChIGeneratorFactoryTest extends CDKTestCase {
 
 		//Generate RInChI
 		RInChIGenerator gen = RInChIGeneratorFactory.getInstance().getRInChIGenerator(reaction);
-		Assert.assertEquals("RInChI status: ", RinchiStatus.SUCCESS, gen.getRInChIStatus());		
+		Assert.assertEquals("RInChI status: ", Status.SUCCESS, gen.getRInChIStatus());		
 		Assert.assertEquals("RInChI for benzene: ", "RInChI=1.00.1S/<>C6H6/c1-2-4-6-5-3-1/h1-6H/d-", gen.getRInChI());
 		
 		//Generate RInChI using CDK MDL writer
@@ -333,7 +333,7 @@ public class RInChIGeneratorFactoryTest extends CDKTestCase {
 		
 		//Generate RInChI
 		RInChIGenerator gen = RInChIGeneratorFactory.getInstance().getRInChIGenerator(reaction);
-		Assert.assertEquals("RInChI status: ", RinchiStatus.SUCCESS, gen.getRInChIStatus());		
+		Assert.assertEquals("RInChI status: ", Status.SUCCESS, gen.getRInChIStatus());		
 		Assert.assertEquals("RInChI for propane radical: ", "RInChI=1.00.1S/<>C3H7/c1-3-2/h1,3H2,2H3/d-", gen.getRInChI());
 		Assert.assertEquals("RAuxInfo for propane radical: ", "RAuxInfo=1.00.1/<>0/N:1,3,2/CRV:1d/rA:3nC.2CC/rB:s1;s2;/rC:;;;", gen.getAuxInfo());
 				
@@ -372,7 +372,7 @@ public class RInChIGeneratorFactoryTest extends CDKTestCase {
 		
 		//Generate RInChI
 		RInChIGenerator gen = RInChIGeneratorFactory.getInstance().getRInChIGenerator(reaction);
-		Assert.assertEquals("RInChI status: ", RinchiStatus.SUCCESS, gen.getRInChIStatus());		
+		Assert.assertEquals("RInChI status: ", Status.SUCCESS, gen.getRInChIStatus());		
 		Assert.assertEquals("RInChI for propane radical: ", "RInChI=1.00.1S/<>C3H6/c1-3-2/h1H,3H2,2H3/d-", gen.getRInChI());
 		Assert.assertEquals("RAuxInfo for propane radical: ", "RAuxInfo=1.00.1/<>0/N:1,3,2/CRV:1t/rA:3nC.3CC/rB:s1;s2;/rC:;;;", gen.getAuxInfo());
 				
