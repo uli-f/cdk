@@ -51,7 +51,6 @@ import io.github.dan2097.jnarinchi.ReactionFileFormat;
 import io.github.dan2097.jnarinchi.RinchiInput;
 import io.github.dan2097.jnarinchi.RinchiInputComponent;
 import io.github.dan2097.jnarinchi.RinchiKeyOutput;
-import io.github.dan2097.jnarinchi.RinchiKeyStatus;
 import io.github.dan2097.jnarinchi.RinchiKeyType;
 import io.github.dan2097.jnarinchi.RinchiOptions;
 import io.github.dan2097.jnarinchi.RinchiOutput;
@@ -215,7 +214,7 @@ public class RInChIGenerator {
 		RinchiKeyOutput rkOut;
 		if (rinchiOutput.getStatus() == Status.ERROR) {
 			String err = "Unable to generate RInChIKey since, no RInChI is generated!";
-			rkOut = new RinchiKeyOutput("", type, RinchiKeyStatus.ERROR, -1, err);
+			rkOut = new RinchiKeyOutput("", type, Status.ERROR, -1, err);
 		} else {
 			rkOut = JnaRinchi.rinchiToRinchiKey(type, rinchiOutput.getRinchi());
 		}
@@ -232,7 +231,7 @@ public class RInChIGenerator {
 			break;
 		}
 
-		if (rkOut.getStatus() == RinchiKeyStatus.ERROR)
+		if (rkOut.getStatus() == Status.ERROR)
 			throw new CDKException("RInChIKey generation problem: " + rkOut.getErrorMessage());
 	}
 
