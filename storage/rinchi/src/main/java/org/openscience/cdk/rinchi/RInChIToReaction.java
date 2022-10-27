@@ -50,7 +50,6 @@ import io.github.dan2097.jnainchi.InchiStereo;
 import io.github.dan2097.jnainchi.InchiStereoParity;
 import io.github.dan2097.jnainchi.InchiStereoType;
 import io.github.dan2097.jnarinchi.FileTextOutput;
-import io.github.dan2097.jnarinchi.FileTextStatus;
 import io.github.dan2097.jnarinchi.JnaRinchi;
 import io.github.dan2097.jnarinchi.ReactionFileFormat;
 import io.github.dan2097.jnarinchi.RinchiInput;
@@ -183,7 +182,7 @@ public class RInChIToReaction {
 	 * @throws CDKException if an error is encountered
      */
     protected void generateReactionFromMDLRXNFile() throws CDKException {
-    	if (fileTextOutput.getStatus() == FileTextStatus.ERROR)
+    	if (fileTextOutput.getStatus() == Status.ERROR)
     		throw new CDKException(fileTextOutput.getErrorMessage());
     		
     	try {
