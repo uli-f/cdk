@@ -304,16 +304,15 @@ public class RInChIGenerator {
 						atomInchiAtomMap.get(atom).setRadical(radical);
 					 }
 					 else {
-						 // information loss: divalent but singlet or triplet?
-						 // no conversion;
-						 // TODO
-						 LOGGER.info("");
+						 // information loss: divalent, but not clear whether singlet or triplet?
+						 // no conversion;						 
+						 LOGGER.info("Information loss/radical not converted: "
+						 		+ "unable to determone divalent radical type (singlet or triple)");
 					 }
 					 break;
 				 default:
-					 //Invalid number of radicals;
-					 // TODO
-					 LOGGER.info("");
+					 //Invalid number of eCount					 
+					 LOGGER.info("Radical not converted: invalid number of connected single electrons to atom #" + (i+1));
 					 break;
 				 }
 			 }
