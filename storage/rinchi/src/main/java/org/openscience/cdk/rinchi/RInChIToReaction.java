@@ -81,7 +81,7 @@ public class RInChIToReaction {
 	protected FileTextOutput fileTextOutput = null;
 	protected IReaction reaction;
 	protected final boolean useCDK_MDL_IO;
-	protected boolean configureMolecules = false;
+	protected boolean configureReactionComponents = false;
 	private final List<String> reactionGenerationErrors = new ArrayList<>();
 	private String curComponentErrorContext = "";
 		
@@ -91,7 +91,7 @@ public class RInChIToReaction {
      * @throws CDKException if an error is encountered
      */
 	protected RInChIToReaction(String rinchi) throws CDKException {
-		this (rinchi, "", false);
+		this (rinchi, "", false, false);
 	}
 	
 	/**
@@ -101,7 +101,7 @@ public class RInChIToReaction {
      * @throws CDKException if an error is encountered
      */
 	protected RInChIToReaction(String rinchi, String auxInfo) throws CDKException {
-		this (rinchi, auxInfo, false);
+		this (rinchi, auxInfo, false, false);
 	}
 	
 	/**
@@ -112,12 +112,25 @@ public class RInChIToReaction {
      * @throws CDKException if an error is encountered
      */
 	protected RInChIToReaction(String rinchi, String auxInfo, boolean useCDK_MDL_IO) throws CDKException {
+		this (rinchi, auxInfo, useCDK_MDL_IO, false);
+	}
+	
+	/**
+	 * Consumes a RInChI with associated auxiliary information and produces a CDK Reaction.
+     * @param rinchi RInChI string
+	 * @param auxInfo RInChI auxiliary information (AuxInfo) string
+     * @param useCDK_MDL_IO determines whether to use CDK MDL RXN Reader for the conversion
+     * @param configureReactionComponents determines whether to configure CDK AtomContainer objects storing reaction components
+     * @throws CDKException if an error is encountered
+     */
+	protected RInChIToReaction(String rinchi, String auxInfo, boolean useCDK_MDL_IO, boolean configureReactionComponents) throws CDKException {
 		if (rinchi == null)
 			throw new IllegalArgumentException("Null RInChI string provided");
 		if (auxInfo == null)
 			throw new IllegalArgumentException("Null RInChI aux info string provided");
 		
 		this.useCDK_MDL_IO = useCDK_MDL_IO;
+		this.configureReactionComponents = configureReactionComponents; 
 
 		if (useCDK_MDL_IO) {
 			// use CDK RXN Reader to make a Reaction object directly from the file text output
@@ -259,7 +272,7 @@ public class RInChIToReaction {
     		}
     	}	
     	
-    	if (configureMolecules) {
+    	if (configureReactionComponents) {
     		try {
     			AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(atomContainer);
     		}
@@ -491,6 +504,16 @@ public class RInChIToReaction {
 	public boolean isUseCDK_MDL_IO() {
 		return useCDK_MDL_IO;
 	}
+	
+	/**
+	 * Returns the flag that indicates whether CDK AtomContainers for result reaction components are to be configured.
+	 *
+	 * @return <code>true</code> if the reaction components are to be configured, otherwise <code>false</code> is returned
+	 */	
+	public boolean isConfigureReactionComponents() {
+		return configureReactionComponents;
+	}
+
 	/**
      * Gets the RinchiInput object used for data conversion. 
 	 * @return the RinchiInput object used for conversion or <code>null</code> if {@link #isUseCDK_MDL_IO()} is <code>null</code>
