@@ -194,6 +194,23 @@ public class RInChIGeneratorFactory {
 	}
 	
 	/**
+	 * Returns an instance of {@link RInChIToReaction} that consumes a RInChI string with an accompanying <i>AuxInfo</i> string and produces a {@link IReaction}.
+	 * <br>
+	 * This method also allows to specify whether the CDK IO capabilities should be used for
+	 * reading the MDL RXN file that is passed from the native RInChI library.
+	 * Optionally, the resulting CDK AtomContainer objects, storing reaction components, could be configured. 
+	 *
+	 * @param rinchi   RInChI to generate reaction from
+	 * @param auxInfo   RInChI auxiliary information (<i>AuxInfo</i>)
+	 * @param useCDK_MDL_IO determines whether to use CDK MDL RXN Reader
+	 * @param configureReactionComponents determines whether to configure reaction components (CDK AtomContainer objects) 
+	 * @throws CDKException if the generator cannot be instantiated
+	 */
+	public RInChIToReaction getRInChIToReaction(String rinchi, String auxInfo, boolean useCDK_MDL_IO, boolean configureReactionComponents) throws CDKException {
+		return (new RInChIToReaction(rinchi, auxInfo, useCDK_MDL_IO, configureReactionComponents));
+	}
+	
+	/**
 	 * Consumes a RInChI string and produces a {@link RInChIDecomposition}.
 	 *
 	 * @param rinchi  RInChI that is decomposed
