@@ -493,8 +493,14 @@ public class RInChIGenerator {
 			return InchiStereo.createTetrahedralStereo(inchiAtomCentral, inchiAtom1, inchiAtom2, inchiAtom3, inchiAtom4, parity);
 		}
 
-		//TODO handle allene atoms and double bonds
-
+		
+		//Other types of stereo elements are not handled (converted).
+    	//Generally the conversion of double bond and allene atom stereo elements is not needed 
+    	//for the proper work of RInChI generation since 
+    	//the stereo information is handled via 2D/3D coordinates.
+		//Generallt, stereo elements of the other types could not be handled from the 
+    	//jna-rinchi libary when converting InchiStereo to MDL RXN/RDFile content.   
+		
 		return null;
 	}
 
