@@ -442,7 +442,12 @@ public class RInChIToReaction {
     		}
     	}
     	
-    	//TODO handle other types of stereo elements
+    	//Other types of stereo elements are not handled (converted).
+    	//Generally the conversion of double bond and allene atom stereo elements is not needed 
+    	//for the proper work of RInChI generation since 
+    	//the stereo information is handled via 2D/3D coordinates.
+    	//Stereo elements of the other types generally should not be expected withing  
+    	//the jna-rinchi resulting list of InchiStereo objects.  
 
     	return null;
     }
