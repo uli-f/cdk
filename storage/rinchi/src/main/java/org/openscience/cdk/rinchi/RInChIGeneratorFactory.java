@@ -116,7 +116,15 @@ public class RInChIGeneratorFactory {
 
 	/**
 	 * Get a RInChI generator providing a {@link String} with options to customise the generation.
-	 *
+	 * <b>Example for option setting:</b><br/>
+	 * <code>//Generate RInChI with option ForceEquilibrium</code><br>		
+	 * <code>RInChIGenerator gen = RInChIGeneratorFactory.getInstance().getRInChIGenerator(reaction, "ForceEquilibrium");</code><br>
+	 * <code>String rinchi = gen.getRInChI();</code><br>
+	 * <code></code><br>
+	 * <code>//Generate default RInChI, reaction has a direction (option ForceEquilibrium is false)</code><br>		
+	 * <code>RInChIGenerator gen0 = RInChIGeneratorFactory.getInstance().getRInChIGenerator(reaction);</code><br>
+	 * <code>String rinchi0 = gen0.getRInChI();</code><br>
+	 * 
 	 * @param reaction reaction to generate RInChI for
 	 * @param options space or comma delimited string of options for the generation of the RInChI
 	 * @return the RInChI generator
