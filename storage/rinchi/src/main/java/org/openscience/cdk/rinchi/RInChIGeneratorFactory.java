@@ -65,7 +65,11 @@ public class RInChIGeneratorFactory {
 
 		static {
 			INSTANCE = new RInChIGeneratorFactory();
-			// TODO do we want to load the rinchi native library at this point so that we get an exception early on?
+			try {
+				RInChIGeneratorFactory.class.getClassLoader().loadClass("io.github.dan2097.jnarinchi.JnaRinchi");
+			} catch (ClassNotFoundException exception) {
+				throw new RuntimeException(exception);
+			}
 		}
 	}
 
