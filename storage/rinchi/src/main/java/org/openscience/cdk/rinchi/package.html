@@ -5,9 +5,13 @@
 </h1>
 This package provides functionality related to RInChI.
 <ol>
-    <li>RInChIGenerator: Given an IReaction generate RInChI, RAuxInfo, Long-RInChIKey, Short-RInChIKey and Web-RInChIKey.</li>
+    <li>RInChIGenerator: Given an IReaction generate RInChI, RAuxInfo, Long-RInChIKey, Short-RInChIKey and
+        Web-RInChIKey.
+    </li>
     <li>RInChIToReaction: Given a RInChI and optionally an associated RAuxInfo generate a IReaction.</li>
-    <li>RInChIDecomposition: Given a RInChI and optionally an associated RAuxInfo decompose the RInChI into its constituent InChIs and AuxInfos.</li>
+    <li>RInChIDecomposition: Given a RInChI and optionally an associated RAuxInfo decompose the RInChI into its
+        constituent InChIs and AuxInfos.
+    </li>
 </ol>
 <h1>
     Known Limitations
@@ -19,22 +23,65 @@ This package provides functionality related to RInChI.
 <h2>
     Stereochemical Information
 </h2>
-The native RInChI library infers stereochemical information from 2D/3D coordinates of the input files.
-Consequently, if a RInChI does not come with an associated RAuxInfo that includes 2D/3D coordinates any stereochemical
-information that is present in the RInChI string gets lost when converting
-<ol>
-    <li>from RInChI to a CDK Reaction - which ends up not having any 2D/3D coordinates for the atoms - and then</li>
-    <li>from this CDK Reaction back to RInChI.</li>
-</ol>
 <p>
-    In general, if a CDK IReaction does not have coordinates for its reaction components a RInChI generated from it ...
-    @Nikolay TODO can you please finish this sentence and/or amend other information that is relevant when it comes to the potential loss of stereochemical information?
+    The native RInChI library infers stereochemical information from 2D/3D coordinates of the input files. Consequently,
+    there are scenarios where the stereochemical information gets lost when generating RInChI from a given CDK
+    <code>IReaction</code> and generating a CDK <code>IReaction</code> from a RInChI. As the 2D/3D coordinates
+    are not stored in the RInChI itself, but instead in an associated RAuxInfo string retaining the RAuxInfo string
+    is key if the stereochemical layers of the RInChI are of importance.
+</p>
+<p>
+    Consequently, if a RInChI does not come with an associated RAuxInfo that includes 2D/3D coordinates for its reaction
+    components any stereochemical information that is present in the RInChI string gets lost when converting from a RInChI
+    to a CDK <code>IReaction</code>.
+</p>
+<p>
+    Please note that the conversion from a CDK <code>IReaction</code> to a RInChI string is also impacted by this:
+    For double bond and allene atom stereo elements to be considered by the native RInChI library the CDK
+    <code>IReaction</code> must have 2D or 3D coordinates for the atoms of its constituent components.
 </p>
 <h2>
     Agents
 </h2>
 <p>
-    @Nikolay TODO see github issue #17 https://github.com/ideaconsult/cdk/issues/17
+    The official RXN syntax as specified in <i>CTFile Formats Biova Databases 2020</i> by Dassault Systèmes only
+    includes reagents and products on the <i>count line</i>
+    of the RXN. Moreover, agents are also omitted from the list of Molfiles (but may be found within the data block of
+    the RXN). There is an unofficial extension with
+    regard to agents that was originally suggested by ChemAxon where the counts of agents is added to the counts line of
+    the RXN and the structural information of
+    agents is added as Molfiles.
+</p>
+<p>
+    If there are any agents present in the <code>IReaction</code> object and CDK is used to write a RXN V2000 file using
+    its <code>MDLRXNWriter</code>, the number of
+    agents is added to the count line of the RXN. This, unfortunately, causes an error if the RXN is then used as an
+    input for the native RInChI library. However,
+    the native RInChI library is able to consider agents if they are specified within an RDfile, that is, in the counts
+    line of an RXN record of an RDfile. This is
+    the reason that RDfile is the preferred (and default) input format to feed into the native RInChI library when
+    producing a RInChI and consuming a
+    <code>IReaction</code> by making calls to RInChIGenerator.
+</p>
+<p>
+    The flag <code>useCDK_MDL_IO</code> is used to specify the input format for RInChIGenerator. Please note that the
+    calls to RInChIGenerator are placed from
+    RInChIGeneratorFactory::getRInChIGenerator(IReaction,RinchiOptions,boolean).
+    <br>
+    <code>useCDK_MDL_IO</code> set to <code>false</code> (default): CDK's <code>IReaction</code> object is converted to
+    a <code>RinchiInput</code> object.
+    The <code>RinchiInput</code> instance is consumed by and converted to an RDfile by the <code>jna-rinchi</code>
+    library. The RDfile is then used as an
+    input for the native RInChI library. Any information regarding agents is successfully retained in all objects along
+    this chain and processed
+    by the native RInChI library.
+    <br>
+    <code>useCDK_MDL_IO</code> set to <code>true</code>: This uses CDK's capabilities to convert the
+    <code>IReaction</code> object to an RXN V2000. Prior
+    to this conversion any agents present in the reaction are removed to ensure that the resultant RXN V2000 can be
+    consumed by the native RInChI library.
+    Next, this agent-less RXN V2000 is consumed by the <code>jna-rinchi</code> library and passed on to the native
+    RInChI library as an input.
 </p>
 </body>
 </html>
