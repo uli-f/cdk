@@ -27,14 +27,23 @@ information that is present in the RInChI string gets lost when converting
     <li>from this CDK Reaction back to RInChI.</li>
 </ol>
 <p>
-    In general, if a CDK IReaction does not have coordinates for its reaction components a RInChI generated from it ...
-    @Nikolay TODO can you please finish this sentence and/or amend other information that is relevant when it comes to the potential loss of stereochemical information?
+    In general, if a CDK IReaction does not have coordinates for its reaction components, the RInChI generated from it will
+    have reaction components without stereo. Also, if 2D/3D coordinates are missing, the stereo information is lost even when components' stereo (e.g. chiral atoms)
+    is specified topologically on a 0D level using CDK list of StereoElement objects. 
 </p>
 <h2>
     Agents
 </h2>
 <p>
-    @Nikolay TODO see github issue #17 https://github.com/ideaconsult/cdk/issues/17
+    If the conversion of a CDK IReaction object to RInChI is performed with option <b>useCDK_MDL_IO = true</b>, then 
+    the agents (if present) are lost during the conversion. This is so, because the native RInChI library cannot read agents 
+    from the RXN V2000 format, produced by CDK.
+    Alternatively, the default conversion procedure (<b>useCDK_MDL_IO = false</b>) does not have such a limitation, since internally 
+    MDL RDFile format is used instead of RXN format.  
+</p>
+<p>
+    The agent types information is not supported by the native RInChI library 
+    hence distinguishing different agent types cannot be done (e.g. catalysts, solvents etc.).   
 </p>
 </body>
 </html>
