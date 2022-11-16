@@ -75,6 +75,40 @@ import org.openscience.cdk.tools.LoggingToolFactory;
  *     If the atom container has 3D coordinates for all of its atoms then these 3D coordinates
  *     will be used, otherwise 2D coordinates will be used if available.
  * </p>
+ * Given an IReaction, let's generate RInChI, RAuxInfo, Long-RInChIKey, Short-RInChIKey and Web-RInChIKey:
+ * <pre>
+ *     // all we need is an IReaction object, e.g., by loading an RXN file
+ *     IReaction reaction = ....;
+ *     RInChIGenerator generator = RInChIGeneratorFactory.getInstance().getRInChIGenerator(reaction);
+ *     String rinchi = generator.getRInChI();
+ *     String rAuxInfo = generator.getAuxInfo();
+ *     String longKey = generator.getLongRInChIKey();
+ *     String shortKey = generator.getShortRInChIKey();
+ *     String webKey = generator.getWebRInChIKey();
+ * </pre>
+ * Given a RInChI and optionally its RAuxInfo here is how to generate an IReaction:
+ * <pre>
+ *     RInChIToReaction rinchiToReaction = RInChIGeneratorFactory.getInstance().getRInChIToReaction(rinchi, rAuxInfo);
+ *     IReaction reaction = rinchiToReaction.getReaction();
+ *
+ *     // if a RAuxInfo isn't available an overloaded method can be called
+ *     RInChIToReaction rinchiToReactionNoRauxinfo = RInChIGeneratorFactory.getInstance().getRInChIToReaction(rinchi);
+ *     IReaction reaction2 = rinchiToReactionNoRauxinfo.getReaction();
+ * </pre>
+ * And here is how to decompose the RInChI and its associated RAuxInfo into the constituent InChIs and AuxInfo:
+ * <pre>
+ *     RInChIDecomposition rinchiDecomposition = RInChIGeneratorFactory.getInstance().getRInChIDecomposition(rinchi);
+ *     List&lt;String&gt; inchis = rinchiDecomposition.getInchis();
+ *     List&lt;String&gt; auxInfos = rinchiDecomposition.getAuxInfo();
+ *     // getting the roles of the individual reaction components and the direction of the reaction
+ *     List&lt;ReactionComponentRole&gt; roles =  rinchiDecomposition.getReactionComponentRoles();
+ *     ReactionDirection direction = rinchiDecomposition.getReactionDirection();
+ *
+ *     // there are also utility methods to get a map of (Inchi, AuxInfo) pairs ...
+ *     Map&lt;String,String&gr; inchiAuxInfoMap = rinchiDecomposition.getInchiAuxInfoMap();
+ *     // ... and a map of (inchi, reaction component roles) pairs
+ *     Map&lt;String,ReactionComponentRole&gr; inchiReactionComponentRoleMap = rinchiDecomposition.getInchiReactionComponentRoleMap();
+ * </pre>
  * @author Nikolay Kochev
  * @cdk.module rinchi
  * @cdk.githash
