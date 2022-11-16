@@ -111,7 +111,8 @@ public class RInChIGeneratorFactory {
 		if (flags == null)
 			throw new IllegalArgumentException("Null flags");
 
-		RinchiOptions options = new RinchiOptions.RinchiOptionsBuilder()
+		RinchiOptions options = RinchiOptions
+				.builder()
 				.withFlag(flags)
 				.build();
 

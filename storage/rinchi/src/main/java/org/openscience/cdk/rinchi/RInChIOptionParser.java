@@ -41,7 +41,7 @@ public class RInChIOptionParser {
 		for (RinchiFlag flag : RinchiFlag.values())
 			optMap.put(flag.name(), flag);
 
-		options = new RinchiOptions.RinchiOptionsBuilder();
+		options = RinchiOptions.builder();
 	}
 
 	private void processString(String optstr) {
