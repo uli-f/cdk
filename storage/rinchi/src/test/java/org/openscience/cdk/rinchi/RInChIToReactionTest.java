@@ -21,8 +21,8 @@ package org.openscience.cdk.rinchi;
 
 import io.github.dan2097.jnarinchi.RinchiOptions;
 import io.github.dan2097.jnarinchi.Status;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.test.CDKTestCase;
 
@@ -34,17 +34,17 @@ public class RInChIToReactionTest extends CDKTestCase {
 	public void doubleConversionTest(String rinchi, String auxInfo, boolean useCDK_MDL_IO, boolean useCDK_MDL_IO2) throws Exception {
 		//RInChI --> Reaction
 		RInChIToReaction r2r = RInChIGeneratorFactory.getInstance().getRInChIToReaction(rinchi, auxInfo, useCDK_MDL_IO);
-		Assert.assertEquals("RInChI status:", Status.SUCCESS, r2r.getStatus());
+		Assertions.assertEquals(Status.SUCCESS, r2r.getStatus(), "RInChI status:");
 		IReaction reaction = r2r.getReaction();
-		Assert.assertNotNull(reaction);
+		Assertions.assertNotNull(reaction);
 		//Reaction --> RInChI
 		RInChIGenerator gen = RInChIGeneratorFactory.getInstance().
 			 	getRInChIGenerator(reaction, RinchiOptions.DEFAULT_OPTIONS, useCDK_MDL_IO2);
-		Assert.assertNotNull(gen);
-		Assert.assertEquals("RInChI status:", Status.SUCCESS, gen.getRInChIStatus());
-		Assert.assertEquals("RinChI:", rinchi, gen.getRInChI());
+		Assertions.assertNotNull(gen);
+		Assertions.assertEquals(Status.SUCCESS, gen.getRInChIStatus(), "RInChI status:");
+		Assertions.assertEquals(rinchi, gen.getRInChI(), "RinChI:");
 		if (!auxInfo.isEmpty())
-			Assert.assertEquals("RAuxInfo:", auxInfo, gen.getAuxInfo());
+			Assertions.assertEquals(auxInfo, gen.getAuxInfo(), "RAuxInfo:");
 	}
 
 	public void doubleConversionTestForExampleFile(String rinchiFile, boolean useCDK_MDL_IO, boolean useCDK_MDL_IO2) throws Exception {
@@ -58,20 +58,20 @@ public class RInChIToReactionTest extends CDKTestCase {
 		String rinchi = rfi.get("RInChI");
 		String auxInfo = rfi.get("RAuxInfo");
 		RInChIToReaction r2r = RInChIGeneratorFactory.getInstance().getRInChIToReaction(rinchi, auxInfo, useCDK_MDL_IO);
-		Assert.assertEquals("RInChI status:", Status.SUCCESS, r2r.getStatus());
+		Assertions.assertEquals(Status.SUCCESS, r2r.getStatus(), "RInChI status:");
 		IReaction reaction = r2r.getReaction();
-		Assert.assertNotNull(reaction);
+		Assertions.assertNotNull(reaction);
 		//Reaction --> RInChI
 		RInChIGenerator gen = RInChIGeneratorFactory.getInstance().
 			 	getRInChIGenerator(reaction, RinchiOptions.DEFAULT_OPTIONS, useCDK_MDL_IO2);
-		Assert.assertNotNull(gen);
-		Assert.assertEquals("RInChI status:", Status.SUCCESS, gen.getRInChIStatus());
-		Assert.assertEquals("RinChI:", rinchi, gen.getRInChI());
+		Assertions.assertNotNull(gen);
+		Assertions.assertEquals(Status.SUCCESS, gen.getRInChIStatus(), "RInChI status:");
+		Assertions.assertEquals(rinchi, gen.getRInChI(), "RinChI:");
 		if (compareRAuxInfo)
-			Assert.assertEquals("RAuxInfo:", auxInfo, gen.getAuxInfo());
-		Assert.assertEquals("Long-RInChIKey:", rfi.get("Long-RInChIKey"), gen.getLongRInChIKey());
-		Assert.assertEquals("Short-RInChIKey:", rfi.get("Short-RInChIKey"), gen.getShortRInChIKey());
-		Assert.assertEquals("Web-RInChIKey:", rfi.get("Web-RInChIKey"), gen.getWebRInChIKey());
+			Assertions.assertEquals(auxInfo, gen.getAuxInfo(), "RAuxInfo:");
+		Assertions.assertEquals(rfi.get("Long-RInChIKey"), gen.getLongRInChIKey(), "Long-RInChIKey:");
+		Assertions.assertEquals(rfi.get("Short-RInChIKey"), gen.getShortRInChIKey(), "Short-RInChIKey:");
+		Assertions.assertEquals(rfi.get("Web-RInChIKey"), gen.getWebRInChIKey(), "Web-RInChIKey:");
 	}
 
 	public void doubleConversionTestForExampleFile_excludeAgents(String rinchiFile,
@@ -81,16 +81,16 @@ public class RInChIToReactionTest extends CDKTestCase {
 		String rinchi = rfi.get("RInChI");
 		String auxInfo = rfi.get("RAuxInfo");
 		RInChIToReaction r2r = RInChIGeneratorFactory.getInstance().getRInChIToReaction(rinchi, auxInfo, useCDK_MDL_IO);
-		Assert.assertEquals("RInChI status:", Status.SUCCESS, r2r.getStatus());
+		Assertions.assertEquals(Status.SUCCESS, r2r.getStatus(), "RInChI status:");
 		IReaction reaction = r2r.getReaction();
-		Assert.assertNotNull(reaction);
+		Assertions.assertNotNull(reaction);
 		//Reaction --> RInChI
 		String expectedRinchi = removeAgents(rinchi);
 		RInChIGenerator gen = RInChIGeneratorFactory.getInstance().
 			 	getRInChIGenerator(reaction, RinchiOptions.DEFAULT_OPTIONS, useCDK_MDL_IO2);
-		Assert.assertNotNull(gen);
-		Assert.assertEquals("RInChI status:", Status.SUCCESS, gen.getRInChIStatus());
-		Assert.assertEquals("RinChI with excluded agents:", expectedRinchi, gen.getRInChI());
+		Assertions.assertNotNull(gen);
+		Assertions.assertEquals(Status.SUCCESS, gen.getRInChIStatus(), "RInChI status:");
+		Assertions.assertEquals(expectedRinchi, gen.getRInChI(), "RinChI with excluded agents:");
 	}
 
 	private String removeAgents(String rinchi) {
@@ -346,18 +346,18 @@ public class RInChIToReactionTest extends CDKTestCase {
 
 		//RInChI --> Reaction
 		RInChIToReaction r2r = RInChIGeneratorFactory.getInstance().getRInChIToReaction(rinchi, auxInfo);
-		Assert.assertEquals("RInChI status:", Status.SUCCESS, r2r.getStatus());
+		Assertions.assertEquals(Status.SUCCESS, r2r.getStatus(), "RInChI status:");
 		IReaction reaction = r2r.getReaction();
-		Assert.assertNotNull(reaction);
+		Assertions.assertNotNull(reaction);
 
 		//Reaction --> RInChI
 		RInChIGenerator gen = RInChIGeneratorFactory.getInstance().getRInChIGenerator(reaction, RinchiOptions.DEFAULT_OPTIONS);
-		Assert.assertNotNull(gen);
-		Assert.assertEquals("RInChI status:", Status.SUCCESS, gen.getRInChIStatus());
+		Assertions.assertNotNull(gen);
+		Assertions.assertEquals(Status.SUCCESS, gen.getRInChIStatus(), "RInChI status:");
 
 		// PLEASE NOTE: the rinchi after the round-trip conversion is the 'expected' in this assertion
 		// as we know that we loose the stereochemistry layers as a result of this conversion
-		Assert.assertEquals("RinChI:", rinchiAfterRoundtrip, gen.getRInChI());
+		Assertions.assertEquals(rinchiAfterRoundtrip, gen.getRInChI(), "RinChI:");
 	}
 
 	@Test
