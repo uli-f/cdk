@@ -54,6 +54,7 @@ public class RInChIOptionParser {
 			case ',':
 				pos++; // skip
 				break;
+			/*
 			case 'W': // timeout
 				pos++;
 				int next = getIndexOfEither(optstr,',',' ', pos);
@@ -67,8 +68,9 @@ public class RInChIOptionParser {
 					logger.warn("Invalid timeout:" + substring);
 				}
 				break;
+			*/	
 			default:
-				next = getIndexOfEither(optstr,',',' ', pos);
+				int next = getIndexOfEither(optstr,',',' ', pos);
 				if (next < 0)
 					next = optstr.length();
 				RinchiFlag flag = optMap.get(optstr.substring(pos, next));
