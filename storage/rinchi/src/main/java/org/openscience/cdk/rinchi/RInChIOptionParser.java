@@ -54,21 +54,6 @@ public class RInChIOptionParser {
 			case ',':
 				pos++; // skip
 				break;
-			/*
-			case 'W': // timeout
-				pos++;
-				int next = getIndexOfEither(optstr,',',' ', pos);
-				if (next < 0)
-					next = optstr.length();
-				String substring = optstr.substring(pos, next);
-				try {
-					// Note: locale sensitive e.g. 0,01 but we can not pass in milliseconds so doesn't matter so much
-					options.withTimeoutMilliSeconds((int)(1000*Double.parseDouble(substring)));
-				} catch (NumberFormatException ex) {
-					logger.warn("Invalid timeout:" + substring);
-				}
-				break;
-			*/	
 			default:
 				int next = getIndexOfEither(optstr,',',' ', pos);
 				if (next < 0)
