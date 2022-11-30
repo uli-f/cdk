@@ -73,7 +73,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  *
  *
- * @author MehmetAzizYirik <mehmetazizyirik@outlook.com> <0000-0001-7520-7215@orcid.org>
+ * @author MehmetAzizYirik mehmetazizyirik@outlook.com 0000-0001-7520-7215@orcid.org
  * @cdk.module structgen
  */
 public class Maygen {

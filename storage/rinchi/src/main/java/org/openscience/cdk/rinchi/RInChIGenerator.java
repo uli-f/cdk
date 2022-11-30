@@ -105,9 +105,9 @@ import org.openscience.cdk.tools.LoggingToolFactory;
  *     ReactionDirection direction = rinchiDecomposition.getReactionDirection();
  *
  *     // there are also utility methods to get a map of (Inchi, AuxInfo) pairs ...
- *     Map&lt;String,String&gr; inchiAuxInfoMap = rinchiDecomposition.getInchiAuxInfoMap();
+ *     Map&lt;String,String&gt; inchiAuxInfoMap = rinchiDecomposition.getInchiAuxInfoMap();
  *     // ... and a map of (inchi, reaction component roles) pairs
- *     Map&lt;String,ReactionComponentRole&gr; inchiReactionComponentRoleMap = rinchiDecomposition.getInchiReactionComponentRoleMap();
+ *     Map&lt;String,ReactionComponentRole&gt; inchiReactionComponentRoleMap = rinchiDecomposition.getInchiReactionComponentRoleMap();
  * </pre>
  * @author Nikolay Kochev
  * @cdk.module rinchi
@@ -313,7 +313,7 @@ public class RInChIGenerator {
 		}
 
 		//Convert stereo elements
-		for (IStereoElement stereoElement : atomContainer.stereoElements()) {
+		for (IStereoElement<?,?> stereoElement : atomContainer.stereoElements()) {
 			InchiStereo stereo = cdkStereoElementToInchiStereo(stereoElement, atomInchiAtomMap);
 			if (stereo != null)
 				rinchiInputComponent.addStereo(stereo);
@@ -452,7 +452,7 @@ public class RInChIGenerator {
 		return InchiBondStereo.NONE;
 	}
 
-	private InchiStereo cdkStereoElementToInchiStereo (IStereoElement stereoElement, Map<IAtom,InchiAtom> atomInchiAtomMap) {
+	private InchiStereo cdkStereoElementToInchiStereo (IStereoElement<?,?> stereoElement, Map<IAtom,InchiAtom> atomInchiAtomMap) {
 		if (stereoElement instanceof ITetrahedralChirality) {
 			ITetrahedralChirality thc = (ITetrahedralChirality) stereoElement;
 			InchiAtom inchiAtomCentral = atomInchiAtomMap.get(thc.getChiralAtom());
