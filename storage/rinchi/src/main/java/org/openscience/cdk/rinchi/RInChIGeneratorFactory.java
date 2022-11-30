@@ -30,16 +30,15 @@ import io.github.dan2097.jnarinchi.RinchiOptions;
  * <br>
  * See these classes for examples of use. Methods in these classes make use of the
  * JNA-RInChI library.
- * <p>
+ * <br><br>
  * The {@link RInChIGeneratorFactory} is a singleton class, which means that there
  * exists only one instance of the class. An instance of this class is obtained
  * with:
  * <pre>
  * RInChIGeneratorFactory factory = RInChIGeneratorFactory.getInstance();
  * </pre>
- * </p>
  * <p>
- *     RInChI/Reaction interconversion is implemented in this way so that we can
+ * RInChI/Reaction interconversion is implemented in this way so that we can
  * check whether the required native code is available. If the native
  * code cannot be loaded during the first call to {@link #getInstance()}
  * (when the instance is created) a {@link CDKException} will be thrown. The

@@ -1,6 +1,6 @@
 /**
- * <h1>Overview</h1>
  * This package provides functionality related to <a href="https://dx.doi.org/10.1186/s13321-018-0277-8">RInChI</a>.
+ * <h2>Overview</h2>
  * <ol>
  *     <li>{@link org.openscience.cdk.rinchi.RInChIGenerator}: Given an {@link org.openscience.cdk.interfaces.IReaction}
  *     generate RInChI, RAuxInfo, Long-RInChIKey, Short-RInChIKey and Web-RInChIKey.</li>
@@ -12,18 +12,17 @@
  * To provide this functionality the library <a href="https://github.com/dan2097/jna-inchi">jna-inchi</a> is used
  * which in turn places calls to methods of the <a href="https://github.com/IUPAC-InChI/RInChI/">native RInChI library</a>
  * by means of a <a href="https://github.com/java-native-access/jna">JNA</a> wrapper.
- * <h1>Chemical Information Routing Process</h1>
+ * <h2>Chemical Information Routing Process</h2>
  * <p>
  *     The precompiled binaries (i.e., dll and so files) of the IUPAC RInChI native C++ code provide access to their
  *     functionality only by consuming MDL CTAB file text formats RXN and RDfile. Direct access of the C++ internal
  *     data structures of the IUPAC RInChI library is <i>not</i> available.
  * </p>
- * <img src="org.openscience.cdk.rinchi.Figure.1.png" alt="Diagram of the chemical information conversion process.">
  * <p>
  *     The conversion from a CDK {@link org.openscience.cdk.interfaces.IReaction} to RInChI can be done in two ways:
  * </p>
  * <ol>
- *     <li>CDK IReaction -> RinChIInput &#xF0E0; RXN or RDfile &#xF0E0; RInChI</li>
+ *     <li>CDK IReaction -> RinChIInput -> RXN or RDfile -> RInChI</li>
  *     <li>CDK IReaction -> RXN (written by the MDL RXN Writer of CDK) -> RInChI</li>
  * </ol>
  * <p>
@@ -46,8 +45,8 @@
  *     If an error is encountered corresponding messages can be accessed by calling {@code getErrorMessage()} of
  *     RInChIGenerator, RInChIToReaction and RInChIDecomposition.
  * </p>
- * <h1>Good to know</h1>
- * <h2>Aromaticity</h2>
+ * <h2>Good to know</h2>
+ * <h3>Aromaticity</h3>
  * <p>
  *    The usage of "aromatic" bonds is strongly discouraged. Instead <b>Kekule</b> structures are <b>recommended</b>.
  *    <br>
@@ -56,20 +55,20 @@
  *    prone to errors; for example, {@link org.openscience.cdk.io.MDLRXNWriter} throws an exception when trying to
  *    convert an <code>IReaction</code> object with "aromatic bonds" to RInChI.
  * </p>
- * <h2>Implicit Hydrogen Atoms</h2>
+ * <h3>Implicit Hydrogen Atoms</h3>
  * <p>
  *     The reaction components returned from the native RInChI library in the MDL RXN or RDFile format do not indicate the
  *     number of implicit hydrogen atoms. In the <code>jna-rinchi</code> library, the implicit valence (hydrogen atom count)
  *     for a given atom is determined by taking into account the element, charge and explicit valence (sum of all bond orders)
  *     by using the MDL valence model (see also <code>org.openscience.cdk.io.MDLValence</code>).
  * </p>
- * <h1>Known Limitations</h1>
+ * <h2>Known Limitations</h2>
  * <p>
  *     The functionality of the native RInChI library, the capabilities of CDK, and the required interconversions
  *     of their inputs and outputs results in known limitations.
  * </p>
- * <h2>Stereochemical Information</h2>
- * <h3>Reaction to RInChI</h3>
+ * <h3>Stereochemical Information</h3>
+ * <h4>Reaction to RInChI</h4>
  * <p>
  *    CDK and jna-inchi support the following stereo elements: tetrahedral chiral atoms, allene atoms and double
  *    bond stereo configurations. The native RInChI library only supports MDL CTAB formats RXN V2000 and RDFile as
@@ -87,7 +86,7 @@
  *    even if the stereo elements of the components (e.g., chiral atoms, double bonds) are specified topologically using
  *    <code>StereoCenters.StereoElement</code> of CDK.
  * </p>
- * <h3>RInChI to Reaction</h3>
+ * <h4>RInChI to Reaction</h4>
  * <p>
  *    If a RInChI does not come with an associated RAuxInfo that includes 2D/3D coordinates for its reaction components,
  *    stereochemical information for tetrahedral chiral atoms and double bonds that is present in the stereochemical layer
@@ -106,7 +105,7 @@
  *     <li>alternate route using the MDL RXN V2000 reader of CDK: StereoElementFactory is invoked by the CDK
  *     {@link org.openscience.cdk.io.MDLRXNV2000Reader}}</li>
  * </ol>
- * <h2>Agents</h2>
+ * <h3>Agents</h3>
  * <p>
  *     The official RXN syntax as specified in <i>CTFile Formats Biova Databases 2020</i> by Dassault Syst&egrave;mes only
  *     includes reagents and products on the <i>count line</i> of the RXN. Moreover, agents are also omitted from the list
@@ -143,7 +142,7 @@
  *     Please also note that the agent type information is not supported by the native RInChI library,
  *     thus different agent types (e.g. catalysts, solvents etc.) cannot be distinguished.
  * </p>
- * <h2>Radicals</h2>
+ * <h3>Radicals</h3>
  * <p>
  *    Radicals are supported by the InChI and RInChI standard as well as by the <code>jna-inchi</code> and CDK libraries.
  *    The conversion of radical information as represented in CDK to and from its representation in RInChI is implemented.
