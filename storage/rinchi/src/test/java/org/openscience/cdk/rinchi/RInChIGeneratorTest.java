@@ -25,13 +25,13 @@ import io.github.dan2097.jnarinchi.Status;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openscience.cdk.CDKConstants;
-import org.openscience.cdk.Reaction;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.*;
 import org.openscience.cdk.interfaces.IDoubleBondStereochemistry.Conformation;
 import org.openscience.cdk.io.IChemObjectReader.Mode;
 import org.openscience.cdk.io.MDLRXNV2000Reader;
 import org.openscience.cdk.io.MDLV2000Writer.SPIN_MULTIPLICITY;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.test.CDKTestCase;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
@@ -80,8 +80,7 @@ public class RInChIGeneratorTest extends CDKTestCase {
     public static IReaction readReactionFromResourceRXNFile(String fileName) throws Exception {
         InputStream ins = RInChIGeneratorTest.class.getResourceAsStream(fileName);
         MDLRXNV2000Reader reader = new MDLRXNV2000Reader(ins, Mode.STRICT);
-        IReaction reaction = new Reaction();
-        reaction = reader.read(reaction);
+        IReaction reaction = reader.read(SilentChemObjectBuilder.getInstance().newReaction());
         reader.close();
         return reaction;
     }

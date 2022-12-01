@@ -18,23 +18,22 @@
  */
 package org.openscience.cdk.rinchi;
 
+import io.github.dan2097.jnarinchi.RinchiOptions;
+import io.github.dan2097.jnarinchi.Status;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.openscience.cdk.Atom;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.Bond;
 import org.openscience.cdk.CDKConstants;
-import org.openscience.cdk.Reaction;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IReaction;
 import org.openscience.cdk.io.MDLV2000Writer.SPIN_MULTIPLICITY;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.test.CDKTestCase;
-
-import io.github.dan2097.jnarinchi.RinchiOptions;
-import io.github.dan2097.jnarinchi.Status;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
@@ -139,7 +138,7 @@ public class RInChIGeneratorFactoryTest extends CDKTestCase {
 		mol3.addBond(new Bond (pa2, pa3, IBond.Order.SINGLE));
 		
 		//Create reaction and set reagents and products
-		IReaction reaction = new Reaction();
+		IReaction reaction = SilentChemObjectBuilder.getInstance().newReaction();
 		reaction.addReactant(mol1);
 		reaction.addReactant(mol2);
 		reaction.addProduct(mol3);
@@ -154,7 +153,7 @@ public class RInChIGeneratorFactoryTest extends CDKTestCase {
 		Assertions.assertTrue(gen_eq.getRInChI().endsWith("/d="), "Equilibrium reaction RInChI: ");
 				
 		//Create reverse reaction and generate RInChI
-		IReaction reaction2 = new Reaction();
+		IReaction reaction2 = SilentChemObjectBuilder.getInstance().newReaction();
 		reaction2.addReactant(mol3);		
 		reaction2.addProduct(mol1);
 		reaction2.addProduct(mol2);
@@ -236,7 +235,7 @@ public class RInChIGeneratorFactoryTest extends CDKTestCase {
 		mol.addBond(b5);
 
 		//Create reaction and set benzene as a reagent
-		IReaction reaction = new Reaction();
+		IReaction reaction = SilentChemObjectBuilder.getInstance().newReaction();
 		reaction.addReactant(mol);
 
 		//Generate RInChI
@@ -297,7 +296,7 @@ public class RInChIGeneratorFactoryTest extends CDKTestCase {
 		mol.addBond(b5);
 
 		//Create reaction and set benzene as a reagent
-		IReaction reaction = new Reaction();
+		IReaction reaction = SilentChemObjectBuilder.getInstance().newReaction();
 		reaction.addReactant(mol);
 
 		//Generate RInChI
@@ -332,7 +331,7 @@ public class RInChIGeneratorFactoryTest extends CDKTestCase {
 		mol.addSingleElectron(0);
 						
 		//Create reaction and set propane as a reagent
-		IReaction reaction = new Reaction();
+		IReaction reaction = SilentChemObjectBuilder.getInstance().newReaction();
 		reaction.addReactant(mol);
 		
 		//Generate RInChI
@@ -371,7 +370,7 @@ public class RInChIGeneratorFactoryTest extends CDKTestCase {
 		mol.addSingleElectron(0);
 						
 		//Create reaction and set propane as a reagent
-		IReaction reaction = new Reaction();
+		IReaction reaction = SilentChemObjectBuilder.getInstance().newReaction();
 		reaction.addReactant(mol);
 		
 		//Generate RInChI
