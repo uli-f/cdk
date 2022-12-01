@@ -29,7 +29,8 @@ import io.github.dan2097.jnarinchi.Status;
 import java.util.*;
 
 /**
- * This class decomposes a RInChI into the individual InChIs and auxiliary Information (if available) of each reaction component.
+ * This class decomposes a RInChI into the individual InChIs and auxiliary Information (if available)
+ * of each reaction component.
  * Moreover, components roles (reactant, product, agent) and the reaction direction are returned.
  * <br>
  * This class places calls to a JNA wrapper for the RInChI C++ library (io.github.dan2097.jnarinchi).
@@ -40,132 +41,142 @@ import java.util.*;
  * @cdk.githash
  */
 public class RInChIDecomposition {
-	protected final RinchiDecompositionOutput rinchiDecompositionOutput;
+    protected final RinchiDecompositionOutput rinchiDecompositionOutput;
 
-	/**
-	 * Decomposes a RInChI into a set of InChIs.
-	 * @param rinchi RInChI string
-	 * @throws CDKException thrown if an error occurs
-	 */
-	protected RInChIDecomposition(String rinchi) throws CDKException {
-		this (rinchi, "");
-	}
+    /**
+     * Decomposes a RInChI into a set of InChIs.
+     *
+     * @param rinchi RInChI string
+     * @throws CDKException thrown if an error occurs
+     */
+    protected RInChIDecomposition(String rinchi) throws CDKException {
+        this(rinchi, "");
+    }
 
-	/**
-	 * Decomposes a RInChI and its auxiliary information into a set of InChIs and AuxInfo.
-	 * @param rinchi RInChI string
-	 * @param auxInfo RInChI aux info string
-	 * @throws CDKException thrown if an error occurs
-	 */
-	protected RInChIDecomposition(String rinchi, String auxInfo) throws CDKException {
-		if (rinchi == null)
-			throw new IllegalArgumentException("Null RInChI string provided");
-		if (auxInfo == null)
-			throw new IllegalArgumentException("Null RInChI aux info string provided");
+    /**
+     * Decomposes a RInChI and its auxiliary information into a set of InChIs and AuxInfo.
+     *
+     * @param rinchi  RInChI string
+     * @param auxInfo RInChI aux info string
+     * @throws CDKException thrown if an error occurs
+     */
+    protected RInChIDecomposition(String rinchi, String auxInfo) throws CDKException {
+        if (rinchi == null)
+            throw new IllegalArgumentException("Null RInChI string provided");
+        if (auxInfo == null)
+            throw new IllegalArgumentException("Null RInChI aux info string provided");
 
-		this.rinchiDecompositionOutput = decompose (rinchi, auxInfo);
-	}
-	
-	private RinchiDecompositionOutput decompose(String rinchi, String auxInfo) throws CDKException {
-		RinchiDecompositionOutput output = JnaRinchi.decomposeRinchi(rinchi, auxInfo);
-		
-		if (output.getStatus() == Status.ERROR)
-			throw new CDKException("RInChI decomposition error: " + output.getErrorMessage());
+        this.rinchiDecompositionOutput = decompose(rinchi, auxInfo);
+    }
 
-		return output;
-	}
-	
-	/**
+    private RinchiDecompositionOutput decompose(String rinchi, String auxInfo) throws CDKException {
+        RinchiDecompositionOutput output = JnaRinchi.decomposeRinchi(rinchi, auxInfo);
+
+        if (output.getStatus() == Status.ERROR)
+            throw new CDKException("RInChI decomposition error: " + output.getErrorMessage());
+
+        return output;
+    }
+
+    /**
      * Access the status of the RInChI Decomposition output.
+     *
      * @return the status
      */
-	public Status getStatus() { 
-		return rinchiDecompositionOutput.getStatus();
-	}
-	
-	/**
-	 * Returns reaction component InChIs.
-	 * @return unmodifiable list of reaction components InChIs
-	 */
-	public List<String> getInchis() {
-		return Collections.unmodifiableList(Arrays.asList(rinchiDecompositionOutput.getInchis()));
-	}
-	
-	/**
-	 * Returns reaction component aux infos.
-	 * @return unmodifiable list of RInChI auxiliary information
-	 */
-	public List<String> getAuxInfo() {
-		return Collections.unmodifiableList(Arrays.asList(rinchiDecompositionOutput.getAuxInfos()));
-	}
-	
-	/**
-	 * Return a list of reaction component roles.
-	 * @return unmodifiable reaction component roles
-	 */
-	public List<ReactionComponentRole> getReactionComponentRoles() {
-		return Collections.unmodifiableList(Arrays.asList(rinchiDecompositionOutput.getRoles()));
-	}
-	
-	/**
-	 * Returns RInChI reaction direction.
-	 * @return the reaction direction of the RInChI
-	 */
-	public ReactionDirection getReactionDirection() {
-		return rinchiDecompositionOutput.getDirection();
-	}
+    public Status getStatus() {
+        return rinchiDecompositionOutput.getStatus();
+    }
 
-	/**
-	 * Gets generated error messages.
-	 * @return generated error messages
-	 */
-	public String getErrorMessage() {
-		return rinchiDecompositionOutput.getErrorMessage();
-	}
+    /**
+     * Returns reaction component InChIs.
+     *
+     * @return unmodifiable list of reaction components InChIs
+     */
+    public List<String> getInchis() {
+        return Collections.unmodifiableList(Arrays.asList(rinchiDecompositionOutput.getInchis()));
+    }
 
-	/**
-	 * Returns a map with (InChI, auxiliary information) pairs.
-	 * @return unmodifiable map of (InChI, AuxInfo) pairs
-	 * @throws IllegalStateException thrown if there is a different number of InChIs and AuxInfo
-	 */
-	public Map<String, String> getInchiAuxInfoMap() {
-		if (rinchiDecompositionOutput.getInchis() == null || rinchiDecompositionOutput.getAuxInfos() == null) {
-			return Collections.unmodifiableMap(new HashMap<>());
-		}
+    /**
+     * Returns reaction component aux infos.
+     *
+     * @return unmodifiable list of RInChI auxiliary information
+     */
+    public List<String> getAuxInfo() {
+        return Collections.unmodifiableList(Arrays.asList(rinchiDecompositionOutput.getAuxInfos()));
+    }
 
-		if (rinchiDecompositionOutput.getInchis().length != rinchiDecompositionOutput.getAuxInfos().length) {
-			throw new IllegalStateException("Different number of InChIs and AuxInfo: There are " +
-					rinchiDecompositionOutput.getInchis().length + " InChIs and " + rinchiDecompositionOutput.getAuxInfos().length + " AuxInfo.");
-		}
+    /**
+     * Return a list of reaction component roles.
+     *
+     * @return unmodifiable reaction component roles
+     */
+    public List<ReactionComponentRole> getReactionComponentRoles() {
+        return Collections.unmodifiableList(Arrays.asList(rinchiDecompositionOutput.getRoles()));
+    }
 
-		Map<String,String> inchiAuxInfoMap = new HashMap<>(rinchiDecompositionOutput.getInchis().length);
-		for (int i = 0; i < rinchiDecompositionOutput.getInchis().length; i++) {
-			inchiAuxInfoMap.put(rinchiDecompositionOutput.getInchis()[i], rinchiDecompositionOutput.getAuxInfos()[i]);
-		}
+    /**
+     * Returns RInChI reaction direction.
+     *
+     * @return the reaction direction of the RInChI
+     */
+    public ReactionDirection getReactionDirection() {
+        return rinchiDecompositionOutput.getDirection();
+    }
 
-		return Collections.unmodifiableMap(inchiAuxInfoMap);
-	}
+    /**
+     * Gets generated error messages.
+     *
+     * @return generated error messages
+     */
+    public String getErrorMessage() {
+        return rinchiDecompositionOutput.getErrorMessage();
+    }
 
-	/**
-	 * Returns a map with (InChI, reaction component role) pairs.
-	 * @return unmodifiable map of (InChI, reaction component role) pairs
-	 * @throws IllegalStateException thrown if the number of InChIs and reaction component roles is not equal
-	 */
-	public Map<String, ReactionComponentRole> getInchiReactionComponentRoleMap() {
-		if (rinchiDecompositionOutput.getInchis() == null || rinchiDecompositionOutput.getRoles() == null) {
-			return Collections.unmodifiableMap(new HashMap<>());
-		}
+    /**
+     * Returns a map with (InChI, auxiliary information) pairs.
+     *
+     * @return unmodifiable map of (InChI, AuxInfo) pairs
+     * @throws IllegalStateException thrown if there is a different number of InChIs and AuxInfo
+     */
+    public Map<String, String> getInchiAuxInfoMap() {
+        if (rinchiDecompositionOutput.getInchis() == null || rinchiDecompositionOutput.getAuxInfos() == null) {
+            return Collections.unmodifiableMap(new HashMap<>());
+        }
 
-		if (rinchiDecompositionOutput.getInchis().length != rinchiDecompositionOutput.getRoles().length) {
-			throw new IllegalStateException("Different number of InChIs and reaction component roles: There are " +
-					rinchiDecompositionOutput.getInchis().length + " InChIs and " + rinchiDecompositionOutput.getRoles().length + " reaction component roles.");
-		}
+        if (rinchiDecompositionOutput.getInchis().length != rinchiDecompositionOutput.getAuxInfos().length) {
+            throw new IllegalStateException("Different number of InChIs and AuxInfo: There are " +
+                    rinchiDecompositionOutput.getInchis().length + " InChIs and " + rinchiDecompositionOutput.getAuxInfos().length + " AuxInfo.");
+        }
 
-		Map<String, ReactionComponentRole> inchiReactionComponentRolesMap = new HashMap<>(rinchiDecompositionOutput.getInchis().length);
-		for (int i = 0; i < rinchiDecompositionOutput.getInchis().length; i++) {
-			inchiReactionComponentRolesMap.put(rinchiDecompositionOutput.getInchis()[i], rinchiDecompositionOutput.getRoles()[i]);
-		}
+        Map<String, String> inchiAuxInfoMap = new HashMap<>(rinchiDecompositionOutput.getInchis().length);
+        for (int i = 0; i < rinchiDecompositionOutput.getInchis().length; i++) {
+            inchiAuxInfoMap.put(rinchiDecompositionOutput.getInchis()[i], rinchiDecompositionOutput.getAuxInfos()[i]);
+        }
 
-		return Collections.unmodifiableMap(inchiReactionComponentRolesMap);
-	}
+        return Collections.unmodifiableMap(inchiAuxInfoMap);
+    }
+
+    /**
+     * Returns a map with (InChI, reaction component role) pairs.
+     *
+     * @return unmodifiable map of (InChI, reaction component role) pairs
+     * @throws IllegalStateException thrown if the number of InChIs and reaction component roles is not equal
+     */
+    public Map<String, ReactionComponentRole> getInchiReactionComponentRoleMap() {
+        if (rinchiDecompositionOutput.getInchis() == null || rinchiDecompositionOutput.getRoles() == null) {
+            return Collections.unmodifiableMap(new HashMap<>());
+        }
+
+        if (rinchiDecompositionOutput.getInchis().length != rinchiDecompositionOutput.getRoles().length) {
+            throw new IllegalStateException("Different number of InChIs and reaction component roles: There are " +
+                    rinchiDecompositionOutput.getInchis().length + " InChIs and " + rinchiDecompositionOutput.getRoles().length + " reaction component roles.");
+        }
+
+        Map<String, ReactionComponentRole> inchiReactionComponentRolesMap = new HashMap<>(rinchiDecompositionOutput.getInchis().length);
+        for (int i = 0; i < rinchiDecompositionOutput.getInchis().length; i++) {
+            inchiReactionComponentRolesMap.put(rinchiDecompositionOutput.getInchis()[i], rinchiDecompositionOutput.getRoles()[i]);
+        }
+
+        return Collections.unmodifiableMap(inchiReactionComponentRolesMap);
+    }
 }

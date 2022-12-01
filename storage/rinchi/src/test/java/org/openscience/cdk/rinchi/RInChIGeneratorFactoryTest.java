@@ -43,16 +43,20 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * @author Nikolay Kochev
+ * @author Uli Fechner
+ */
 public class RInChIGeneratorFactoryTest extends CDKTestCase {
 
 	@Test
-	public void testGetInstance() throws CDKException {
+	public void testGetInstance() {
 		RInChIGeneratorFactory factory = RInChIGeneratorFactory.getInstance();
 		assertNotNull(factory);
 	}
 
 	@Test
-	public void testGetInstance_multipleCalls_sameInstance() throws CDKException {
+	public void testGetInstance_multipleCalls_sameInstance() {
 		RInChIGeneratorFactory factory1 = RInChIGeneratorFactory.getInstance();
 		assertNotNull(factory1);
 
@@ -67,7 +71,7 @@ public class RInChIGeneratorFactoryTest extends CDKTestCase {
 	}
 
 	@Test
-	public void testGetInstance_threadSafety() throws InterruptedException, CDKException {
+	public void testGetInstance_threadSafety() throws InterruptedException {
 		RInChIGeneratorFactory singletonInstance = RInChIGeneratorFactory.getInstance();
 
 		int numberOfMethodCalls = 10000;

@@ -28,72 +28,77 @@ import io.github.dan2097.jnarinchi.RinchiFlag;
 import io.github.dan2097.jnarinchi.RinchiOptions;
 
 /**
- * Provides parsing of RInChI options from a string. Using the JNA RinchiOptions builder directly.
+ * Provides parsing of RInChI options from a string.
+ * Uses the JNA RinchiOptions builder directly.
+ *
  * @author Nikolay Kochev (adopted original code from John Mayfield)
  */
 public class RInChIOptionParser {
+    private final ILoggingTool logger = LoggingToolFactory.createLoggingTool(RInChIOptionParser.class);
+    private final Map<String, RinchiFlag> optMap = new HashMap<>();
+    private final RinchiOptions.RinchiOptionsBuilder options;
 
-	private final ILoggingTool logger = LoggingToolFactory.createLoggingTool(RInChIOptionParser.class);
-	private final Map<String,RinchiFlag> optMap = new HashMap<>();
-	private final RinchiOptions.RinchiOptionsBuilder options;
+    private RInChIOptionParser() {
+        for (RinchiFlag flag : RinchiFlag.values())
+            optMap.put(flag.name(), flag);
 
-	private RInChIOptionParser() {
-		for (RinchiFlag flag : RinchiFlag.values())
-			optMap.put(flag.name(), flag);
+        options = RinchiOptions.builder();
+    }
 
-		options = RinchiOptions.builder();
-	}
+    /**
+     * Parses the RInChI options string and returns a RInChIOptions instance.
+     *
+     * @param str string with RInChI options
+     * @return RInChIOptions instance where the options were parsed from the argument <code>str</code>
+     */
+    static RinchiOptions parseString(String str) {
+        if (str == null)
+            return null;
+        RInChIOptionParser parser = new RInChIOptionParser();
+        parser.processString(str);
+        return parser.options.build();
+    }
 
-	private void processString(String optstr) {
-		int pos = 0;
-		while (pos < optstr.length()) {
-			switch (optstr.charAt(pos)) {
-			case ' ':
-			case '-':
-			case '/':
-			case ',':
-				pos++; // skip
-				break;
-			default:
-				int next = getIndexOfEither(optstr,',',' ', pos);
-				if (next < 0)
-					next = optstr.length();
-				RinchiFlag flag = optMap.get(optstr.substring(pos, next));
-				if (flag != null)
-					options.withFlag(flag);
-				else
-					logger.warn("Ignore unrecognized InChI flag:" + optstr.substring(pos, next));
-				pos = next;
-			}
-		}
-	}
+    private void processString(String optstr) {
+        int pos = 0;
+        while (pos < optstr.length()) {
+            switch (optstr.charAt(pos)) {
+                case ' ':
+                case '-':
+                case '/':
+                case ',':
+                    pos++; // skip
+                    break;
+                default:
+                    int next = getIndexOfEither(optstr, ',', ' ', pos);
+                    if (next < 0)
+                        next = optstr.length();
+                    RinchiFlag flag = optMap.get(optstr.substring(pos, next));
+                    if (flag != null)
+                        options.withFlag(flag);
+                    else
+                        logger.warn("Ignore unrecognized InChI flag:" + optstr.substring(pos, next));
+                    pos = next;
+            }
+        }
+    }
 
-	/**
-	 * 
-	 * @param str the string to search into.
-	 * @param chA a character to search for (Unicode code point).
-	 * @param chB a character to search for (Unicode code point).
-	 * @param fromIndex the index to start the search from.
-	 * @return the index of the first occurrence of either of the characters in the character 
-	 * sequence represented by the string object that is greater than or equal to fromIndex, 
-	 * or -1 if the character does not occur.
-	 */
-	private static int getIndexOfEither(String str, char chA, char chB, int fromIndex) {
-		int iA = str.indexOf(chA, fromIndex);
-		int iB = str.indexOf(chB, fromIndex);
-		if (iA<0)
-			return iB;
-		if (iB<0)
-			return iA;
-		return Math.min(iA, iB);
-	}
-
-	static RinchiOptions parseString(String str) {
-		if (str == null)
-			return null;
-		RInChIOptionParser parser = new RInChIOptionParser();
-		parser.processString(str);
-		return parser.options.build();
-	}
-
+    /**
+     * @param str       the string to search into.
+     * @param chA       a character to search for (Unicode code point).
+     * @param chB       a character to search for (Unicode code point).
+     * @param fromIndex the index to start the search from.
+     * @return the index of the first occurrence of either of the characters in the character
+     * sequence represented by the string object that is greater than or equal to fromIndex,
+     * or -1 if the character does not occur.
+     */
+    private static int getIndexOfEither(String str, char chA, char chB, int fromIndex) {
+        int iA = str.indexOf(chA, fromIndex);
+        int iB = str.indexOf(chB, fromIndex);
+        if (iA < 0)
+            return iB;
+        if (iB < 0)
+            return iA;
+        return Math.min(iA, iB);
+    }
 }

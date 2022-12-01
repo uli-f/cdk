@@ -56,190 +56,190 @@ import io.github.dan2097.jnarinchi.RinchiOptions;
  * @cdk.githash
  */
 public class RInChIGeneratorFactory {
-	// this singleton pattern with a static inner class lets the JVM take
-	// care of (1) lazy instantiation and (2) concurrency
-	// https://blog.paumard.org/2011/04/22/bilan-sur-le-pattern-singleton/
-	private static class SingletonInstanceHolder {
-		public final static RInChIGeneratorFactory INSTANCE;
+    // this singleton pattern with a static inner class lets the JVM take
+    // care of (1) lazy instantiation and (2) concurrency
+    // https://blog.paumard.org/2011/04/22/bilan-sur-le-pattern-singleton/
+    private static class SingletonInstanceHolder {
+        public final static RInChIGeneratorFactory INSTANCE;
 
-		static {
-			INSTANCE = new RInChIGeneratorFactory();
-			try {
-				RInChIGeneratorFactory.class.getClassLoader().loadClass("io.github.dan2097.jnarinchi.JnaRinchi");
-			} catch (ClassNotFoundException exception) {
-				throw new RuntimeException(exception);
-			}
-		}
-	}
+        static {
+            INSTANCE = new RInChIGeneratorFactory();
+            try {
+                RInChIGeneratorFactory.class.getClassLoader().loadClass("io.github.dan2097.jnarinchi.JnaRinchi");
+            } catch (ClassNotFoundException exception) {
+                throw new RuntimeException(exception);
+            }
+        }
+    }
 
-	private RInChIGeneratorFactory() {
-	}
+    private RInChIGeneratorFactory() {
+    }
 
 
-	/**
-	 * Return the singleton instance of this class, if needed also creates it.
-	 *
-	 * @return the singleton instance of this class
-	 */
-	public static RInChIGeneratorFactory getInstance() {
-		return SingletonInstanceHolder.INSTANCE;
-	}
+    /**
+     * Return the singleton instance of this class, if needed also creates it.
+     *
+     * @return the singleton instance of this class
+     */
+    public static RInChIGeneratorFactory getInstance() {
+        return SingletonInstanceHolder.INSTANCE;
+    }
 
-	/**
-	 * Gets a Standard RInChI generator for a {@link IReaction}. 
-	 *
-	 * @param reaction reaction to generate RInChI for
-	 * @return the RInChI generator object
-	 * @throws CDKException if the generator cannot be instantiated
-	 */
-	public RInChIGenerator getRInChIGenerator(IReaction reaction) throws CDKException {
-		return (new RInChIGenerator(reaction));
-	}
+    /**
+     * Gets a Standard RInChI generator for a {@link IReaction}.
+     *
+     * @param reaction reaction to generate RInChI for
+     * @return the RInChI generator object
+     * @throws CDKException if the generator cannot be instantiated
+     */
+    public RInChIGenerator getRInChIGenerator(IReaction reaction) throws CDKException {
+        return (new RInChIGenerator(reaction));
+    }
 
-	/**
-	 * Gets a RInChI generator for a {@link IReaction} providing flags to customise the generation.
-	 * If a timeout for the RInChI generation is required one of the methods that accept an
-	 * {@link io.github.dan2097.jnarinchi.RinchiOptions} should be used.
-	 * 
-	 * @param reaction reaction to generate RInChI for
-	 * @param flags the option flags
-	 * @return the RInChI generator object
-	 * @throws CDKException if the generator cannot be instantiated
-	 */
-	public RInChIGenerator getRInChIGenerator(IReaction reaction, RinchiFlag...flags) throws CDKException {
-		if (flags == null)
-			throw new IllegalArgumentException("Null flags");
+    /**
+     * Gets a RInChI generator for a {@link IReaction} providing flags to customise the generation.
+     * If a timeout for the RInChI generation is required one of the methods that accept an
+     * {@link io.github.dan2097.jnarinchi.RinchiOptions} should be used.
+     *
+     * @param reaction reaction to generate RInChI for
+     * @param flags    the option flags
+     * @return the RInChI generator object
+     * @throws CDKException if the generator cannot be instantiated
+     */
+    public RInChIGenerator getRInChIGenerator(IReaction reaction, RinchiFlag... flags) throws CDKException {
+        if (flags == null)
+            throw new IllegalArgumentException("Null flags");
 
-		RinchiOptions options = RinchiOptions
-				.builder()
-				.withFlag(flags)
-				.build();
+        RinchiOptions options = RinchiOptions
+                .builder()
+                .withFlag(flags)
+                .build();
 
-		return getRInChIGenerator(reaction, options);
-	}
+        return getRInChIGenerator(reaction, options);
+    }
 
-	/**
-	 * Get a RInChI generator providing a {@link String} with options to customise the generation.
-	 * <b>Example for option setting:</b><br/>
-	 * <code>//Generate RInChI with option ForceEquilibrium</code><br>		
-	 * <code>RInChIGenerator gen = RInChIGeneratorFactory.getInstance().getRInChIGenerator(reaction, "ForceEquilibrium");</code><br>
-	 * <code>String rinchi = gen.getRInChI();</code><br>
-	 * <code></code><br>
-	 * <code>//Generate default RInChI, reaction has a direction (option ForceEquilibrium is false)</code><br>		
-	 * <code>RInChIGenerator gen0 = RInChIGeneratorFactory.getInstance().getRInChIGenerator(reaction);</code><br>
-	 * <code>String rinchi0 = gen0.getRInChI();</code><br>
-	 * 
-	 * @param reaction reaction to generate RInChI for
-	 * @param options space or comma delimited string of options for the generation of the RInChI
-	 * @return the RInChI generator
-	 * @throws CDKException if the generator cannot be instantiated
-	 */
-	public RInChIGenerator getRInChIGenerator(IReaction reaction, String options) throws CDKException {
-		return (new RInChIGenerator(reaction, options));
-	}
+    /**
+     * Get a RInChI generator providing a {@link String} with options to customise the generation.
+     * <b>Example for option setting:</b><br/>
+     * <code>//Generate RInChI with option ForceEquilibrium</code><br>
+     * <code>RInChIGenerator gen = RInChIGeneratorFactory.getInstance().getRInChIGenerator(reaction, "ForceEquilibrium");</code><br>
+     * <code>String rinchi = gen.getRInChI();</code><br>
+     * <code></code><br>
+     * <code>//Generate default RInChI, reaction has a direction (option ForceEquilibrium is false)</code><br>
+     * <code>RInChIGenerator gen0 = RInChIGeneratorFactory.getInstance().getRInChIGenerator(reaction);</code><br>
+     * <code>String rinchi0 = gen0.getRInChI();</code><br>
+     *
+     * @param reaction reaction to generate RInChI for
+     * @param options  space or comma delimited string of options for the generation of the RInChI
+     * @return the RInChI generator
+     * @throws CDKException if the generator cannot be instantiated
+     */
+    public RInChIGenerator getRInChIGenerator(IReaction reaction, String options) throws CDKException {
+        return (new RInChIGenerator(reaction, options));
+    }
 
-	/**
-	 * Get a RInChI generator providing a {@link RinchiOptions} instance to customise the generation.
-	 *
-	 * @param reaction reaction to generate RInChI for
-	 * @param options object that holds option for the calculation of the RInChI
-	 * @return the RInChI generator
-	 * @throws CDKException if the generator cannot be instantiated
-	 */
-	public RInChIGenerator getRInChIGenerator(IReaction reaction, RinchiOptions options) throws CDKException {
-		if (options == null)
-			throw new IllegalArgumentException("Null flags");
+    /**
+     * Get a RInChI generator providing a {@link RinchiOptions} instance to customise the generation.
+     *
+     * @param reaction reaction to generate RInChI for
+     * @param options  object that holds option for the calculation of the RInChI
+     * @return the RInChI generator
+     * @throws CDKException if the generator cannot be instantiated
+     */
+    public RInChIGenerator getRInChIGenerator(IReaction reaction, RinchiOptions options) throws CDKException {
+        if (options == null)
+            throw new IllegalArgumentException("Null flags");
 
-		return (new RInChIGenerator(reaction, options));
-	}
+        return (new RInChIGenerator(reaction, options));
+    }
 
-	/**
-	 * Get a RInChI generator providing a {@link RinchiOptions} instance to customise the generation.
-	 * This method also allows to specify whether the CDK IO capabilities should be used for
-	 * writing the MDL RXN file that is passed to the native RInChI library.
-	 *
-	 * @param reaction reaction to generate RInChI for
-	 * @param options object that holds option for the calculation of the RInChI
-	 * @param useCDK_MDL_IO determines whether to use CDK MDL RXN Writer
-	 * @return the RInChI generator
-	 * @throws CDKException if the generator cannot be instantiated
-	 */
-	public RInChIGenerator getRInChIGenerator(IReaction reaction, RinchiOptions options, boolean useCDK_MDL_IO) throws CDKException {
-		return (new RInChIGenerator(reaction, options, useCDK_MDL_IO));
-	}
-	
-	/**
-	 * Returns an instance of {@link RInChIToReaction} that consumes a RInChI string and produces a {@link IReaction}.
-	 *
-	 * @param rinchi   RInChI to generate the reaction from
-	 * @throws CDKException if the generator cannot be instantiated
-	 */
-	public RInChIToReaction getRInChIToReaction(String rinchi) throws CDKException {
-		return (new RInChIToReaction(rinchi));
-	}
-	
-	/**
-	 * Returns an instance of {@link RInChIToReaction} that consumes a RInChI string with an accompanying <i>AuxInfo</i> string and produces a {@link IReaction}.
-	 *
-	 * @param rinchi   RInChI to generate reaction from
-	 * @param auxInfo   RInChI auxiliary information (<i>AuxInfo</i>)
-	 * @throws CDKException if the generator cannot be instantiated
-	 */
-	public RInChIToReaction getRInChIToReaction(String rinchi, String auxInfo) throws CDKException {
-		return (new RInChIToReaction(rinchi, auxInfo));
-	}
-	
-	
-	/**
-	 * Returns an instance of {@link RInChIToReaction} that consumes a RInChI string with an accompanying <i>AuxInfo</i> string and produces a {@link IReaction}.
-	 * <br>
-	 * This method also allows to specify whether the CDK IO capabilities should be used for
-	 * reading the MDL RXN file that is passed from the native RInChI library.
-	 *
-	 * @param rinchi   RInChI to generate reaction from
-	 * @param auxInfo   RInChI auxiliary information (<i>AuxInfo</i>)
-	 * @param useCDK_MDL_IO determines whether to use CDK MDL RXN Reader
-	 * @throws CDKException if the generator cannot be instantiated
-	 */
-	public RInChIToReaction getRInChIToReaction(String rinchi, String auxInfo, boolean useCDK_MDL_IO) throws CDKException {
-		return (new RInChIToReaction(rinchi, auxInfo, useCDK_MDL_IO));
-	}
-	
-	/**
-	 * Returns an instance of {@link RInChIToReaction} that consumes a RInChI string with an accompanying <i>AuxInfo</i> string and produces a {@link IReaction}.
-	 * <br>
-	 * This method also allows to specify whether the CDK IO capabilities should be used for
-	 * reading the MDL RXN file that is passed from the native RInChI library.
-	 * Optionally, the resulting CDK AtomContainer objects, storing reaction components, could be configured. 
-	 *
-	 * @param rinchi   RInChI to generate reaction from
-	 * @param auxInfo   RInChI auxiliary information (<i>AuxInfo</i>)
-	 * @param useCDK_MDL_IO determines whether to use CDK MDL RXN Reader
-	 * @param configureReactionComponents determines whether to configure reaction components (CDK AtomContainer objects) 
-	 * @throws CDKException if the generator cannot be instantiated
-	 */
-	public RInChIToReaction getRInChIToReaction(String rinchi, String auxInfo, boolean useCDK_MDL_IO, boolean configureReactionComponents) throws CDKException {
-		return (new RInChIToReaction(rinchi, auxInfo, useCDK_MDL_IO, configureReactionComponents));
-	}
-	
-	/**
-	 * Consumes a RInChI string and produces a {@link RInChIDecomposition}.
-	 *
-	 * @param rinchi  RInChI that is decomposed
-	 * @throws CDKException if the generator cannot be instantiated
-	 */
-	public RInChIDecomposition getRInChIDecomposition(String rinchi) throws CDKException {
-		return (new RInChIDecomposition(rinchi));
-	}
-	
-	/**
-	 * Consumes a RInChI string with an accompanying <i>AuxInfo</i> string and produces a {@link RInChIDecomposition}.
-	 *
-	 * @param rinchi  RInChI that is decomposed
-	 * @param auxInfo   RInChI auxiliary information (<i>AuxInfo</i>)
-	 * @throws CDKException if the generator cannot be instantiated
-	 */
-	public RInChIDecomposition getRInChIDecomposition(String rinchi, String auxInfo) throws CDKException {
-		return (new RInChIDecomposition(rinchi, auxInfo));
-	}
+    /**
+     * Get a RInChI generator providing a {@link RinchiOptions} instance to customise the generation.
+     * This method also allows to specify whether the CDK IO capabilities should be used for
+     * writing the MDL RXN file that is passed to the native RInChI library.
+     *
+     * @param reaction      reaction to generate RInChI for
+     * @param options       object that holds option for the calculation of the RInChI
+     * @param useCDK_MDL_IO determines whether to use CDK MDL RXN Writer
+     * @return the RInChI generator
+     * @throws CDKException if the generator cannot be instantiated
+     */
+    public RInChIGenerator getRInChIGenerator(IReaction reaction, RinchiOptions options, boolean useCDK_MDL_IO) throws CDKException {
+        return (new RInChIGenerator(reaction, options, useCDK_MDL_IO));
+    }
+
+    /**
+     * Returns an instance of {@link RInChIToReaction} that consumes a RInChI string and produces a {@link IReaction}.
+     *
+     * @param rinchi RInChI to generate the reaction from
+     * @throws CDKException if the generator cannot be instantiated
+     */
+    public RInChIToReaction getRInChIToReaction(String rinchi) throws CDKException {
+        return (new RInChIToReaction(rinchi));
+    }
+
+    /**
+     * Returns an instance of {@link RInChIToReaction} that consumes a RInChI string with an accompanying <i>AuxInfo</i> string and produces a {@link IReaction}.
+     *
+     * @param rinchi  RInChI to generate reaction from
+     * @param auxInfo RInChI auxiliary information (<i>AuxInfo</i>)
+     * @throws CDKException if the generator cannot be instantiated
+     */
+    public RInChIToReaction getRInChIToReaction(String rinchi, String auxInfo) throws CDKException {
+        return (new RInChIToReaction(rinchi, auxInfo));
+    }
+
+
+    /**
+     * Returns an instance of {@link RInChIToReaction} that consumes a RInChI string with an accompanying <i>AuxInfo</i> string and produces a {@link IReaction}.
+     * <br>
+     * This method also allows to specify whether the CDK IO capabilities should be used for
+     * reading the MDL RXN file that is passed from the native RInChI library.
+     *
+     * @param rinchi        RInChI to generate reaction from
+     * @param auxInfo       RInChI auxiliary information (<i>AuxInfo</i>)
+     * @param useCDK_MDL_IO determines whether to use CDK MDL RXN Reader
+     * @throws CDKException if the generator cannot be instantiated
+     */
+    public RInChIToReaction getRInChIToReaction(String rinchi, String auxInfo, boolean useCDK_MDL_IO) throws CDKException {
+        return (new RInChIToReaction(rinchi, auxInfo, useCDK_MDL_IO));
+    }
+
+    /**
+     * Returns an instance of {@link RInChIToReaction} that consumes a RInChI string with an accompanying <i>AuxInfo</i> string and produces a {@link IReaction}.
+     * <br>
+     * This method also allows to specify whether the CDK IO capabilities should be used for
+     * reading the MDL RXN file that is passed from the native RInChI library.
+     * Optionally, the resulting CDK AtomContainer objects, storing reaction components, could be configured.
+     *
+     * @param rinchi                      RInChI to generate reaction from
+     * @param auxInfo                     RInChI auxiliary information (<i>AuxInfo</i>)
+     * @param useCDK_MDL_IO               determines whether to use CDK MDL RXN Reader
+     * @param configureReactionComponents determines whether to configure reaction components (CDK AtomContainer objects)
+     * @throws CDKException if the generator cannot be instantiated
+     */
+    public RInChIToReaction getRInChIToReaction(String rinchi, String auxInfo, boolean useCDK_MDL_IO, boolean configureReactionComponents) throws CDKException {
+        return (new RInChIToReaction(rinchi, auxInfo, useCDK_MDL_IO, configureReactionComponents));
+    }
+
+    /**
+     * Consumes a RInChI string and produces a {@link RInChIDecomposition}.
+     *
+     * @param rinchi RInChI that is decomposed
+     * @throws CDKException if the generator cannot be instantiated
+     */
+    public RInChIDecomposition getRInChIDecomposition(String rinchi) throws CDKException {
+        return (new RInChIDecomposition(rinchi));
+    }
+
+    /**
+     * Consumes a RInChI string with an accompanying <i>AuxInfo</i> string and produces a {@link RInChIDecomposition}.
+     *
+     * @param rinchi  RInChI that is decomposed
+     * @param auxInfo RInChI auxiliary information (<i>AuxInfo</i>)
+     * @throws CDKException if the generator cannot be instantiated
+     */
+    public RInChIDecomposition getRInChIDecomposition(String rinchi, String auxInfo) throws CDKException {
+        return (new RInChIDecomposition(rinchi, auxInfo));
+    }
 }
