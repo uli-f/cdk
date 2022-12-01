@@ -18,6 +18,24 @@
  */
 package org.openscience.cdk.rinchi;
 
+import io.github.dan2097.jnarinchi.JnaRinchi;
+import io.github.dan2097.jnarinchi.RinchiOptions;
+import io.github.dan2097.jnarinchi.RinchiOutput;
+import io.github.dan2097.jnarinchi.Status;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.openscience.cdk.CDKConstants;
+import org.openscience.cdk.Reaction;
+import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.interfaces.*;
+import org.openscience.cdk.interfaces.IDoubleBondStereochemistry.Conformation;
+import org.openscience.cdk.io.IChemObjectReader.Mode;
+import org.openscience.cdk.io.MDLRXNV2000Reader;
+import org.openscience.cdk.io.MDLV2000Writer.SPIN_MULTIPLICITY;
+import org.openscience.cdk.test.CDKTestCase;
+import org.openscience.cdk.tools.ILoggingTool;
+import org.openscience.cdk.tools.LoggingToolFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,29 +43,6 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.openscience.cdk.CDKConstants;
-import org.openscience.cdk.Reaction;
-import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.interfaces.IReaction;
-import org.openscience.cdk.interfaces.IStereoElement;
-import org.openscience.cdk.interfaces.IAtom;
-import org.openscience.cdk.interfaces.IAtomContainer;
-import org.openscience.cdk.interfaces.IDoubleBondStereochemistry;
-import org.openscience.cdk.interfaces.IDoubleBondStereochemistry.Conformation;
-import org.openscience.cdk.io.MDLRXNV2000Reader;
-import org.openscience.cdk.io.IChemObjectReader.Mode;
-import org.openscience.cdk.io.MDLV2000Writer.SPIN_MULTIPLICITY;
-import org.openscience.cdk.test.CDKTestCase;
-import org.openscience.cdk.tools.ILoggingTool;
-import org.openscience.cdk.tools.LoggingToolFactory;
-
-import io.github.dan2097.jnarinchi.JnaRinchi;
-import io.github.dan2097.jnarinchi.RinchiOptions;
-import io.github.dan2097.jnarinchi.RinchiOutput;
-import io.github.dan2097.jnarinchi.Status;
 
 /**
  * @author Nikolay Kochev
@@ -166,40 +161,26 @@ public class RInChIGeneratorTest extends CDKTestCase {
 
     @Test
     public void testExample_nostruct_one_in_products() throws Exception {
-        // TODO commented out because it fails
-//		genericExampleTest("examples/nostruct_one_in_products.rxn", "examples/nostruct_one_in_products.rxn.rinchi_strings.txt", false);
+        // reactant and product with tetrahedral stereochemistry that can only be resolved from the coordinates in RAuxInfo when using the MDL IO capabilities of CDK
         genericExampleTest("examples/nostruct_one_in_products.rxn", "examples/nostruct_one_in_products.rxn.rinchi_strings.txt", true);
     }
 
     @Test
     public void testExample_nostruct_one_in_reactants() throws Exception {
-        // TODO commented out because it fails
-//		genericExampleTest("examples/nostruct_one_in_reactants.rxn", "examples/nostruct_one_in_reactants.rxn.rinchi_strings.txt", false);
+        // reactant and product with tetrahedral stereochemistry that can only be resolved from the coordinates in RAuxInfo when using the MDL IO capabilities of CDK
         genericExampleTest("examples/nostruct_one_in_reactants.rxn", "examples/nostruct_one_in_reactants.rxn.rinchi_strings.txt", true);
     }
 
     @Test
     public void testExample_nostruct_two_in_reactants() throws Exception {
-        // TODO commented out because it fails
-//		genericExampleTest("examples/nostruct_two_in_reactants.rxn", "examples/nostruct_two_in_reactants.rxn.rinchi_strings.txt", false);
+        // reactant and product with tetrahedral stereochemistry that can only be resolved from the coordinates in RAuxInfo when using the MDL IO capabilities of CDK
         genericExampleTest("examples/nostruct_two_in_reactants.rxn", "examples/nostruct_two_in_reactants.rxn.rinchi_strings.txt", true);
     }
 
     @Test
     public void testExample_R005a() throws Exception {
-        // TODO commented out because it fails
-//		genericExampleTest("examples/R005a.rxn", "examples/R005a.rxn.rinchi_strings.txt", false);
+        // reactant and product with tetrahedral stereochemistry that can only be resolved from the coordinates in RAuxInfo when using the MDL IO capabilities of CDK
         genericExampleTest("examples/R005a.rxn", "examples/R005a.rxn.rinchi_strings.txt", true);
-    }
-
-    @Test
-    public void testExample_R005a_with_agents() {
-        // TODO commented out because it fails
-//		genericExampleTest("examples/R005a_with_agents.rxn", "examples/R005a_with_agents.rxn.rinchi_strings.txt", false);
-        // TODO commented out because it fails
-        // this probably fails as agent count is considered an error when using the MDL V2000 reader with Mode.STRICT
-        // using Mode.RELAXED might solve that issue
-//		genericExampleTest("examples/R005a_with_agents.rxn", "examples/R005a_with_agents.rxn.rinchi_strings.txt", true);
     }
 
     @Test
