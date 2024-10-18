@@ -19,6 +19,7 @@
 package org.openscience.cdk.rinchi;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openscience.cdk.Atom;
@@ -33,6 +34,7 @@ import org.openscience.cdk.io.MDLV2000Writer.SPIN_MULTIPLICITY;
 import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.test.CDKTestCase;
 
+import java.util.Locale;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -44,16 +46,16 @@ import static org.junit.jupiter.api.Assertions.*;
  * @author Nikolay Kochev
  * @author Uli Fechner
  */
-public class RInChIGeneratorFactoryTest extends CDKTestCase {
+class RInChIGeneratorFactoryTest extends CDKTestCase {
 
 	@Test
-	public void testGetInstance() {
+	void testGetInstance() {
 		RInChIGeneratorFactory factory = RInChIGeneratorFactory.getInstance();
 		assertNotNull(factory);
 	}
 
 	@Test
-	public void testGetInstance_multipleCalls_sameInstance() {
+	void testGetInstance_multipleCalls_sameInstance() {
 		RInChIGeneratorFactory factory1 = RInChIGeneratorFactory.getInstance();
 		assertNotNull(factory1);
 
@@ -68,7 +70,7 @@ public class RInChIGeneratorFactoryTest extends CDKTestCase {
 	}
 
 	@Test
-	public void testGetInstance_threadSafety() throws InterruptedException {
+	void testGetInstance_threadSafety() throws InterruptedException {
 		RInChIGeneratorFactory singletonInstance = RInChIGeneratorFactory.getInstance();
 
 		int numberOfMethodCalls = 10000;
@@ -93,7 +95,7 @@ public class RInChIGeneratorFactoryTest extends CDKTestCase {
 	
 	@Disabled("not implemented yet")
 	@Test
-	public void test01() {
+	void test01() {
 		//Create Diels–Alder Reaction using CDK
 		//Reactant 1
 		IAtomContainer molecule1 = new AtomContainer();
@@ -132,9 +134,9 @@ public class RInChIGeneratorFactoryTest extends CDKTestCase {
 		molecule3.addBond(new Bond (productAtom1, productAtom2, IBond.Order.DOUBLE));
 		molecule3.addBond(new Bond (productAtom2, productAtom3, IBond.Order.SINGLE));
 		molecule3.addBond(new Bond (productAtom3, productAtom4, IBond.Order.SINGLE));
-		molecule3.addBond(new Bond (productAtom2, productAtom3, IBond.Order.SINGLE));
-		molecule3.addBond(new Bond (productAtom2, productAtom3, IBond.Order.SINGLE));
-		molecule3.addBond(new Bond (productAtom2, productAtom3, IBond.Order.SINGLE));
+		molecule3.addBond(new Bond (productAtom4, productAtom5, IBond.Order.SINGLE));
+		molecule3.addBond(new Bond (productAtom5, productAtom6, IBond.Order.SINGLE));
+		molecule3.addBond(new Bond (productAtom6, productAtom1, IBond.Order.SINGLE));
 		
 		//Create reaction and set reagents and products
 		IReaction reaction = SilentChemObjectBuilder.getInstance().newReaction();
@@ -186,9 +188,8 @@ public class RInChIGeneratorFactoryTest extends CDKTestCase {
 		Assertions.assertEquals(6, reaction3.getProducts().getAtomContainer(0).getAtomCount(), "Product atom count: ");
 	}
 
-	@Disabled("not implemented yet")
 	@Test
-	public void test02_benzene_kekulized() {
+	void test02_benzene_kekulized() {
 		//Create kekulized benzene
 		IAtomContainer molecule = new AtomContainer();
 		IAtom atom0 = new Atom("C");
@@ -242,11 +243,14 @@ public class RInChIGeneratorFactoryTest extends CDKTestCase {
 		RInChIGenerator generator = RInChIGeneratorFactory.getInstance().getRInChIGenerator(reaction);
 		Assertions.assertEquals(RInChIGenerator.Status.SUCCESS, generator.getStatus(), "RInChI status: ");
 		Assertions.assertEquals("RInChI=1.00.1S/<>C6H6/c1-2-4-6-5-3-1/h1-6H/d-", generator.getRInChI());
+		Assertions.assertEquals("Long-RInChIKey=SA-BUHFF---UHOVQNZJYSORNB-UHFFFAOYSA-N", generator.getLongRInChIKey());
+		Assertions.assertEquals("Short-RInChIKey=SA-BUHFF-UHFFFADPSC-UHOVQNZJYS-UHFFFADPSC-NUHFF-NUHFF-NUHFF-ZZZ", generator.getShortRInChIKey());
+		Assertions.assertEquals("Web-RInChIKey=UHOVQNZJYSORNBOAP-NUHFFFADPSCTJSA", generator.getWebRInChIKey());
 	}
 
-	@Disabled("not implemented yet")
+	@Disabled("IBond.Order.UNSET not supported by jna-inchi.")
 	@Test
-	public void test03_benzene_aromatic() {
+	void test03_benzene_aromatic() {
 		//Create aromatic benzene for testing conversion of CDK bonds of type UNSET flagged as aromatic
 		IAtomContainer molecule = new AtomContainer();
 		IAtom atom0 = new Atom("C");
@@ -302,9 +306,8 @@ public class RInChIGeneratorFactoryTest extends CDKTestCase {
 		Assertions.assertEquals("RInChI=1.00.1S/<>C6H6/c1-2-4-6-5-3-1/h1-6H/d-", generator.getRInChI(), "RInChI for benzene: ");
 	}
 
-	@Disabled("not implemented yet")
 	@Test
-	public void test04_radical_doublet() {
+	void test04_radical_doublet() {
 		//Create propane doublet radical (monovalent)
 		IAtomContainer molecule = new AtomContainer();
 		IAtom atom0 = new Atom("C");
@@ -335,9 +338,8 @@ public class RInChIGeneratorFactoryTest extends CDKTestCase {
 		Assertions.assertEquals("RAuxInfo=1.00.1/<>0/N:1,3,2/CRV:1d/rA:3nC.2CC/rB:s1;s2;/rC:;;;", generator.getAuxInfo(), "RAuxInfo for propane radical: ");
 	}
 
-	@Disabled("not implemented yet")
 	@Test
-	public void test05_radical_triplet() {
+	void test05_radical_triplet() {
 		//Create propane triple radical (divalent)
 		//!!! propane singlet radical produces the same RAuxInfo (bug or feature in RInChI - unknown ??)
 		IAtomContainer molecule = new AtomContainer();
