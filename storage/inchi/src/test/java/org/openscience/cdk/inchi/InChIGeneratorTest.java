@@ -28,10 +28,12 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import javax.vecmath.Point2d;
 import javax.vecmath.Point3d;
 
+import io.github.dan2097.jnainchi.InchiOptions;
 import net.sf.jniinchi.INCHI_OPTION;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -489,10 +491,12 @@ class InChIGeneratorTest extends CDKTestCase {
     void testGetStandardInchiFromMethylRadical() throws Exception {
         IAtomContainer ac = DefaultChemObjectBuilder.getInstance().newAtomContainer();
         IAtom a = new Atom("C");
+        a.setPoint2d(new Point2d(1.0, -2));
         a.setImplicitHydrogenCount(3);
         ac.addAtom(a);
         ac.addSingleElectron(new SingleElectron(a));
-        InChIGenerator gen = getFactory().getInChIGenerator(ac);
+        System.out.println(Locale.getDefault());
+        InChIGenerator gen = getFactory().getInChIGenerator(ac, new InchiOptions.InchiOptionsBuilder().build());
         Assertions.assertEquals(INCHI_RET.OKAY, gen.getReturnStatus());
         Assertions.assertEquals("InChI=1S/CH3/h1H3", gen.getInchi());
     }
@@ -760,6 +764,18 @@ class InChIGeneratorTest extends CDKTestCase {
             IAtomContainer container = reader.read(DefaultChemObjectBuilder.getInstance().newAtomContainer());
             InChIGenerator generator = getFactory().getInChIGenerator(container);
             Assertions.assertEquals("InChI=1S/C7H15NO/c1-4-7(3)6-8-9-5-2/h6-7H,4-5H2,1-3H3", generator.getInchi());
+        } finally {
+            reader.close();
+        }
+    }
+
+     @Test
+    void andEnantiomer_test() throws Exception {
+        MDLV2000Reader reader = new MDLV2000Reader(getClass().getResourceAsStream("ANDEnantiomer.mol"));
+        try {
+            IAtomContainer container = reader.read(DefaultChemObjectBuilder.getInstance().newAtomContainer());
+            InChIGenerator generator = getFactory().getInChIGenerator(container);
+            Assertions.assertEquals("InChI=1S/C4H8O/c1-3-4(2)5-3/h3-4H,1-2H3/t3-,4?/m0/s1", generator.getInchi());
         } finally {
             reader.close();
         }
